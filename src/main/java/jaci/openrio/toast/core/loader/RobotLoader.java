@@ -2,14 +2,12 @@ package jaci.openrio.toast.core.loader;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.lib.crash.CrashHandler;
-import jaci.openrio.toast.lib.listener.Robot;
+import jaci.openrio.toast.lib.Robot;
 import jaci.openrio.toast.lib.log.Logger;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.jar.Manifest;
 
 public class RobotLoader {
@@ -43,6 +41,10 @@ public class RobotLoader {
 
             CrashHandler.handle(t);
         }
+    }
+
+    public static Robot getRobot() {
+        return robot;
     }
 
 }

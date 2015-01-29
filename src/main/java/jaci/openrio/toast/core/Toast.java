@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.lib.FRCHooks;
@@ -16,14 +17,18 @@ import java.util.Random;
  *
  * Also in the Manifest file, create a new property named
  * 'Toast-Robot' and set it to your robot Base Class implementing
- * the {@link jaci.openrio.toast.lib.listener.Robot} class.
+ * the {@link jaci.openrio.toast.lib.Robot} class.
  *
  * @author Jaci
  */
 public class Toast extends RobotBase {
 
     private static Logger log;
-    private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt"};
+    private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt", "Hot, Hot, HOT!!"};
+
+    public DriverStation station() {
+        return m_ds;
+    }
 
     /**
      * Get the default logger for the Toast API. This logger uses
@@ -54,6 +59,7 @@ public class Toast extends RobotBase {
         RobotLoader.init();
 
         log().info("Nuking Toast...");
+        RobotLoader.getRobot().prestart();
         FRCHooks.robotReady();
     }
 
@@ -69,6 +75,8 @@ public class Toast extends RobotBase {
 
         Thread.currentThread().setName("Main");
         log().info("Verdict: " + getRandomTaste());
+        RobotLoader.getRobot().startCompetition();
+        StateTracker.init(this);
     }
 
 }
