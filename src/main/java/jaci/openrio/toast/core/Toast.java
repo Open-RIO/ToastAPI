@@ -3,6 +3,7 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.webui.WebRegistry;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -14,10 +15,6 @@ import java.util.Random;
  * The Toast Base Class. This is the base for the Toast API.
  * In order to take advantage of this, change your Robot-Class
  * to this instead of your own in the Manifest.MF file.
- *
- * Also in the Manifest file, create a new property named
- * 'Toast-Robot' and set it to your robot Base Class implementing
- * the {@link jaci.openrio.toast.lib.Robot} class.
  *
  * @author Jaci
  */
@@ -57,6 +54,7 @@ public class Toast extends RobotBase {
         log().info("Slicing Loaf...");
         CrashHandler.init();
         RobotLoader.init();
+        WebRegistry.init();
 
         log().info("Nuking Toast...");
         RobotLoader.getRobot().prestart();
@@ -72,7 +70,6 @@ public class Toast extends RobotBase {
         log().info("Buttering Bread...");
 
         log().info("Fabricating Sandwich...");
-
         Thread.currentThread().setName("Main");
         log().info("Verdict: " + getRandomTaste());
         RobotLoader.getRobot().startCompetition();
