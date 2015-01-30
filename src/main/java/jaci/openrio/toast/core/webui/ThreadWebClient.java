@@ -74,6 +74,8 @@ public class ThreadWebClient extends Thread {
             if (url.endsWith("/")) {
                 url += "index.html";
             } else if (!url.matches(".*\\..*")) {
+                dos.writeBytes("HTTP/1.1 301 Moved Permanently \n");
+                dos.writeBytes("Location: http://" + headers.get("Host") + url + "/\n");
                 url += "/index.html";
             }
 
