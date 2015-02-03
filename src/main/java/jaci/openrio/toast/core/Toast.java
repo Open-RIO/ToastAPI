@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.webui.WebRegistry;
+import jaci.openrio.toast.core.webui.handlers.HandlerConsole;
 import jaci.openrio.toast.core.webui.handlers.HandlerPower;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
@@ -83,6 +84,7 @@ public class Toast extends RobotBase {
         log().info("Buttering Bread...");
         PDPMonitor.init();
         WebRegistry.addHandler(new HandlerPower());
+        WebRegistry.addHandler(new HandlerConsole());
 
         log().info("Fabricating Sandwich...");
         Thread.currentThread().setName("Main");
