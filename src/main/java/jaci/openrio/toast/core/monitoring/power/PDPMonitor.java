@@ -2,12 +2,15 @@ package jaci.openrio.toast.core.monitoring.power;
 
 import edu.wpi.first.wpilibj.ControllerPower;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import jaci.openrio.toast.core.StateTracker;
 import jaci.openrio.toast.lib.EvictingQueue;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.state.RobotState;
+import jaci.openrio.toast.lib.state.StateListener;
 
 import static jaci.openrio.toast.lib.math.MathHelper.*;
 
-public class PDPMonitor {
+public class PDPMonitor implements StateListener.Ticker{
 
     private static EvictingQueue<PDPPoll> pollHistory = new EvictingQueue<PDPPoll>(10);
 
@@ -18,6 +21,7 @@ public class PDPMonitor {
     public static void init() {
         pdp = new PowerDistributionPanel();
         log = new Logger("Toast|Power", Logger.ATTR_DEFAULT);
+        StateTracker.addTicker(new PDPMonitor());
     }
 
     public static void resetFaults() {
@@ -64,5 +68,8 @@ public class PDPMonitor {
     }
 
 
-
+    @Override
+    public void tickState(RobotState state) {
+        tick();
+    }
 }

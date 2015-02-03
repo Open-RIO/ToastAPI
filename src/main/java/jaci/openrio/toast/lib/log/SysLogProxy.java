@@ -23,6 +23,10 @@ public class SysLogProxy {
             File fe = new File("toast/log");
             fo.mkdirs();
             fe.mkdirs();
+
+            fo.createNewFile();
+            fe.createNewFile();
+
             fileOut = new FileOutputStream(fo + "/recent.txt");
             fileErr = new FileOutputStream(fe + "/recentErr.txt");
 

@@ -54,7 +54,7 @@ public class Logger {
         backlog.add(ts);
 
         for (LogHandler hand : handlers)
-            hand.onLog(message, level);
+            hand.onLog(level, message);
     }
 
     public String getPrefix(String level) {
