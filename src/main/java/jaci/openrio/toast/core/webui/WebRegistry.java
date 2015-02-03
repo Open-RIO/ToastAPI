@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.webui;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class WebRegistry {
 
@@ -10,13 +11,20 @@ public class WebRegistry {
 
     protected static ArrayList<WebHandler> handlers;
 
+    protected static HashMap<String, String> variables;
+
     public static void init() {
         handlers = new ArrayList<WebHandler>();
+        variables = new HashMap<String, String>();
         startDispatch();
     }
 
     public static void addHandler(WebHandler handler) {
         handlers.add(handler);
+    }
+
+    public static void setVar(String id, String val) {
+        variables.put(id, val);
     }
 
     public static void startDispatch() {

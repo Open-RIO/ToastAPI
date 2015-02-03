@@ -21,10 +21,14 @@ public class Logger {
     public DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy-hh:mm:ss");
 
     public static ArrayList<String> backlog = new ArrayList<String>();
+    public static ArrayList<LogHandler> handlers = new ArrayList<LogHandler>();
 
     int attr;
     String name;
 
+    public static void addHandler(LogHandler handler) {
+        handlers.add(handler);
+    }
 
     public Logger(String name, int attributes) {
         this.attr = attributes;
@@ -48,6 +52,9 @@ public class Logger {
         ps.println(ts);
 
         backlog.add(ts);
+
+        for (LogHandler hand : handlers)
+            hand.onLog(message, level);
     }
 
     public String getPrefix(String level) {

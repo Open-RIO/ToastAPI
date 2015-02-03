@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.css">
+    <script type="text/javascript" src="../js/progressbar.js"></script>
+    <script type="text/javascript" src="../api/apiget.js"></script>
+    <title>Toast Web Dashboard</title>
+
+    <nav class="mainNav">
+        <a href="../" class="headerTitle fade"> Toast Web Dashboard </a>
+        <!--<a href="/" class="headerLink fade"> Console </a>-->
+        <a href="" class="headerLink fade"> Power </a>
+        <a href="../io/" class="headerLink fade"> IO </a>
+
+        <a href="/" class="headerLinkAction fade"><i class="fa fa-power-off"></i> Reboot RIO </a>
+        <a href="/" class="headerLinkAction fade"><i class="fa fa-refresh"></i> Restart Code</a>
+    </nav>
+</head>
+<body>
+
+    <div class="mainContainer">
+        <h1 class="pageTitle">Power Management &nbsp;</h1>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-bolt">&nbsp;Voltages</h2>
+            <div id="batVolt" class="pCircle"></div>
+            <div id="rioVolt" class="pCircle"></div>
+        </div>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-sun-o">&nbsp;Temperature</h2>
+            <div id="pdpTemp" class="pCircle"></div>
+        </div>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-plug">&nbsp;Current</h2>
+            <div id="current0" class="pCircle"></div>
+            <div id="current1" class="pCircle"></div>
+            <div id="current2" class="pCircle"></div>
+            <div id="current3" class="pCircle"></div>
+            <div id="current4" class="pCircle"></div>
+            <div id="current5" class="pCircle"></div>
+            <div id="current6" class="pCircle"></div>
+            <div id="current7" class="pCircle"></div>
+            <div id="current8" class="pCircle"></div>
+            <div id="current9" class="pCircle"></div>
+            <div id="current10" class="pCircle"></div>
+            <div id="current11" class="pCircle"></div>
+            <div id="current12" class="pCircle"></div>
+            <div id="current13" class="pCircle"></div>
+            <div id="current14" class="pCircle"></div>
+            <div id="current15" class="pCircle"></div>
+        </div>
+
+
+    </div>
+
+</body>
+
+<script type="text/javascript">
+    function createCircle(id, text, color) {
+        var thing = new ProgressBar.Circle("#" + id, {
+            color: color,
+            fill: 'rgba(255, 255, 255, 0.05)',
+            strokeWidth: 3,
+            duration: 500,
+            easing: 'easeInOut',
+            text: {
+                value: text,
+                color: 'rgba(255, 255, 255, 1)'
+            }
+        });
+
+        return thing;
+    }
+
+    var triggers = [];
+
+    function createHandler(circle, id) {
+        var obj = {
+            object: circle,
+            id: id
+        };
+
+        triggers.push(obj);
+    }
+
+    createHandler(createCircle("batVolt", "BAT", 'rgba(255, 100, 0, 1)'), 'batVolt');
+    createHandler(createCircle("rioVolt", "RIO", 'rgba(255, 100, 0, 1)'), 'rioVolt');
+
+    createHandler(createCircle("pdpTemp", "PDP", 'rgba(255, 30, 10, 1)'), 'pdpTemp');
+
+    var currents = [];
+
+    for (var i = 0; i < 16; i++) {
+        var thing = createCircle("current"+i, i.toString(), 'rgba(255, 255, 0, 1)');
+        currents[i] = thing;
+    }
+
+    function loopUpdate() {
+        setTimeout(function () {
+            for (var i = 0; i < 16; i++) {
+                var thing = currents[i];
+                getPower('current' + i, function(val, thing) {
+                    thing.animate(val);
+                }, thing);
+            }
+
+            for (var i = 0; i < triggers.length; i++) {
+                var obj = triggers[i];
+                getPower(obj.id, function(val, thing) {
+                    thing.animate(val);
+                }, obj.object);
+            }
+
+            loopUpdate();
+        }, 500);
+    }
+
+    loopUpdate();
+
+</script>
+</html>

@@ -3,7 +3,9 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.webui.WebRegistry;
+import jaci.openrio.toast.core.webui.handlers.HandlerPower;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -22,6 +24,17 @@ public class Toast extends RobotBase {
 
     private static Logger log;
     private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt", "Hot, Hot, HOT!!"};
+
+    private static Toast instance;
+
+    public Toast() {
+        super();
+        instance = this;
+    }
+
+    public static Toast getToast() {
+        return instance;
+    }
 
     public DriverStation station() {
         return m_ds;
@@ -68,6 +81,8 @@ public class Toast extends RobotBase {
     public void startCompetition() {
         Thread.currentThread().setName("Initialization");
         log().info("Buttering Bread...");
+        PDPMonitor.init();
+        WebRegistry.addHandler(new HandlerPower());
 
         log().info("Fabricating Sandwich...");
         Thread.currentThread().setName("Main");

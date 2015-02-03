@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.css">
+    <script type="text/javascript" src="../api/apiget.js"></script>
+    <title>Toast Web Dashboard</title>
+
+    <nav class="mainNav">
+        <a href="../" class="headerTitle fade"> Toast Web Dashboard </a>
+        <!--<a href="/" class="headerLink fade"> Console </a>-->
+        <a href="../power/" class="headerLink fade"> Power </a>
+        <a href="" class="headerLink fade"> IO </a>
+
+        <a href="/" class="headerLinkAction fade"><i class="fa fa-power-off"></i> Reboot RIO </a>
+        <a href="/" class="headerLinkAction fade"><i class="fa fa-refresh"></i> Restart Code</a>
+    </nav>
+</head>
+<body>
+<script type="text/javascript" src="../js/progressbar.js"></script>
+
+    <div class="mainContainer">
+        <h1 class="pageTitle">IO Management</h1>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-download">&nbsp;Digital Input</h2>
+            <p class="io enabled">0</p>
+            <p class="io">1</p>
+            <p class="io">2</p>
+            <p class="io">3</p>
+            <p class="io enabled">4</p>
+            <p class="io enabled">5</p>
+            <p class="io">6</p>
+            <p class="io">7</p>
+            <p class="io enabled">8</p>
+            <p class="io">9</p>
+        </div>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-upload">&nbsp;Digital Output</h2>
+            <a class="io enabled">0</a>
+            <a class="io">1</a>
+            <a class="io">2</a>
+            <a class="io">3</a>
+            <a class="io enabled">4</a>
+            <a class="io enabled">5</a>
+            <a class="io">6</a>
+            <a class="io">7</a>
+            <a class="io enabled">8</a>
+            <a class="io">9</a>
+        </div><br/>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-line-chart">&nbsp;Analog</h2>
+            <div id="analog0" class="pCircle" data-aid="0"></div>
+            <div id="analog1" class="pCircle" data-aid="1"></div>
+            <div id="analog2" class="pCircle" data-aid="2"></div>
+            <div id="analog3" class="pCircle" data-aid="3"></div>
+        </div>
+
+        <div class="block">
+            <h2 class="sectionTitle fade fa-cog">&nbsp;PWM</h2>
+            <div id="pwm0" class="pCircle" data-pid="0"></div>
+            <div id="pwm1" class="pCircle" data-pid="1"></div>
+            <div id="pwm2" class="pCircle" data-pid="2"></div>
+            <div id="pwm3" class="pCircle" data-pid="3"></div>
+            <div id="pwm4" class="pCircle" data-pid="4"></div>
+            <div id="pwm5" class="pCircle" data-pid="5"></div>
+            <div id="pwm6" class="pCircle" data-pid="6"></div>
+            <div id="pwm7" class="pCircle" data-pid="7"></div>
+            <div id="pwm8" class="pCircle" data-pid="8"></div>
+            <div id="pwm9" class="pCircle" data-pid="9"></div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="circles.js"></script>
+</html>

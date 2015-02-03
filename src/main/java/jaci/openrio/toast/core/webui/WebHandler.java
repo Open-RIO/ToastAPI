@@ -15,4 +15,8 @@ public interface WebHandler {
      */
     public String handle(String url, HashMap<String, String> post, HashMap<String, String> get, HashMap<String, String> headers);
 
+    public boolean overrideData(String url, HashMap<String, String> post, HashMap<String, String> get, HashMap<String, String> headers);
+
+    public String doOverride(String url, HashMap<String, String> post, HashMap<String, String> get, HashMap<String, String> headers);
+
 }

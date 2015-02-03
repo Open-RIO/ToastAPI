@@ -28,6 +28,10 @@ public class PDPMonitor {
         return !ControllerPower.getEnabled3V3() || !ControllerPower.getEnabled5V() || !ControllerPower.getEnabled6V();
     }
 
+    public static PowerDistributionPanel panel() {
+        return pdp;
+    }
+
     public static void tick() {
         double[] current = new double[16];
         for (int i = 0; i < 16; i++) {

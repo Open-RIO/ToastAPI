@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ThreadWebClient extends Thread {
 
@@ -92,12 +93,34 @@ public class ThreadWebClient extends Thread {
 
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-            byte by[] = new byte[BUFFER_SIZE];
-            int index = is.read(by, 0, BUFFER_SIZE);
-            while (index != -1) {
-                dos.write(by, 0, index);
-                index = is.read(by, 0, BUFFER_SIZE);
+            if (url.matches(".*\\.(html|css|js|less).*")) {
+                String s = "";
+                String last;
+
+                while ((last = rd.readLine()) != null)
+                    s += last + "\n";
+
+                for (WebHandler handler : WebRegistry.handlers)
+                    if (handler.overrideData(url, postQueries, getQueries, headers))
+                        s = handler.doOverride(url, postQueries, getQueries, headers);
+
+                for (Map.Entry<String, String> var : WebRegistry.variables.entrySet()) {
+                    String id = var.getKey();
+                    String val = var.getValue();
+
+                    s = s.replace("$TOAST{" + id + "}", val);
+                }
+
+                dos.writeBytes(s);
+            } else {
+                byte by[] = new byte[BUFFER_SIZE];
+                int index = is.read(by, 0, BUFFER_SIZE);
+                while (index != -1) {
+                    dos.write(by, 0, index);
+                    index = is.read(by, 0, BUFFER_SIZE);
+                }
             }
+
             dos.flush();
 
             rd.close();
