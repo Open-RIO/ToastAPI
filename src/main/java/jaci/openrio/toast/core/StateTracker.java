@@ -12,6 +12,16 @@ import java.util.List;
 
 import static jaci.openrio.toast.lib.state.RobotState.*;
 
+/**
+ * Keeps track of the {@link jaci.openrio.toast.lib.state.RobotState} the robot is in, as well as the one
+ * it just switched from. This allows for context-aware state management.
+ *
+ * This class also allows classes to implement sub-interfaces of {@link jaci.openrio.toast.lib.state.StateListener},
+ * which will trigger the interfaces when the robot 'ticks' or transitions between states. This allows for multiple
+ * handlers to work with states
+ *
+ * @author Jaci
+ */
 public class StateTracker {
 
     static boolean _state_disabled_init = false;
@@ -113,15 +123,27 @@ public class StateTracker {
             tra.transitionState(currentState, lastState);
     }
 
+    /**
+     * Tick all interfaces with the given state
+     */
     public static void tick(RobotState state) {
         for (StateListener.Ticker ticker : tickers)
             ticker.tickState(state);
     }
 
+    /**
+     * Register a new 'Ticking' {@link jaci.openrio.toast.lib.state.StateListener}. This will tick
+     * whenever a state has an update, or every 20ms. This is similar to the {@link edu.wpi.first.wpilibj.IterativeRobot}
+     * implementation
+     */
     public static void addTicker(StateListener.Ticker ticker) {
         tickers.add(ticker);
     }
 
+    /**
+     * Register a new 'Transition' {@link jaci.openrio.toast.lib.state.StateListener}. This will
+     * trigger whenever the robot switches between states.
+     */
     public static void addTransition(StateListener.Transition transition) {
         transitioners.add(transition);
     }

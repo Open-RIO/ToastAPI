@@ -63,16 +63,20 @@ public class Toast extends RobotBase {
      */
     @Override
     protected void prestart() {
-        Thread.currentThread().setName("Pre-Initialization");
-        SysLogProxy.init();
-        log().info("Slicing Loaf...");
-        CrashHandler.init();
-        RobotLoader.init();
-        WebRegistry.init();
+        try {
+            Thread.currentThread().setName("Pre-Initialization");
+            SysLogProxy.init();
+            log().info("Slicing Loaf...");
+            CrashHandler.init();
+            RobotLoader.init();
+            WebRegistry.init();
 
-        log().info("Nuking Toast...");
-        RobotLoader.getRobot().prestart();
-        FRCHooks.robotReady();
+            log().info("Nuking Toast...");
+            RobotLoader.getRobot().prestart();
+            FRCHooks.robotReady();
+        } catch (Exception e) {
+            CrashHandler.handle(e);
+        }
     }
 
     /**
@@ -80,17 +84,29 @@ public class Toast extends RobotBase {
      */
     @Override
     public void startCompetition() {
-        Thread.currentThread().setName("Initialization");
-        log().info("Buttering Bread...");
-        PDPMonitor.init();
-        WebRegistry.addHandler(new HandlerPower());
-        WebRegistry.addHandler(new HandlerConsole());
+        try {
+            Thread.currentThread().setName("Initialization");
+            log().info("Buttering Bread...");
+            PDPMonitor.init();
+            StateTracker.addTicker(new ToastStateManager());
 
-        log().info("Fabricating Sandwich...");
-        Thread.currentThread().setName("Main");
-        log().info("Verdict: " + getRandomTaste());
-        RobotLoader.getRobot().startCompetition();
-        StateTracker.init(this);
+            log().info("Fabricating Sandwich...");
+
+            WebRegistry.addHandler(new HandlerPower());
+            WebRegistry.addHandler(new HandlerConsole());
+
+            Thread.currentThread().setName("Main");
+            log().info("Verdict: " + getRandomTaste());
+            RobotLoader.getRobot().startCompetition();
+            StateTracker.init(this);
+        } catch (Exception e) {
+            CrashHandler.handle(e);
+        }
+    }
+
+    public void shutdownSafely() {
+        log().info("Robot Shutting Down...");
+        System.exit(1);
     }
 
 }

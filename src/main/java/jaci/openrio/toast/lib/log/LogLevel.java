@@ -2,6 +2,12 @@ package jaci.openrio.toast.lib.log;
 
 import java.io.PrintStream;
 
+/**
+ * A level used by the {@link jaci.openrio.toast.lib.log.Logger} object. This is used to
+ * differentiate severities of logged data
+ *
+ * @author Jaci
+ */
 public class LogLevel {
 
     String name;

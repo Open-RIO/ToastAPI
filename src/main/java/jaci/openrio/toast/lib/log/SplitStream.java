@@ -3,6 +3,12 @@ package jaci.openrio.toast.lib.log;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Acts as a splitter for {@link java.io.OutputStream} objects, splitting the output
+ * between all the given instances in the constructor
+ *
+ * @author Jaci
+ */
 public class SplitStream extends OutputStream {
 
     OutputStream[] outs;

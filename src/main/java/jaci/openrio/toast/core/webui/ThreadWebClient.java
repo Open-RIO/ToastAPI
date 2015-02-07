@@ -8,6 +8,16 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An instance of a client connected to the Web UI. This is threaded to allow for fast connection
+ * and support for multiple clients. This handles resource-gathering and client-server communications,
+ * most hooks can be found in the {@link jaci.openrio.toast.core.webui.WebHandler} interface.
+ *
+ * This thread is dispatched via the {@link jaci.openrio.toast.core.webui.WebRegistry}, and should not be
+ * tampered with.
+ *
+ * @author Jaci
+ */
 public class ThreadWebClient extends Thread {
 
     HashMap<String, Object> requestInfo;
@@ -108,7 +118,7 @@ public class ThreadWebClient extends Thread {
                     String id = var.getKey();
                     String val = var.getValue();
 
-                    s = s.replace("$TOAST{" + id + "}", val);
+                    s = s.replace("${" + id + "}", val);
                 }
 
                 dos.writeBytes(s);
@@ -155,8 +165,7 @@ public class ThreadWebClient extends Thread {
                     req = req.substring(1);
 
                 headers.put(parsed[0].substring(0, parsed[0].lastIndexOf(':')), req);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
         }
 
     }

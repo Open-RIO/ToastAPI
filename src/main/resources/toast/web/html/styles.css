@@ -216,14 +216,14 @@ a.io.enabled:hover {
 }
 
 div.pCircle {
-    width: 69px;
-    height: 69px;
+    width: 80px;
+    height: 80px;
 
     float: left;
     padding: 7px;
 
     font-family: FontAwesome;
-    font-size: 15px;
+    font-size: 12px;
 
     opacity: 0.7;
 }
@@ -239,4 +239,8 @@ div.pCircle > svg > path {
 
 div.pCircle:hover {
     opacity: 1;
+}
+
+.progressbar-text {
+    text-align: center;
 }

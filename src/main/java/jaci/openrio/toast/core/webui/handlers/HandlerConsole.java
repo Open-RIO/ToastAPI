@@ -8,6 +8,11 @@ import jaci.openrio.toast.lib.log.Logger;
 
 import java.util.HashMap;
 
+/**
+ * The web handler for Console Logging. This allows users to see the console output via the Web UI
+ *
+ * @author Jaci
+ */
 public class HandlerConsole implements WebHandler {
 
     @Override

@@ -11,6 +11,11 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
 
+/**
+ * Utility class to load the class for the Robot's main class, as Toast acts as a middle-man
+ *
+ * @author Jaci
+ */
 public class RobotLoader {
 
     static Robot robot;

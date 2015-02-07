@@ -7,6 +7,12 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * A utility class to attach system.out and system.err into {@link jaci.openrio.toast.lib.log.SplitStream} to
+ * a file and to the standard streams
+ *
+ * @author Jaci
+ */
 public class SysLogProxy {
 
     static PrintStream sysOut;

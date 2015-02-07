@@ -10,7 +10,14 @@ import jaci.openrio.toast.lib.state.StateListener;
 
 import static jaci.openrio.toast.lib.math.MathHelper.*;
 
-public class PDPMonitor implements StateListener.Ticker{
+/**
+ * Monitors the Power Distribution Panel, keeping a record of voltages and amperage to the last 10 ticks.
+ *
+ * When a brownout occurs, it gathers the largest current draw and reports it in the log
+ *
+ * @author Jaci
+ */
+public class PDPMonitor {
 
     private static EvictingQueue<PDPPoll> pollHistory = new EvictingQueue<PDPPoll>(10);
 
@@ -18,20 +25,32 @@ public class PDPMonitor implements StateListener.Ticker{
 
     static Logger log;
 
+    /**
+     * Initialize the PDPMonitor. This is managed by Toast
+     */
     public static void init() {
         pdp = new PowerDistributionPanel();
         log = new Logger("Toast|Power", Logger.ATTR_DEFAULT);
-        StateTracker.addTicker(new PDPMonitor());
     }
 
+    /**
+     * Reset the faults on the Power Distribution Panel. A 'sticky fault' occurs when the robot browns-out.
+     * To identify a sticky fault, the lights on the PDP will flash orange. When they are green, the faults are cleared
+     */
     public static void resetFaults() {
         pdp.clearStickyFaults();
     }
 
+    /**
+     * @return Are we currently browned-out?
+     */
     public static boolean brownout() {
         return !ControllerPower.getEnabled3V3() || !ControllerPower.getEnabled5V() || !ControllerPower.getEnabled6V();
     }
 
+    /**
+     * @return The under-lying {@link edu.wpi.first.wpilibj.PowerDistributionPanel} instance
+     */
     public static PowerDistributionPanel panel() {
         return pdp;
     }
@@ -65,11 +84,5 @@ public class PDPMonitor implements StateListener.Ticker{
                 }
             }
         }
-    }
-
-
-    @Override
-    public void tickState(RobotState state) {
-        tick();
     }
 }

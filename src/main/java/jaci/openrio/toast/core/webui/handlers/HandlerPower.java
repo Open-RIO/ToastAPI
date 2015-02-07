@@ -4,9 +4,16 @@ import edu.wpi.first.wpilibj.ControllerPower;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.webui.WebHandler;
+import jaci.openrio.toast.lib.math.MathHelper;
 
 import java.util.HashMap;
 
+/**
+ * The web handler for the Power Distribution Panel. This implementation allows users to see information
+ * about the Power Distribution Panel and current draw of its ports
+ *
+ * @author Jaci
+ */
 public class HandlerPower implements WebHandler {
 
     @Override
@@ -31,21 +38,29 @@ public class HandlerPower implements WebHandler {
 
             if (id.startsWith("current")) {
                 int n = Integer.parseInt(id.replace("current", ""));
-                return String.valueOf(PDPMonitor.panel().getCurrent(n) / 10);
+                double val = rnd(PDPMonitor.panel().getCurrent(n));
+                return String.valueOf(val / 10) + ":" + val + "A";
             }
 
             switch (id) {
                 case "batVolt":
-                    return String.valueOf((PDPMonitor.panel().getVoltage() - 11D) / 1.8D);
+                    double bv = rnd(PDPMonitor.panel().getVoltage());
+                    return String.valueOf((bv - 11D) / 1.8D) + ":" + bv + "V";
                 case "rioVolt":
-                    return String.valueOf((ControllerPower.getInputVoltage() - 11D) / 1.8D);
+                    double rv = rnd(ControllerPower.getInputVoltage());
+                    return String.valueOf((rv - 11D) / 1.8D) + ":" + rv + "V";
                 case "pdpTemp":
-                    return String.valueOf(PDPMonitor.panel().getTemperature() / 40D);
+                    double t = rnd(PDPMonitor.panel().getTemperature());
+                    return String.valueOf(t / 40D) + ":" + t + "C";
             }
         } catch (Exception e) {
             Toast.log().exception(e);
         }
         return "0";
+    }
+
+    double rnd(double x) {
+        return MathHelper.round(x, 2);
     }
 
 }
