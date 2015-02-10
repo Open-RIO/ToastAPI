@@ -4,9 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
-import jaci.openrio.toast.core.webui.WebRegistry;
-import jaci.openrio.toast.core.webui.handlers.HandlerConsole;
-import jaci.openrio.toast.core.webui.handlers.HandlerPower;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -91,9 +88,6 @@ public class Toast extends RobotBase {
             StateTracker.addTicker(new ToastStateManager());
 
             log().info("Fabricating Sandwich...");
-
-            WebRegistry.addHandler(new HandlerPower());
-            WebRegistry.addHandler(new HandlerConsole());
 
             Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());
