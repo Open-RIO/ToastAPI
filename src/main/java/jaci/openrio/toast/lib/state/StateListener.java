@@ -18,8 +18,7 @@ public interface StateListener {
     }
 
     /**
-     * An interface for classes wanting to trigger when the Robot 'transitions' between states, such as
-     * Disabled->Autonomous->Teleop->Disabled
+     * An interface for classes wanting to trigger when the Robot 'transitions' between states
      */
     public static interface Transition {
         public void transitionState(RobotState state, RobotState oldState);

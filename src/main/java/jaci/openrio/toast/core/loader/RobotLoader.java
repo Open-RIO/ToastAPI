@@ -1,22 +1,22 @@
 package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.lib.log.Logger;
-import jaci.openrio.toast.lib.module.IToastModule;
+import jaci.openrio.toast.lib.module.ToastModule;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
-/**
- * Utility class to load the class for the Robot's main class, as Toast acts as a middle-man
- *
- * @author Jaci
- */
 public class RobotLoader {
 
     static Logger log;
@@ -25,21 +25,20 @@ public class RobotLoader {
     static ArrayList<ToastModuleCandidate> candidates = new ArrayList<ToastModuleCandidate>();
     static ArrayList<ToastModuleContainer> containers = new ArrayList<ToastModuleContainer>();
 
-    static RobotClassLoader loader;
-
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
 
-    public static void init() throws IOException {
+    public static void init() {
         log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
-        loader = new RobotClassLoader(RobotLoader.class.getClassLoader());
 
         loadCandidates();
         parseEntries();
+        construct();
     }
 
-    private static void loadCandidates() throws IOException {
+    private static void loadCandidates() {
         for (String currentDirectory : discoveryDirs) {
             File dir = new File(currentDirectory);
+                dir.mkdirs();
             File[] files = dir.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -59,7 +58,7 @@ public class RobotLoader {
                             }
                         }
                         candidates.add(container);
-                        loader.addURL(file.toURI().toURL());
+                        addURL(file.toURI().toURL());
                     } catch (Exception e) {
                     }
                 }
@@ -73,7 +72,9 @@ public class RobotLoader {
 
             if (otherFiles != null)
                 for (File file : otherFiles) {
-                    loader.addURL(file.toURI().toURL());
+                    try {
+                        addURL(file.toURI().toURL());
+                    } catch (Exception e) {}
                 }
         }
     }
@@ -82,15 +83,51 @@ public class RobotLoader {
         for (ToastModuleCandidate candidate : candidates) {
             for (String clazz : candidate.classMembers) {
                 try {
-                    Class c = loader.loadClass(clazz);
-                    if (IToastModule.class.isAssignableFrom(c)) {
+                    Class c = Class.forName(clazz);
+                    if (ToastModule.class.isAssignableFrom(c)) {
                         ToastModuleContainer container = new ToastModuleContainer(c);
-
+                        containers.add(container);
                     }
                 } catch (Exception e) {
                 }
             }
         }
+    }
+
+    private static void construct() {
+        for (ToastModuleContainer container : containers) {
+            try {
+                container.construct();
+                log.info("Module Loaded: " + container.name + "@" + container.version);
+            } catch (Exception e) {}
+        }
+    }
+
+    public static List<ToastModuleContainer> getContainers() {
+        return containers;
+    }
+
+    public static void prestart() {
+        for (ToastModuleContainer container : getContainers())
+            container.moduleInstance.prestart();
+    }
+
+    public static void start() {
+        for (ToastModuleContainer container : getContainers())
+            container.moduleInstance.start();
+    }
+
+    public static void addURL(URL u) throws IOException {
+        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class sysclass = URLClassLoader.class;
+
+        try {
+            Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(sysloader, u);
+        } catch (Throwable t) {
+        }
+
     }
 
 }

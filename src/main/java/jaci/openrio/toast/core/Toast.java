@@ -66,10 +66,9 @@ public class Toast extends RobotBase {
             log().info("Slicing Loaf...");
             CrashHandler.init();
             RobotLoader.init();
-            WebRegistry.init();
 
             log().info("Nuking Toast...");
-            RobotLoader.getRobot().prestart();
+            RobotLoader.prestart();
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -91,7 +90,7 @@ public class Toast extends RobotBase {
 
             Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());
-            RobotLoader.getRobot().startCompetition();
+            RobotLoader.start();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);

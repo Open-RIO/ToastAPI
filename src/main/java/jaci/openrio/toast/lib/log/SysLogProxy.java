@@ -30,11 +30,17 @@ public class SysLogProxy {
             fo.mkdirs();
             fe.mkdirs();
 
-            fo.createNewFile();
-            fe.createNewFile();
+            File fileO = new File(fo, "recent.txt");
+            File fileE = new File(fe, "recentErr.txt");
 
-            fileOut = new FileOutputStream(fo + "/recent.txt");
-            fileErr = new FileOutputStream(fe + "/recentErr.txt");
+            if (fileO.exists())
+                fileO.delete();
+
+            if (fileE.exists())
+                fileE.delete();
+
+            fileOut = new FileOutputStream(fileO);
+            fileErr = new FileOutputStream(fileE);
 
             sysOut = System.out;
             sysErr = System.err;

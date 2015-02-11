@@ -1,13 +1,27 @@
 package jaci.openrio.toast.core.loader;
 
-import jaci.openrio.toast.lib.module.IToastModule;
+import jaci.openrio.toast.lib.module.ToastModule;
 
 public class ToastModuleContainer {
 
-    Class<? extends IToastModule> moduleClass;
+    Class<? extends ToastModule> moduleClass;
+    ToastModule moduleInstance;
 
-    public ToastModuleContainer(Class<? extends IToastModule> moduleClass) {
+    String name = "{undefined}";
+    String version = "{undefined}";
+
+    public ToastModuleContainer(Class<? extends ToastModule> moduleClass) {
         this.moduleClass = moduleClass;
+    }
+
+    public void construct() throws IllegalAccessException, InstantiationException {
+        moduleInstance = moduleClass.newInstance();
+        name = moduleInstance.getModuleName();
+        version = moduleInstance.getModuleVersion();
+    }
+
+    public String toString() {
+        return String.format("ToastModuleContainer[name:%s, version:%s, class:%s]", name, version, moduleClass);
     }
 
 }
