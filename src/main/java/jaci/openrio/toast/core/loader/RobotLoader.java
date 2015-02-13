@@ -9,21 +9,18 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+
+import static jaci.openrio.toast.core.loader.ModuleManager.*;
 
 public class RobotLoader {
 
     static Logger log;
 
     static String[] discoveryDirs = new String[]{"toast/modules/", "toast/system/modules/"};
-    static ArrayList<ToastModuleCandidate> candidates = new ArrayList<ToastModuleCandidate>();
-    static ArrayList<ToastModuleContainer> containers = new ArrayList<ToastModuleContainer>();
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
 
@@ -50,7 +47,7 @@ public class RobotLoader {
                 for (File file : files) {
                     try {
                         JarFile jar = new JarFile(file);
-                        ToastModuleCandidate container = new ToastModuleCandidate();
+                        ModuleCandidate container = new ModuleCandidate();
                         container.setFile(file);
                         for (ZipEntry ze : Collections.list(jar.entries())) {
                             if (classFile.matcher(ze.getName()).matches()) {
@@ -80,12 +77,12 @@ public class RobotLoader {
     }
 
     private static void parseEntries() {
-        for (ToastModuleCandidate candidate : candidates) {
-            for (String clazz : candidate.classMembers) {
+        for (ModuleCandidate candidate : candidates) {
+            for (String clazz : candidate.getClassEntries()) {
                 try {
                     Class c = Class.forName(clazz);
                     if (ToastModule.class.isAssignableFrom(c)) {
-                        ToastModuleContainer container = new ToastModuleContainer(c);
+                        ModuleContainer container = new ModuleContainer(c, candidate);
                         containers.add(container);
                     }
                 } catch (Exception e) {
@@ -95,26 +92,22 @@ public class RobotLoader {
     }
 
     private static void construct() {
-        for (ToastModuleContainer container : containers) {
+        for (ModuleContainer container : containers) {
             try {
                 container.construct();
-                log.info("Module Loaded: " + container.name + "@" + container.version);
+                log.info("Module Loaded: " + container.getDetails());
             } catch (Exception e) {}
         }
     }
 
-    public static List<ToastModuleContainer> getContainers() {
-        return containers;
-    }
-
     public static void prestart() {
-        for (ToastModuleContainer container : getContainers())
-            container.moduleInstance.prestart();
+        for (ModuleContainer container : getContainers())
+            container.getModule().prestart();
     }
 
     public static void start() {
-        for (ToastModuleContainer container : getContainers())
-            container.moduleInstance.start();
+        for (ModuleContainer container : getContainers())
+            container.getModule().start();
     }
 
     public static void addURL(URL u) throws IOException {

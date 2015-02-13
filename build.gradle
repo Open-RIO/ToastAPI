@@ -12,7 +12,7 @@ buildscript {
 	}
   }
   dependencies {
-    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '1.0.1'			//Change this line if you wish to Update GradleRIO
+    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '1.1.2'			//Change this line if you wish to Update GradleRIO
   }
 }
 
@@ -20,12 +20,35 @@ apply plugin: 'GradleRIO'                                 //Apply the GradleRIO 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: BuildGradle
+apply plugin: 'maven'
 
 gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
 gradlerio.team = "5333"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
 //gradlerio.rioIP = "10.53.33.20"                         //Uncomment to specify the IP address of the RIO
 
-//version = "0.0.1-DEV"
+ext.mavenProps = file "../maven.properties"
+mavenProps.withReader {
+  def prop = new Properties()
+  prop.load(it)
+  project.ext.mavenProps = new ConfigSlurper().parse prop
+}
+
+configurations {
+    deployerJars
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
+}
+
+archivesBaseName = "Toast"
+version = "0.0.1-R2-DEV"
+group = "jaci.openrio.toast"
 
 def robotManifest = {
   attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
@@ -48,6 +71,34 @@ task src(type: Jar) {
 }
 
 artifacts {
-  archives genJavadoc
-  archives src
+  //archives genJavadoc
+  //archives src
+}
+uploadArchives {
+  repositories.mavenDeployer {
+    configuration = configurations.deployerJars
+    repository(url: mavenProps.jaci.url) {
+      authentication(userName: mavenProps.jaci.user, password: mavenProps.jaci.auth)
+    }
+
+    pom {
+      groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+            project {
+                name project.archivesBaseName
+                packaging 'jar'
+                description 'Toast API Module Loader '
+            }
+    }
+  }
+}
+
+class BuildGradle implements Plugin<Project> {
+  void apply(Project project) {
+    project.task('release', dependsOn: 'build') << {
+      ant.zip(destfile: "releases/Toast-${project.version}.zip",
+        basedir: "release")
+    }
+  }
 }
