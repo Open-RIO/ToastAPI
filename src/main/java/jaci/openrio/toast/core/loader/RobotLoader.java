@@ -1,5 +1,7 @@
 package jaci.openrio.toast.core.loader;
 
+import jaci.openrio.toast.core.loader.module.ModuleCandidate;
+import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
 
@@ -14,7 +16,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
-import static jaci.openrio.toast.core.loader.ModuleManager.*;
+import static jaci.openrio.toast.core.loader.module.ModuleManager.*;
 
 public class RobotLoader {
 
@@ -54,7 +56,7 @@ public class RobotLoader {
                                 container.addClassEntry(ze.getName());
                             }
                         }
-                        candidates.add(container);
+                        getCandidates().add(container);
                         addURL(file.toURI().toURL());
                     } catch (Exception e) {
                     }
@@ -77,13 +79,13 @@ public class RobotLoader {
     }
 
     private static void parseEntries() {
-        for (ModuleCandidate candidate : candidates) {
+        for (ModuleCandidate candidate : getCandidates()) {
             for (String clazz : candidate.getClassEntries()) {
                 try {
                     Class c = Class.forName(clazz);
                     if (ToastModule.class.isAssignableFrom(c)) {
                         ModuleContainer container = new ModuleContainer(c, candidate);
-                        containers.add(container);
+                        getContainers().add(container);
                     }
                 } catch (Exception e) {
                 }
@@ -92,7 +94,7 @@ public class RobotLoader {
     }
 
     private static void construct() {
-        for (ModuleContainer container : containers) {
+        for (ModuleContainer container : getContainers()) {
             try {
                 container.construct();
                 log.info("Module Loaded: " + container.getDetails());

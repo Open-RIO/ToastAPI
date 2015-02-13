@@ -1,7 +1,5 @@
 package jaci.openrio.toast.lib.state;
 
-import jaci.openrio.toast.lib.state.RobotState;
-
 /**
  * A super-class for interfaces wanting to trigger methods when the robot ticks or transitions between states
  *

@@ -2,13 +2,10 @@ package jaci.openrio.toast.core.monitoring.power;
 
 import edu.wpi.first.wpilibj.ControllerPower;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import jaci.openrio.toast.core.StateTracker;
 import jaci.openrio.toast.lib.EvictingQueue;
 import jaci.openrio.toast.lib.log.Logger;
-import jaci.openrio.toast.lib.state.RobotState;
-import jaci.openrio.toast.lib.state.StateListener;
 
-import static jaci.openrio.toast.lib.math.MathHelper.*;
+import static jaci.openrio.toast.lib.math.MathHelper.round;
 
 /**
  * Monitors the Power Distribution Panel, keeping a record of voltages and amperage to the last 10 ticks.
