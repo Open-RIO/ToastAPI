@@ -33,11 +33,8 @@ repositories {
 
 gradlerio.team = "5333"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
 //gradlerio.rioIP = "10.53.33.20"                         //Uncomment to specify the IP address of the RIO
+gradlerio.deployFile = "toast/modules/${archivesBaseName}"
 
 dependencies {
   compile group: 'jaci.openrio.toast', name: 'Toast', version: '0.0.1-R2-DEV'     //Change this line to update Toast
-}
-
-jar.doLast {
-  gradlerio.deployFile = "toast/modules/${jar.archiveName}"
 }
