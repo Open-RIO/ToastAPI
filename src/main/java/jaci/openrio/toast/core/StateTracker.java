@@ -111,11 +111,6 @@ public class StateTracker {
      * Transition between the old state and the new (given) state
      */
     static void transition(RobotState state) {
-        if (state == RobotState.TEST)                   //Set the LiveWindow state
-            LiveWindow.setEnabled(true);
-        else
-            LiveWindow.setEnabled(false);
-
         lastState = currentState;
         currentState = state;
 

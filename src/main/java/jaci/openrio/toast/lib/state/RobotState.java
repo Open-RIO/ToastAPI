@@ -7,10 +7,10 @@ package jaci.openrio.toast.lib.state;
  * @author Jaci
  */
 public enum RobotState {
-    DISABLED("disabled"),
-    TELEOP("teleop"),
-    AUTONOMOUS("autonomous"),
-    TEST("test");
+    DISABLED("Disabled"),
+    TELEOP("Teleop"),
+    AUTONOMOUS("Autonomous"),
+    TEST("Test");
 
     public String state;
 

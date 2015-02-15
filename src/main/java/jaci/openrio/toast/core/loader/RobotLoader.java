@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.loader;
 
+import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.lib.log.Logger;
@@ -16,13 +17,14 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
-import static jaci.openrio.toast.core.loader.module.ModuleManager.*;
+import static jaci.openrio.toast.core.loader.module.ModuleManager.getCandidates;
+import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
 
 public class RobotLoader {
 
     static Logger log;
 
-    static String[] discoveryDirs = new String[]{"toast/modules/", "toast/system/modules/"};
+    static String[] discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
 
@@ -37,7 +39,7 @@ public class RobotLoader {
     private static void loadCandidates() {
         for (String currentDirectory : discoveryDirs) {
             File dir = new File(currentDirectory);
-                dir.mkdirs();
+            dir.mkdirs();
             File[] files = dir.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {

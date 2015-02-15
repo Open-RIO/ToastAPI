@@ -1,6 +1,7 @@
 package jaci.openrio.toast.lib.log;
 
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,25 +22,26 @@ public class SysLogProxy {
     public static FileOutputStream fileErr;
     public static PrintStream outStream;
     public static PrintStream errStream;
+    public static File logDir;
+    public static File recentOut;
+    public static File recentErr;
 
     public static void init() {
         try {
-            File fo = new File("toast/log");
-            File fe = new File("toast/log");
-            fo.mkdirs();
-            fe.mkdirs();
+            logDir = new File(ToastBootstrap.toastHome, "log");
+            logDir.mkdirs();
 
-            File fileO = new File(fo, "recent.txt");
-            File fileE = new File(fe, "recentErr.txt");
+            recentOut = new File(logDir, "recent.txt");
+            recentErr = new File(logDir, "recentErr.txt");
 
-            if (fileO.exists())
-                fileO.delete();
+            if (recentOut.exists())
+                recentOut.delete();
 
-            if (fileE.exists())
-                fileE.delete();
+            if (recentErr.exists())
+                recentErr.delete();
 
-            fileOut = new FileOutputStream(fileO);
-            fileErr = new FileOutputStream(fileE);
+            fileOut = new FileOutputStream(recentOut);
+            fileErr = new FileOutputStream(recentErr);
 
             sysOut = System.out;
             sysErr = System.err;

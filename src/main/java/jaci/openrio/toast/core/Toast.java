@@ -1,5 +1,7 @@
 package jaci.openrio.toast.core;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
@@ -7,7 +9,6 @@ import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
-import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.util.Random;
 
@@ -62,8 +63,8 @@ public class Toast extends RobotBase {
     protected void prestart() {
         try {
             Thread.currentThread().setName("Pre-Initialization");
-            SysLogProxy.init();
             log().info("Slicing Loaf...");
+
             CrashHandler.init();
             RobotLoader.init();
 

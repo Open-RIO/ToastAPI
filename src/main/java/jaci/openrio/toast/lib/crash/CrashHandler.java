@@ -1,11 +1,14 @@
 package jaci.openrio.toast.lib.crash;
 
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.lib.log.SplitStream;
+import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,10 +34,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public static void init() {
         try {
             providers = new ArrayList<CrashInfoProvider>();
-            crashDir = new File("toast/crash");
+            crashDir = new File(ToastBootstrap.toastHome, "crash");
             crashDir.mkdirs();
         } catch (Exception e) {}
-        dateFormat = new SimpleDateFormat("dd/MM/yy-hh:mm:ss");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss");
         instance = new CrashHandler();
         Thread.setDefaultUncaughtExceptionHandler(instance);
         Thread.currentThread().setUncaughtExceptionHandler(instance);
@@ -52,7 +55,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     public static void handle(Throwable t) {
         try {
-            File file = new File(crashDir, "crash-log-" + dateFormat.format(new Date()));
+            String fn = "crash-" + dateFormat.format(new Date());
+            File file = new File(crashDir, fn + ".txt");
             SplitStream split = new SplitStream(System.err, new FileOutputStream(file));
             PrintStream out = new PrintStream(split);
 
@@ -73,9 +77,14 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.flush();
             out.close();
 
-            //TODO: Shutdown safely
+            File recentLog = SysLogProxy.recentOut;
+            File cpFile = new File(crashDir, fn + "-FULL.txt");
+
+            Files.copy(recentLog.toPath(), cpFile.toPath());
+
             Toast.getToast().shutdownSafely();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Override

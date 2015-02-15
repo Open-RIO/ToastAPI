@@ -51,7 +51,8 @@ version = "0.0.1-R2-DEV"
 group = "jaci.openrio.toast"
 
 def robotManifest = {
-  attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+  //attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+  attributes 'Main-Class': 'jaci.openrio.toast.core.ToastStart'
   attributes 'Robot-Class': gradlerio.robotClass
 }
 
