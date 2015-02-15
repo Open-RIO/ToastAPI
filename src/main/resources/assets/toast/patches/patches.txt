@@ -1,0 +1,15 @@
+edu/wpi/first/wpilibj/hal/JNIWrapper.sim
+edu/wpi/first/wpilibj/RobotBase.sim
+edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary$tInstances.sim
+edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary$tModuleType.sim
+edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary$tResourceType.sim
+edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary$tTargetClass.sim
+edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary.sim
+edu/wpi/first/wpilibj/hal/AccelerometerJNI.sim
+edu/wpi/first/wpilibj/hal/DIOJNI.sim
+edu/wpi/first/wpilibj/hal/HALUtil.sim
+edu/wpi/first/wpilibj/hal/InterruptJNI$InterruptJNIHandlerFunction.sim
+edu/wpi/first/wpilibj/hal/InterruptJNI.sim
+edu/wpi/first/wpilibj/hal/PDPJNI.sim
+edu/wpi/first/wpilibj/hal/PowerJNI.sim
+edu/wpi/first/wpilibj/hal/PWMJNI.sim
