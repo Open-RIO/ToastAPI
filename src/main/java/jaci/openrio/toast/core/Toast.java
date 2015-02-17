@@ -63,12 +63,11 @@ public class Toast extends RobotBase {
     protected void prestart() {
         try {
             Thread.currentThread().setName("Pre-Initialization");
-            log().info("Slicing Loaf...");
+            log().info("Buttering Bread...");
 
             CrashHandler.init();
             RobotLoader.init();
 
-            log().info("Nuking Toast...");
             RobotLoader.prestart();
             FRCHooks.robotReady();
         } catch (Exception e) {
@@ -83,11 +82,9 @@ public class Toast extends RobotBase {
     public void startCompetition() {
         try {
             Thread.currentThread().setName("Initialization");
-            log().info("Buttering Bread...");
+            log().info("Fabricating Sandwich...");
             PDPMonitor.init();
             StateTracker.addTicker(new ToastStateManager());
-
-            log().info("Fabricating Sandwich...");
 
             Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());

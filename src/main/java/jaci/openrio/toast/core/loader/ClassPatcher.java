@@ -22,9 +22,14 @@ public class ClassPatcher extends URLClassLoader {
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         String simulation = "assets/toast/patches/" + name.replace(".", "/") + ".sim";
-        if (this.getResource(simulation) != null) {
-            InputStream stream = this.getResourceAsStream(simulation);
+        String patch = "assets/toast/patches/" + name.replace(".", "/" + ".pat");
+        InputStream stream = null;
+        if (this.getResource(simulation) != null)
+            stream = this.getResourceAsStream(simulation);
+        if (this.getResource(patch) != null)
+            stream = this.getResourceAsStream(patch);
 
+        if (stream != null) {
             try {
                 byte[] buf = new byte[10000];
                 int len = stream.read(buf);
@@ -37,10 +42,11 @@ public class ClassPatcher extends URLClassLoader {
                 ToastBootstrap.toastLogger.exception(e);
             }
         }
+
         return super.loadClass(name);
     }
 
-    public void identifyPatches() {
+    public void identifyPatches(boolean sim) {
         try {
             ArrayList<String> patches = new ArrayList<>();
             InputStream is = getResourceAsStream("assets/toast/patches/patches.txt");
@@ -55,8 +61,10 @@ public class ClassPatcher extends URLClassLoader {
 
             for (String s : patches) {
                 try {
-                    if (s.endsWith(".sim"))
+                    if (s.endsWith(".sim") && sim)
                         loadClass(s.replace(".sim","").replace("/", "."));
+                    else if (s.endsWith(".pat"))
+                        loadClass(s.replace(".pat","").replace("/", "."));
                 } catch (Exception e) {
                     ToastBootstrap.toastLogger.error("Could not load Simulation Patch: " + s);
                     ToastBootstrap.toastLogger.exception(e);

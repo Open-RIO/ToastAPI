@@ -7,9 +7,7 @@ public class SimulationData {
     /**
      * ACCELEROMETER *
      */
-    public static double accelerometerX = 0D;
-    public static double accelerometerY = 0D;
-    public static double accelerometerZ = 0D;
+    public static double[] accelerometer = {0D, 0D, 0D};
     public static double accelerometerRange = 0D;
     public static boolean accelerometerEnabled = false;
 

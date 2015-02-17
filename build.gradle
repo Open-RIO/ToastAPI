@@ -47,7 +47,7 @@ dependencies {
 }
 
 archivesBaseName = "Toast"
-version = "0.0.1-R4-DEV"
+version = "0.0.1-R5-DEV"
 group = "jaci.openrio.toast"
 
 def robotManifest = {
@@ -106,10 +106,16 @@ task deletePatches << {
   ant.delete(dir: "src/main/java/toastpatches")
 }
 
+task updateLatest << {
+  ant.delete(dir: "build/latest/")
+  ant.copy(file: "${jar.archivePath}", todir: "build/latest")
+}
+
 compileJava.dependsOn genPatches
 compileJava.dependsOn movePatches
 compileJava.finalizedBy configurePatches
 compileJava.finalizedBy deletePatches
+build.finalizedBy updateLatest
 
 task src(type: Jar) {
   classifier = 'src'
@@ -118,7 +124,6 @@ task src(type: Jar) {
 
 artifacts {
   //archives genJavadoc
-  //archives src
 }
 uploadArchives {
   repositories.mavenDeployer {

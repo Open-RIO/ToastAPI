@@ -13,15 +13,15 @@ public class AccelerometerJNI extends JNIWrapper {
     }
 
     public static double getAccelerometerX() {
-        return SimulationData.accelerometerX;
+        return SimulationData.accelerometer[0];
     }
 
     public static double getAccelerometerY() {
-        return SimulationData.accelerometerY;
+        return SimulationData.accelerometer[1];
     }
 
     public static double getAccelerometerZ() {
-        return SimulationData.accelerometerZ;
+        return SimulationData.accelerometer[2];
     }
 
 }

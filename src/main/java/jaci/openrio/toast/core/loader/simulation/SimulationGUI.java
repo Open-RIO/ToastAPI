@@ -32,6 +32,7 @@ public class SimulationGUI extends JPanel {
 
     GuiNumberSpinner[] dioSpinners = new GuiNumberSpinner[10];
     GuiNumberSpinner[] pwmSpinners = new GuiNumberSpinner[10];
+    GuiNumberSpinner[] accelSpinners = new GuiNumberSpinner[3];
 
     public SimulationGUI() {
         INSTANCE = this;
@@ -54,7 +55,7 @@ public class SimulationGUI extends JPanel {
         try {
             logo = ImageIO.read(SimulationGUI.class.getClassLoader().getResourceAsStream("assets/toast/gui/darkRIOsmall.png")).getScaledInstance(400, 400, Image.SCALE_SMOOTH);
             JLabel imageLabel = new JLabel(new ImageIcon(logo));
-            imageLabel.setBounds(150, 50, 400, 400);
+            imageLabel.setBounds(150, 70, 400, 400);
             this.add(imageLabel);
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +65,7 @@ public class SimulationGUI extends JPanel {
             byte val = SimulationData.dioValues[i];
             byte dir = SimulationData.dioDirections[i];
 
-            GuiNumberSpinner spinner = new GuiNumberSpinner(90, 196 + (22 * i), val, 1, 0, 1, dir == 1, this);
+            GuiNumberSpinner spinner = new GuiNumberSpinner(90, 216 + (22 * i), val, 1, 0, 1, dir == 1, this);
             dioSpinners[i] = spinner;
             final int finalI = i;
             spinner.setCallback(new GuiNumberSpinner.Callback() {
@@ -81,27 +82,61 @@ public class SimulationGUI extends JPanel {
         for (int i = 0; i < SimulationData.pwmValues.length; i++) {
             double val = SimulationData.pwmValues[i];
 
-            GuiNumberSpinner spinner = new GuiNumberSpinner(540, 194 + (22 * i), val, 0.05, -1, 1, false, this);
+            GuiNumberSpinner spinner = new GuiNumberSpinner(540, 214 + (22 * i), val, 0.05, -1, 1, false, this);
             pwmSpinners[i] = spinner;
         }
+
+        createLabel("Accelerometer", 20, 10, 100, 14, new Color(180, 180, 180));
+
+        for (int i = 0; i < SimulationData.accelerometer.length; i++) {
+            double val = SimulationData.accelerometer[i];
+
+            String l = i == 0 ? "X" : i == 1 ? "Y" : "Z";
+
+            createLabel(l + " Axis", 80, 28 + (15 * i), 100, 10, new Color(150, 150, 150));
+
+            GuiNumberSpinner spinner = new GuiNumberSpinner(20, 33 + (15 * i), val, 0.1, -5, 5, true, this);
+            accelSpinners[i] = spinner;
+            final int finalI = i;
+            spinner.setCallback(new GuiNumberSpinner.Callback() {
+                @Override
+                public void callback(double value) {
+                    SimulationData.accelerometer[finalI] = value;
+                }
+            });
+        }
+
+        createLabel("Power", 210, 10, 100, 14, new Color(180, 180, 180));
+
+        GuiNumberSpinner voltage = new GuiNumberSpinner(205, 30, 12.5, 0.5, 5, 12.8, true, this);
+        voltage.setCallback(new GuiNumberSpinner.Callback() {
+            @Override
+            public void callback(double value) {
+                SimulationData.powerVinVoltage = value;
+                SimulationData.pdpVoltage = value;
+            }
+        });
+
+        GuiButton brownout = new GuiButton(205, 45, 50, 20, false, "Brownout", true, this);
+        brownout.setFont(new Font("Arial", 0, 10));
+        brownout.setActiveColor(new Color(170, 100, 100));
+        brownout.setCallback(new GuiButton.ButtonCallback() {
+            @Override
+            public void onClick() {
+            }
+
+            @Override
+            public void onToggle(boolean state) {
+                SimulationData.powerUserActive6V = !state;
+                SimulationData.powerUserActive5V = !state;
+                SimulationData.powerUserActive3V3 = !state;
+            }
+        });
 
         GuiRobotState disabled = new GuiRobotState(575, 20, RobotState.DISABLED, this);
         GuiRobotState auto = new GuiRobotState(575, 50, RobotState.AUTONOMOUS, this);
         GuiRobotState teleop = new GuiRobotState(575, 80, RobotState.TELEOP, this);
         GuiRobotState test = new GuiRobotState(575, 110, RobotState.TEST, this);
-
-//        Color title = new Color(230, 230, 230);
-//        createLabel("Accelerometer:", 7, 10, 100, 14, title);
-//        createSpinner("X:", -1, 1, 0.05, 7, 30, "accelerometerX");
-//        createSpinner("Y:", -1, 1, 0.05, 7, 55, "accelerometerY");
-//        createSpinner("Z:", -1, 1, 0.05, 7, 80, "accelerometerZ");
-//        createSpinner("Rng:", -1, 1, 0.05, 7, 105, "accelerometerRange");
-//
-//        createLabel("Power Dist Panel:", 7, 140, 150, 14, title);
-//        createSpinner("Temp:", 0, 40, 0.5, 7, 160, "pdpTemperature");
-//        createSpinner("Volt:", 0, 12.8, 0.5, 7, 185, "pdpVoltage");
-//        createSpinner("RIO:", 0, 12.8, 0.5, 7, 210, "powerVinVoltage");
-//        createSpinner("Amp:", 0, 20, 0.25, 7, 235, "powerVinCurrent");
     }
 
     public JLabel createLabel(String text, int x, int y, int width, int fontSize, Color color) {
