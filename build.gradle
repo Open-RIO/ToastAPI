@@ -34,6 +34,14 @@ mavenProps.withReader {
   project.ext.mavenProps = new ConfigSlurper().parse prop
 }
 
+ext.settings = file "build.settings"
+settings.withReader {
+  def prop = new Properties()
+  prop.load(it)
+  project.ext.settings = new ConfigSlurper().parse prop
+}
+
+
 configurations {
     deployerJars
 }
@@ -47,7 +55,7 @@ dependencies {
 }
 
 archivesBaseName = "Toast"
-version = "0.0.1-R5-DEV"
+version = settings.toast.version
 group = "jaci.openrio.toast"
 
 def robotManifest = {
@@ -67,43 +75,22 @@ task genJavadoc(type: Jar, dependsOn: javadoc) {
 }
 
 task genPatches << {
-  ant.delete(dir: "build/patches/cache")
-  ant.copy(todir: "build/patches/cache") {
-    ant.fileset(dir: "patches")
-  }
-}
-
-task movePatches << {
-  ant.copy(todir: "src/main/java/toastpatches") {
-    ant.fileset(dir: "build/patches/cache")
-  }
-}
-
-task configurePatches << {
-  String pdir = "build/resources/main/assets/toast/patches";
-   ant.move(todir: "${pdir}") {
-     ant.fileset(dir: "build/classes/main/") {
-       ant.exclude(name: "**/jaci/**")
-     }
-   }
-   ant.move(todir: "${pdir}") {
-     ant.fileset(dir: "${pdir}")
-     ant.mapper(type: "glob", from: "*.class", to: "*.sim")
-   }
-
-  //  def content = ""
-  //  def file = new File("${pdir}/patches.txt")
-  //  def tree = fileTree(dir: "${pdir}", include: "**/*.sim")
-   //
-  //  tree.visit {
-  //    fileDetails -> content += "${fileDetails.relativePath}" + "\n"
-  //  }
-   //
-  //  file.write content
+  try {
+    ant.copy(todir: "build/resources/main/assets/toast/patches/") {
+      ant.fileset(dir: "patches/build/patches")
+    }
+  } catch (Exception e) {}
 }
 
 task deletePatches << {
-  ant.delete(dir: "src/main/java/toastpatches")
+  try {
+    ant.delete(includeemptydirs: "true") {
+      ant.fileset(dir: "build/resources/main/assets/toast/patches/") {
+        ant.include(name: "**/*")
+        ant.exclude(name: "patches.txt")
+      }
+    }
+  } catch (Exception e) {}
 }
 
 task updateLatest << {
@@ -111,10 +98,8 @@ task updateLatest << {
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
 }
 
+genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
-compileJava.dependsOn movePatches
-compileJava.finalizedBy configurePatches
-compileJava.finalizedBy deletePatches
 build.finalizedBy updateLatest
 
 task src(type: Jar) {
@@ -122,8 +107,14 @@ task src(type: Jar) {
   from sourceSets.main.allSource
 }
 
+task raw(type: Jar) {
+  classifier = 'raw'
+  from sourceSets.main.output
+}
+
 artifacts {
   //archives genJavadoc
+  archives raw
 }
 uploadArchives {
   repositories.mavenDeployer {

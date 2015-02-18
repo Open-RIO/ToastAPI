@@ -1,0 +1,32 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+ext.settings = file "../build.settings"
+settings.withReader {
+  def prop = new Properties()
+  prop.load(it)
+  project.ext.settings = new ConfigSlurper().parse prop
+}
+
+dependencies {
+  String apiDest = System.getProperty("user.home") + "/wpilib/java/extracted/library/"
+
+  compile fileTree(dir: apiDest + "lib", include: "*.jar", exclude: "*-sources.jar")
+  compile fileTree(dir: "../build/libs", include: "*${settings.toast.version}-raw.jar")
+}
+
+task genPatches << {
+  ant.delete(dir: "build/patches")
+  ant.copy(todir: "build/patches") {
+    ant.fileset(dir: "build/classes/main")
+    ant.mapper(type: "glob", from: "*.class", to: "*.sim")
+  }
+}
+
+build.finalizedBy genPatches

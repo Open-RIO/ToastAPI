@@ -95,6 +95,9 @@ public class GuiNumberSpinner {
 
         if (cb != null)
             cb.callback(val);
+
+        plus.repaint();
+        minus.repaint();
     }
 
     public static interface Callback {
