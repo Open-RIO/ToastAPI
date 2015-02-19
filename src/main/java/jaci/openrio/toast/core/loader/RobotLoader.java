@@ -9,10 +9,11 @@ import jaci.openrio.toast.lib.module.ToastModule;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -27,13 +28,30 @@ public class RobotLoader {
     static String[] discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
-
+    static URLClassLoader sysLoader;
     public static void init() {
         log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
+
+        sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
         loadCandidates();
         parseEntries();
         construct();
+    }
+
+    public static ArrayList<String> manualLoadedClasses = new ArrayList<>();
+
+    static void sJarFile(File file) throws IOException {
+        JarFile jar = new JarFile(file);
+        ModuleCandidate container = new ModuleCandidate();
+        container.setFile(file);
+        for (ZipEntry ze : Collections.list(jar.entries())) {
+            if (classFile.matcher(ze.getName()).matches()) {
+                container.addClassEntry(ze.getName());
+            }
+        }
+        getCandidates().add(container);
+        addURL(file.toURI().toURL());
     }
 
     private static void loadCandidates() {
@@ -50,16 +68,7 @@ public class RobotLoader {
             if (files != null)
                 for (File file : files) {
                     try {
-                        JarFile jar = new JarFile(file);
-                        ModuleCandidate container = new ModuleCandidate();
-                        container.setFile(file);
-                        for (ZipEntry ze : Collections.list(jar.entries())) {
-                            if (classFile.matcher(ze.getName()).matches()) {
-                                container.addClassEntry(ze.getName());
-                            }
-                        }
-                        getCandidates().add(container);
-                        addURL(file.toURI().toURL());
+                        sJarFile(file);
                     } catch (Exception e) {
                     }
                 }
@@ -83,15 +92,25 @@ public class RobotLoader {
     private static void parseEntries() {
         for (ModuleCandidate candidate : getCandidates()) {
             for (String clazz : candidate.getClassEntries()) {
-                try {
-                    Class c = Class.forName(clazz);
-                    if (ToastModule.class.isAssignableFrom(c)) {
-                        ModuleContainer container = new ModuleContainer(c, candidate);
-                        getContainers().add(container);
-                    }
-                } catch (Exception e) {
-                }
+                parseClass(clazz, candidate);
             }
+        }
+
+        for (String clazz : manualLoadedClasses) {
+            ModuleCandidate candidate = new ModuleCandidate();
+            candidate.addClassEntry(clazz);
+            parseClass(clazz, candidate);
+        }
+    }
+
+    static void parseClass(String clazz, ModuleCandidate candidate) {
+        try {
+            Class c = Class.forName(clazz);
+            if (ToastModule.class.isAssignableFrom(c)) {
+                ModuleContainer container = new ModuleContainer(c, candidate);
+                getContainers().add(container);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -100,7 +119,8 @@ public class RobotLoader {
             try {
                 container.construct();
                 log.info("Module Loaded: " + container.getDetails());
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -115,13 +135,12 @@ public class RobotLoader {
     }
 
     public static void addURL(URL u) throws IOException {
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         Class sysclass = URLClassLoader.class;
 
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
-            method.invoke(sysloader, u);
+            method.invoke(sysLoader, u);
         } catch (Throwable t) {
         }
 

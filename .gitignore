@@ -3,3 +3,6 @@ Toast.ipr
 Toast.iws
 .gradle/
 out/
+toast/
+build/
+patches/build/

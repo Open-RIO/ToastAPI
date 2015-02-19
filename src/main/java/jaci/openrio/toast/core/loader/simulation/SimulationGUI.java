@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.loader.simulation.jni.InterruptContainer;
 import jaci.openrio.toast.lib.state.RobotState;
 
@@ -8,6 +9,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -27,6 +30,18 @@ public class SimulationGUI extends JPanel {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                super.windowOpened(e);
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                Toast.getToast().shutdownSafely();
+            }
+        });
         return panel;
     }
 
@@ -108,7 +123,7 @@ public class SimulationGUI extends JPanel {
 
         createLabel("Power", 210, 10, 100, 14, new Color(180, 180, 180));
 
-        GuiNumberSpinner voltage = new GuiNumberSpinner(205, 30, 12.5, 0.5, 5, 12.8, true, this);
+        GuiNumberSpinner voltage = new GuiNumberSpinner(205, 30, 12.5, 0.1, 5, 12.8, true, this);
         voltage.setCallback(new GuiNumberSpinner.Callback() {
             @Override
             public void callback(double value) {
