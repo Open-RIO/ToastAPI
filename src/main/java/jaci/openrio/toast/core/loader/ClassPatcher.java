@@ -9,6 +9,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
+/**
+ * The class that handles runtime patching of classes. This allows for Simulations to happen
+ * in development environments by patching WPILib's classes. This functions as a replacement for the System
+ * Class Loader during Module Loading
+ */
 public class ClassPatcher extends URLClassLoader {
 
     public ClassPatcher() {
@@ -46,6 +51,9 @@ public class ClassPatcher extends URLClassLoader {
         return super.loadClass(name);
     }
 
+    /**
+     * Identify the patches from assets/toast/patches/patches.txt
+     */
     public void identifyPatches(boolean sim) {
         try {
             ArrayList<String> patches = new ArrayList<>();

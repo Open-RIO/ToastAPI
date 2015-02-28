@@ -8,6 +8,11 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A container object for what would be a DIO Interrupt. Because this is a simulation, we have to simulate the interrupt
+ *
+ * @author Jaci
+ */
 public class InterruptContainer {
 
     public static ArrayList<InterruptContainer> interrupts = new ArrayList<>();
@@ -26,14 +31,24 @@ public class InterruptContainer {
         interrupts.add(this);
     }
 
+    /**
+     * Set the DIO pin of the interrupt
+     */
     public void setPin(int p) {
         this.pin = p;
     }
 
+    /**
+     * @return The DIO pin of the interrupt
+     */
     public int getPin() {
         return pin;
     }
 
+    /**
+     * Get an InterruptContainer for the given DIO Port. Return null if not
+     * registered
+     */
     public static InterruptContainer getByPin(int p) {
         for (InterruptContainer cont : interrupts) {
             if (cont.pin == p) return cont;
@@ -41,6 +56,10 @@ public class InterruptContainer {
         return null;
     }
 
+    /**
+     * Blocks the current thread until an interrupt is detected. Try not to do this in the main thread, as it will
+     * cause the Thread to be blocked until the timeout period is over
+     */
     public synchronized void waitForInterrupt(double timeout) {
         try {
             wait((long) (timeout * 1000));
@@ -48,24 +67,39 @@ public class InterruptContainer {
         }
     }
 
+    /**
+     * Enable the Interrupt
+     */
     public void setEnabled(boolean s) {
         this.enabled = s;
     }
 
+    /**
+     * Get the container for the given Pointer ID
+     */
     public static InterruptContainer getByIndex(int index) {
         return interrupts.get(index);
     }
 
+    /**
+     * Setup which phase the interrupt triggers on
+     */
     public void setup(boolean triggerRising, boolean triggerFalling) {
         this.triggerRising = triggerRising;
         this.triggerFalling = triggerFalling;
     }
 
+    /**
+     * Set the Interrupt callback
+     */
     public void setFunc(InterruptJNI.InterruptJNIHandlerFunction func, Object param) {
         this.func = func;
         this.funcParam = param;
     }
 
+    /**
+     * Trigger the interrupt
+     */
     public synchronized void trigger(boolean isRising) {
         if (!enabled)
             return;
@@ -83,6 +117,9 @@ public class InterruptContainer {
         }
     }
 
+    /**
+     * Get the Timestamp of the trigger
+     */
     public long getTime(boolean isRising) {
         long t = isRising ? risingTime : fallingTime;
         t -= ToastBootstrap.startTimeMS;

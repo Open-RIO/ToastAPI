@@ -14,6 +14,11 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+/**
+ * This is the Rat's nest of code that is the Simulation GUI.
+ *
+ * @author Jaci
+ */
 public class SimulationGUI extends JPanel {
     public static SimulationGUI INSTANCE;
 

@@ -9,12 +9,29 @@ import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.io.File;
 
+/**
+ * The Bootstrap class for launching Toast before WPILib. This makes simulation, class patching, crash handling
+ * and file logging possible. WPILib's main class is called after this class has finished it's configuration
+ *
+ * @author Jaci
+ */
 public class ToastBootstrap {
 
+    /**
+     * Get the Logger for Toast
+     */
     public static Logger toastLogger;
 
+    /**
+     * Is this a simulation? This is set to true if the Launch Args include
+     * -sim or -simulation
+     */
     public static boolean isSimulation;
 
+    /**
+     * Get the root folder for Toast. This is where logs, modules,
+     * and just about everything for toast is saved.
+     */
     public static File toastHome = new File("/home/lvuser/toast/");
 
     public static long startTimeNS;

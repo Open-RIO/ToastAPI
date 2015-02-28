@@ -7,6 +7,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A number spinner GUI Element for Simulation
+ *
+ * @author Jaci
+ */
 public class GuiNumberSpinner {
 
     int x, y;

@@ -21,6 +21,12 @@ import java.util.zip.ZipEntry;
 import static jaci.openrio.toast.core.loader.module.ModuleManager.getCandidates;
 import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
 
+/**
+ * The class responsible for loading modules into Toast. This crawls the Discovery Directories and will also search Manually
+ * Loaded Classes, of which are added by Launch Arguments.
+ *
+ * @author Jaci
+ */
 public class RobotLoader {
 
     static Logger log;
@@ -29,6 +35,10 @@ public class RobotLoader {
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
     static URLClassLoader sysLoader;
+
+    /**
+     * Begin loading classes
+     */
     public static void init() {
         log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
 
@@ -39,8 +49,15 @@ public class RobotLoader {
         construct();
     }
 
+    /**
+     * A List containing a list of class names that are already in the classpath and should be loaded. This is
+     * what makes Debug-Simulation possible in Development Environments
+     */
     public static ArrayList<String> manualLoadedClasses = new ArrayList<>();
 
+    /**
+     * Load a *jar file
+     */
     static void sJarFile(File file) throws IOException {
         JarFile jar = new JarFile(file);
         ModuleCandidate container = new ModuleCandidate();
@@ -54,6 +71,9 @@ public class RobotLoader {
         addURL(file.toURI().toURL());
     }
 
+    /**
+     * Look for candidates in the Discovery Directories
+     */
     private static void loadCandidates() {
         for (String currentDirectory : discoveryDirs) {
             File dir = new File(currentDirectory);
@@ -89,6 +109,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Parse the candidates to find their ToastModule classes
+     */
     private static void parseEntries() {
         for (ModuleCandidate candidate : getCandidates()) {
             for (String clazz : candidate.getClassEntries()) {
@@ -114,6 +137,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Construct all the modules
+     */
     private static void construct() {
         for (ModuleContainer container : getContainers()) {
             try {
@@ -124,19 +150,27 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Prestart all modules
+     */
     public static void prestart() {
         for (ModuleContainer container : getContainers())
             container.getModule().prestart();
     }
 
+    /**
+     * Start all modules
+     */
     public static void start() {
         for (ModuleContainer container : getContainers())
             container.getModule().start();
     }
 
+    /**
+     * Add a URL to the System Class Loader
+     */
     public static void addURL(URL u) throws IOException {
         Class sysclass = URLClassLoader.class;
-
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
