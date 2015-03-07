@@ -6,3 +6,9 @@ out/
 build/
 patches/build/
 *.psd
+toast/crash/crash-2015-03-07_05-45-15.txt
+toast/crash/
+toast/log/recent.txt
+toast/log/
+toast/groovy/
+toast/preferences/

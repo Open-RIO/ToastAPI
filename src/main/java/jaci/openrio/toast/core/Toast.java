@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
@@ -71,9 +73,22 @@ public class Toast extends RobotBase {
 
             CrashHandler.init();
             RobotLoader.init();
+            GroovyLoader.init();
+            GroovyPreferences.init();
 
             RobotLoader.prestart();
+            GroovyLoader.prestart();
             FRCHooks.robotReady();
+
+            //TEST
+            GroovyPreferences preferences = new GroovyPreferences("testPref");
+            System.err.println(preferences.config.entrySet());
+            System.err.println(preferences.getInt("preferences.integer1"));
+            System.err.println(preferences.getString("preferences.string1"));
+            System.err.println(preferences.getDouble("preferences.double1"));
+            System.err.println(preferences.getString("test"));
+            System.err.println(preferences.getString("test2.test3.string"));
+            preferences.invokePreferenceMethod("invokeMe");
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
@@ -93,6 +108,7 @@ public class Toast extends RobotBase {
             Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
+            GroovyLoader.start();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
