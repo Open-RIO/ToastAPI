@@ -16,6 +16,16 @@ Simulation is part of the Toast Core, and is designed for people working in Deve
 
 Ports such as DIO and Analog IN gain a Number Spinner, that allows the inputs to be changed. These spinners are enabled when they are registered through WPILib (DigitalInput/AnalogInput classes). Other things, such as PWM output, can be read as their raw values. This allows for the robots IO to be completely simulated. Additionally, the Simulation GUI will have support for XBox controllers and external Joysticks. In the future, simulated controllers will be supported through an optional module.  
 
+## Other Tools
+Toast has support for many other tools out of the box as well. For example, Toast can load Groovy files and execute them. This means that teams can program
+their entire robot in the Groovy Programming Language. Groovy doesn't need to be compiled, which has the added benefit of not having to rebuild and
+redeploy your code each time you change something, instead, you can use editors like Sublime Text or Atom to remotely edit the script file and have
+your code ready within a few seconds.  
+
+Groovy is also used for Toast's Configuration Files. These .groovy config files can be used alongside normal java programming, and can load in variables
+defined in the groovy file. Methods can also be invoked in these config files if you so choose  
+![A demo of the Groovy Config Files](http://puu.sh/gpZC5/bd99a3242a.png)
+
 ## Debugging Tools
 The Toast Core has inbuilt debugging tools included by default. This includes a FileLogger, that will split the System.out and System.err streams between the Console and a File. This allows for Logs to be recorded. Additionally, when the Robot is detected to have crashed, Toast will shutdown safely and save the Crash Log to a file, as well as identifying possible culprit modules that caused the crash. This allows for debugging to be done quick and easily.  An example crash log has been posted below:
 ```

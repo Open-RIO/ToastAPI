@@ -80,15 +80,6 @@ public class Toast extends RobotBase {
             GroovyLoader.prestart();
             FRCHooks.robotReady();
 
-            //TEST
-            GroovyPreferences preferences = new GroovyPreferences("testPref");
-            System.err.println(preferences.config.entrySet());
-            System.err.println(preferences.getInt("preferences.integer1"));
-            System.err.println(preferences.getString("preferences.string1"));
-            System.err.println(preferences.getDouble("preferences.double1"));
-            System.err.println(preferences.getString("test"));
-            System.err.println(preferences.getString("test2.test3.string"));
-            preferences.invokePreferenceMethod("invokeMe");
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
