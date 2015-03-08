@@ -2,6 +2,12 @@ package jaci.openrio.toast.core.loader.simulation;
 
 import jaci.openrio.toast.lib.state.RobotState;
 
+/**
+ * This class stores and manipulates the data that is used for Robot simulation. Patch classes should hook into this
+ * to store their data
+ *
+ * @author Jaci
+ */
 public class SimulationData {
 
     /**

@@ -8,6 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * A GUI Element for a button in Simulation
+ *
+ * @author Jaci
+ */
 public class GuiButton extends JComponent implements MouseListener {
 
     boolean state;

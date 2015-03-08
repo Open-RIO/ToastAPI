@@ -30,6 +30,13 @@ public class ModuleContainer {
     }
 
     /**
+     * Get the {@link jaci.openrio.toast.core.loader.module.ModuleCandidate} for this container
+     */
+    public ModuleCandidate getCandidate() {
+        return moduleCandidate;
+    }
+
+    /**
      * Construct the underlying {@link jaci.openrio.toast.lib.module.ToastModule} object and retrieve the
      * data from it. This is handled by toast and shouldn't be called
      */
@@ -39,6 +46,7 @@ public class ModuleContainer {
         version = moduleInstance.getModuleVersion();
 
         moduleStorage = new ModuleStorage(name);
+        moduleInstance._moduleContainer = this;
         moduleInstance.onConstruct();
     }
 

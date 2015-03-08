@@ -8,6 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * A GUI Element for switching the Robot State during Simulation
+ *
+ * @author Jaci
+ */
 public class GuiRobotState extends JComponent implements MouseListener {
 
     RobotState state;

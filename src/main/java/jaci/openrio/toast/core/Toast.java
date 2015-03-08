@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
@@ -21,8 +23,7 @@ import java.util.Random;
  */
 public class Toast extends RobotBase {
 
-    private static Logger log;
-    private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt", "Hot, Hot, HOT!!"};
+    private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt", "Hot, Hot, HOT!!", "TOTE-aly delicious"};
 
     private static Toast instance;
 
@@ -31,10 +32,16 @@ public class Toast extends RobotBase {
         instance = this;
     }
 
+    /**
+     * Get the instance of Toast. This is the instance that WPILib loads
+     */
     public static Toast getToast() {
         return instance;
     }
 
+    /**
+     * Get the {@link edu.wpi.first.wpilibj.DriverStation} instance
+     */
     public DriverStation station() {
         return m_ds;
     }
@@ -44,8 +51,7 @@ public class Toast extends RobotBase {
      * ATTR_DEFAULT, including Date, Time and current Thread.
      */
     public static Logger log() {
-        if (log == null) log = new Logger("Toast", Logger.ATTR_DEFAULT);
-        return log;
+        return ToastBootstrap.toastLogger;
     }
 
     /**
@@ -67,9 +73,13 @@ public class Toast extends RobotBase {
 
             CrashHandler.init();
             RobotLoader.init();
+            GroovyLoader.init();
+            GroovyPreferences.init();
 
             RobotLoader.prestart();
+            GroovyLoader.prestart();
             FRCHooks.robotReady();
+
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
@@ -89,6 +99,7 @@ public class Toast extends RobotBase {
             Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
+            GroovyLoader.start();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);

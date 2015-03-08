@@ -41,6 +41,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         instance = new CrashHandler();
         Thread.setDefaultUncaughtExceptionHandler(instance);
         Thread.currentThread().setUncaughtExceptionHandler(instance);
+
+        providers.add(new CrashInfoToast());
     }
 
     /**
@@ -63,7 +65,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.println("**** CRASH LOG ****");
             out.println("Your robot has crashed. Following is a crash log and more details.");
             out.println("This log has been saved to: " + file.getCanonicalPath());
-            out.println();
+            for (CrashInfoProvider provider : providers) {
+                String info = provider.getCrashInfoPre(t);
+                if (info != null)
+                    out.println("\t" + provider.getCrashInfoPre(t) + "\n");
+            }
             t.printStackTrace(out);
             out.println();
             out.println("Crash Information: ");
