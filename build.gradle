@@ -12,7 +12,7 @@ buildscript {
 	}
   }
   dependencies {
-    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '1.1.5'			//Change this line if you wish to Update GradleRIO
+    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '1.1.6'			//Change this line if you wish to Update GradleRIO
   }
 }
 
@@ -27,11 +27,18 @@ gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the ma
 gradlerio.team = "5333"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
 //gradlerio.rioIP = "10.53.33.20"                         //Uncomment to specify the IP address of the RIO
 
-ext.mavenProps = file "../maven.properties"
-mavenProps.withReader {
-  def prop = new Properties()
-  prop.load(it)
-  project.ext.mavenProps = new ConfigSlurper().parse prop
+def maven = true
+
+try {
+  ext.mavenProps = file "../maven.properties"
+  mavenProps.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.mavenProps = new ConfigSlurper().parse prop
+  }
+} catch (Exception e) {
+  println "Could not load Maven Properties... You are not a developer!"
+  maven = false
 }
 
 ext.settings = file "build.settings"
@@ -108,8 +115,8 @@ task src(type: Jar) {
 }
 
 task raw(type: Jar) {
-	classifier = 'raw'
-	from sourceSets.main.output
+  classifier = 'raw'
+  from sourceSets.main.output
 }
 
 artifacts {
@@ -117,21 +124,23 @@ artifacts {
   archives raw
 }
 uploadArchives {
-  repositories.mavenDeployer {
-    configuration = configurations.deployerJars
-    repository(url: mavenProps.jaci.url) {
-      authentication(userName: mavenProps.jaci.user, password: mavenProps.jaci.auth)
-    }
+  if (maven) {
+    repositories.mavenDeployer {
+      configuration = configurations.deployerJars
+      repository(url: mavenProps.jaci.url) {
+        authentication(userName: mavenProps.jaci.user, password: mavenProps.jaci.auth)
+      }
 
-    pom {
-      groupId = project.group
-            version = project.version
-            artifactId = project.archivesBaseName
-            project {
-                name project.archivesBaseName
-                packaging 'jar'
-                description 'Toast API Module Loader '
-            }
+      pom {
+        groupId = project.group
+              version = project.version
+              artifactId = project.archivesBaseName
+              project {
+                  name project.archivesBaseName
+                  packaging 'jar'
+                  description 'Toast API Module Loader '
+              }
+      }
     }
   }
 }
