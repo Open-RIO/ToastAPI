@@ -37,12 +37,14 @@ public class GroovyLoader {
 
     static ArrayList<GroovyScript> scripts;
     public static HashMap<File, GroovyObject> groovyFiles;
+    public static HashMap<String, GroovyObject> groovyObjects;
 
     public static void init() {
         logger = new Logger("Toast|GroovyLoader", Logger.ATTR_DEFAULT);
         loader = ClassLoader.getSystemClassLoader();
         scripts = new ArrayList<>();
         groovyFiles = new HashMap<>();
+        groovyObjects = new HashMap<>();
 
         loadScripts();
     }
@@ -89,6 +91,7 @@ public class GroovyLoader {
                         scripts.add(script);
                     }
                     groovyFiles.put(file, object);
+                    groovyObjects.put(object.getClass().getName(), object);
                 } catch (Exception e) {
                     logger.error("Could not load Groovy Script: " + file.getName());
                     logger.exception(e);
@@ -116,6 +119,10 @@ public class GroovyLoader {
         for (GroovyScript script : scripts) {
             script.startRobot();
         }
+    }
+
+    public static GroovyObject getObject(String name) {
+        return groovyObjects.get(name);
     }
 
 }

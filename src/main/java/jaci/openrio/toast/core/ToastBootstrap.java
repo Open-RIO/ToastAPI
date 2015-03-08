@@ -33,6 +33,7 @@ public class ToastBootstrap {
      * and just about everything for toast is saved.
      */
     public static File toastHome = new File("/home/lvuser/toast/");
+    public static File robotHome = new File("/home/lvuser/");
 
     public static long startTimeNS;
     public static long startTimeMS;
@@ -52,6 +53,7 @@ public class ToastBootstrap {
 
         if (isSimulation) {
             toastHome = new File("toast/");
+            robotHome = new File("./");
         }
 
         toastHome.mkdirs();

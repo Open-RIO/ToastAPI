@@ -22,7 +22,7 @@ public class PWMJNI extends DIOJNI {
 	}
 	
 	public static short getPWM(ByteBuffer digital_port_pointer, IntBuffer status) {
-		return (short) (SimulationData.pwmValues[digital_port_pointer.get(0)] * 255);
+		return (short) (SimulationData.pwmValues[digital_port_pointer.get(0)] * 255 + 1012);
 	}
 	
 	public static void latchPWMZero(ByteBuffer digital_port_pointer, IntBuffer status) {

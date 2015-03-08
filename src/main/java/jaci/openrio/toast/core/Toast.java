@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
@@ -79,7 +80,6 @@ public class Toast extends RobotBase {
             RobotLoader.prestart();
             GroovyLoader.prestart();
             FRCHooks.robotReady();
-
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
@@ -100,6 +100,7 @@ public class Toast extends RobotBase {
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
             GroovyLoader.start();
+
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
