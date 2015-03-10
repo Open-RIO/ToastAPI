@@ -7,6 +7,9 @@ import java.util.ArrayList;
  * globally. This Event Bus allows for Modules to be optional dependencies, but
  * still have methods invoked/listened for
  *
+ * This can also be used for communication inside of your own Module. Kinda like how you
+ * can use a bag or suitcase as a foot-stool. It's not a bug, it's a feature.
+ *
  * @author Jaci
  */
 public class ModuleEventBus {
