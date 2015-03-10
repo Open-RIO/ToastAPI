@@ -151,6 +151,17 @@ class BuildGradle implements Plugin<Project> {
     project.task('release', dependsOn: 'build') << {
       ant.zip(destfile: "releases/Toast-${project.version}.zip",
         basedir: "release")
+	  try {
+		ant.delete(dir: "build/runnable")
+	  } catch (Exception e) {}
+	  ant.copy(tofile: "build/runnable/Toast.jar") {
+		ant.fileset(dir: "build/latest/")
+	  }
+	  ant.copy(todir: "build/runnable"){
+		ant.fileset(dir: "runnableScripts/")
+	  }
+	  ant.zip(destfile: "releases/Toast-${project.version}-RUNNABLE.zip",
+		basedir: "build/runnable")
     }
   }
 }
