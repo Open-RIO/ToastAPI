@@ -83,6 +83,12 @@ Before deploying, there is some setup to do...
 - Save your build.gradle file and run `gradlew deploy`
 - Congrats! Your robot now has your module on it!
 
+#### Simulation
+To run the robot simulation, do the following:
+- Change your Run Configuration to include the arguments ```-sim your.main.robot.class```
+- 	NOTE: Your robot class should include the package!
+- Run your Run Configuration and bam! You're done!
+
 ## Reporting Bugs
 Find something wrong with Toast? Think it needs more butter, or just isn't Toasted enough? Great! Head over to our [issues page](https://github.com/Open-RIO/ToastAPI/issues) and see if your issue has already been submitted. If it hasn't, go ahead and hit 'new issue' and give us a detailed description of what's wrong. If possible, we'd like you to include as much of the following information possible so we can track down that bug and squash it as quickly as possible.  
 - A brief description of the issue (e.g. During teleop the robot crashes for no apparent reason)
