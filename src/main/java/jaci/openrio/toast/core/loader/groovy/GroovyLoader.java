@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.loader.groovy;
 
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
@@ -9,11 +10,9 @@ import jaci.openrio.toast.lib.module.GroovyScript;
 import org.codehaus.groovy.tools.GroovyClass;
 import sun.tools.jar.resources.jar;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -39,6 +38,9 @@ public class GroovyLoader {
     public static HashMap<File, GroovyObject> groovyFiles;
     public static HashMap<String, GroovyObject> groovyObjects;
 
+    public static ArrayList<File> customFiles = new ArrayList<>();
+    public static ArrayList<String> customClasses = new ArrayList<>();
+
     public static void init() {
         logger = new Logger("Toast|GroovyLoader", Logger.ATTR_DEFAULT);
         loader = ClassLoader.getSystemClassLoader();
@@ -55,6 +57,14 @@ public class GroovyLoader {
             File search = new File(ToastBootstrap.toastHome, searchDir);
             search.mkdirs();
             search(search);
+
+            for (File custom : customFiles)
+                if (custom.isDirectory()) {
+                    search(custom);
+                } else loadFile(custom);
+
+            for (String name : customClasses)
+                loadClassName(name);
         } catch (Exception e) {
             logger.error("Could not load Groovy Scripts: ");
             logger.exception(e);
@@ -99,9 +109,34 @@ public class GroovyLoader {
             }
     }
 
+    public static GroovyObject loadClassName(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Class groovyClass = loader.loadClass(name);
+        GroovyObject object = (GroovyObject) groovyClass.newInstance();
+
+        if (object instanceof GroovyScript) {
+            GroovyScript script = (GroovyScript) object;
+            script.loadScript();
+            scripts.add(script);
+        }
+        groovyObjects.put(object.getClass().getName(), object);
+
+        try {
+            object.invokeMethod("init", null);
+        } catch (Exception e) {}
+        return object;
+    }
+
     public static GroovyObject loadFile(File file) throws IOException, IllegalAccessException, InstantiationException {
         Class groovyClass = gLoader.parseClass(file);
         GroovyObject object = (GroovyObject) groovyClass.newInstance();
+
+        if (object instanceof GroovyScript) {
+            GroovyScript script = (GroovyScript) object;
+            script.loadScript();
+            scripts.add(script);
+        }
+        groovyFiles.put(file, object);
+        groovyObjects.put(object.getClass().getName(), object);
 
         try {
             object.invokeMethod("init", new Object[0]);

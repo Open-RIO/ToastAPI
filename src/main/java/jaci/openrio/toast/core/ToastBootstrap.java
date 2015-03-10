@@ -3,6 +3,7 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
@@ -42,12 +43,26 @@ public class ToastBootstrap {
         Thread.currentThread().setName("Toast-Bootstrap");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
+            String nextArg = null;
+            try {
+                nextArg = args[i+1];
+            } catch (Exception e) {}
             if (arg.equalsIgnoreCase("-simulation") || arg.equals("-sim")) {
                 isSimulation = true;
                 try {
-                    String modClass = args[i + 1];
-                    RobotLoader.manualLoadedClasses.add(modClass);
+                    if (!nextArg.equals("."))
+                        RobotLoader.manualLoadedClasses.add(nextArg);
                 } catch (Exception e) { }
+            } else if (arg.equalsIgnoreCase("-groovy") || arg.equalsIgnoreCase("-g")) {
+                try {
+                    if (!nextArg.equals("."))
+                        GroovyLoader.customFiles.add(new File(nextArg));
+                } catch (Exception e) {}
+            } else if (arg.equalsIgnoreCase("-groovyClass") || arg.equalsIgnoreCase("-gc")) {
+                try {
+                    if (!nextArg.equals("."))
+                        GroovyLoader.customClasses.add(nextArg);
+                } catch (Exception e) {}
             }
         }
 
