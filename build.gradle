@@ -58,6 +58,7 @@ repositories {
 }
 
 dependencies {
+  compile fileTree(dir: 'libs/', include: '*.jar')
   deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
 }
 

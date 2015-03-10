@@ -9,6 +9,7 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
+import jaci.openrio.toast.core.shared.ModuleEventBus;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
