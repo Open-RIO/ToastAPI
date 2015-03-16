@@ -34,7 +34,7 @@ public class GroovyLoader {
     static GroovyClassLoader gLoader;
     public static Pattern groovyFile = Pattern.compile("([^\\s$]+).groovy$");
 
-    static ArrayList<GroovyScript> scripts;
+    public static ArrayList<GroovyScript> scripts;
     public static HashMap<File, GroovyObject> groovyFiles;
     public static HashMap<String, GroovyObject> groovyObjects;
 
@@ -95,13 +95,6 @@ public class GroovyLoader {
             for (File file : files) {
                 try {
                     GroovyObject object = loadFile(file);
-                    if (object instanceof GroovyScript) {
-                        GroovyScript script = (GroovyScript) object;
-                        script.loadScript();
-                        scripts.add(script);
-                    }
-                    groovyFiles.put(file, object);
-                    groovyObjects.put(object.getClass().getName(), object);
                 } catch (Exception e) {
                     logger.error("Could not load Groovy Script: " + file.getName());
                     logger.exception(e);
