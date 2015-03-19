@@ -51,6 +51,10 @@ public class GroovyLoader {
         loadScripts();
     }
 
+    public static GroovyClassLoader getGLoader() {
+        return gLoader;
+    }
+
     static void loadScripts() {
         try {
             gLoader = new GroovyClassLoader(loader);

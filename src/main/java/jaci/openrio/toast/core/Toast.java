@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import groovy.lang.GroovyObject;
+import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
@@ -18,8 +19,6 @@ import java.util.Random;
 
 /**
  * The Toast Base Class. This is the base for the Toast API.
- * In order to take advantage of this, change your Robot-Class
- * to this instead of your own in the Manifest.MF file.
  *
  * @author Jaci
  */
@@ -75,6 +74,7 @@ public class Toast extends RobotBase {
 
             CrashHandler.init();
             RobotLoader.init();
+            CommandBus.init();
             GroovyLoader.init();
             GroovyPreferences.init();
 

@@ -5,6 +5,7 @@ import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
+import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
@@ -74,6 +75,7 @@ public class ToastBootstrap {
         toastHome.mkdirs();
 
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
+        new GlobalBlackboard();
         SysLogProxy.init();
 
         toastLogger.info("Slicing Loaf...");
