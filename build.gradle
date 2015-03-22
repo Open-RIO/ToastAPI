@@ -20,6 +20,7 @@ apply plugin: 'GradleRIO'                                 //Apply the GradleRIO 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'groovy'
 apply plugin: BuildGradle
 apply plugin: 'maven'
 
