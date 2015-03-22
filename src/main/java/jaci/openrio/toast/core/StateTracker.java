@@ -35,8 +35,8 @@ public class StateTracker {
 
     private static Toast impl;
 
-    private static List<StateListener.Ticker> tickers = new ArrayList<StateListener.Ticker>();
-    private static List<StateListener.Transition> transitioners = new ArrayList<StateListener.Transition>();
+    private static volatile List<StateListener.Ticker> tickers = new ArrayList<StateListener.Ticker>();
+    private static volatile List<StateListener.Transition> transitioners = new ArrayList<StateListener.Transition>();
 
     /**
      * Start the StateTracker loop
