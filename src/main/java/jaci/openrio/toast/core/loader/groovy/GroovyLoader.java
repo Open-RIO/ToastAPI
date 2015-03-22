@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.GroovyScript;
+import jaci.openrio.toast.lib.state.RobotState;
 import org.codehaus.groovy.tools.GroovyClass;
 import sun.tools.jar.resources.jar;
 
@@ -138,14 +139,34 @@ public class GroovyLoader {
     }
 
     public static void prestart() {
-        for (GroovyScript script : scripts) {
-            script.prestartRobot();
+        for (GroovyObject object : groovyObjects.values()) {
+            try {
+                object.invokeMethod("prestartRobot", new Object[0]);
+            } catch (Exception e) {}
         }
     }
 
     public static void start() {
-        for (GroovyScript script : scripts) {
-            script.startRobot();
+        for (GroovyObject object : groovyObjects.values()) {
+            try {
+                object.invokeMethod("startRobot", new Object[0]);
+            } catch (Exception e) {}
+        }
+    }
+
+    public static void tick(RobotState state) {
+        for (GroovyObject object : groovyObjects.values()) {
+            try {
+                object.invokeMethod("tickState", state);
+            } catch (Exception e) {}
+        }
+    }
+
+    public static void transition(RobotState state) {
+        for (GroovyObject object : groovyObjects.values()) {
+            try {
+                object.invokeMethod("transitionState", state);
+            } catch (Exception e) {}
         }
     }
 

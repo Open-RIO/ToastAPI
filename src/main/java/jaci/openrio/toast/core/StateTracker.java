@@ -3,6 +3,7 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
@@ -116,6 +117,8 @@ public class StateTracker {
 
         for (StateListener.Transition tra : transitioners)
             tra.transitionState(currentState, lastState);
+
+        GroovyLoader.transition(currentState);
     }
 
     /**
@@ -124,6 +127,8 @@ public class StateTracker {
     public static void tick(RobotState state) {
         for (StateListener.Ticker ticker : tickers)
             ticker.tickState(state);
+
+        GroovyLoader.tick(state);
     }
 
     /**
