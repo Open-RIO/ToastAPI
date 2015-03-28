@@ -36,5 +36,5 @@ gradlerio.team = "5333"                                   //Your FRC team number
 gradlerio.deployFile = "toast/modules/${archivesBaseName}"
 
 dependencies {
-  compile group: 'jaci.openrio.toast', name: 'Toast', version: '0.3.0'    //Change this line to update Toast
+  compile group: 'jaci.openrio.toast', name: 'Toast', version: '0.5.0'    //Change this line to update Toast
 }

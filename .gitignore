@@ -15,3 +15,4 @@ toast/preferences/
 run/
 libs/groovy-2.4.1.jar
 releases/
+deploymentScripts/gradle/gradle/wrapper/gradle-wrapper.properties

@@ -1,0 +1,106 @@
+import org.gradle.logging.StyledTextOutput;
+import org.gradle.logging.StyledTextOutputFactory;
+import static org.gradle.logging.StyledTextOutput.Style;
+
+apply plugin: Build
+
+class Build implements Plugin<Project> {
+  def project
+  def teamNumber
+
+  void apply(Project project) {
+    this.project = project
+    System.setProperty('org.gradle.color.header', 'CYAN')
+
+    project.repositories.add(project.repositories.mavenCentral())
+
+    project.getConfigurations().maybeCreate('compile')
+
+    def sshAntTask = project.getConfigurations().maybeCreate('sshAntTask')
+    project.dependencies.add(sshAntTask.name, 'org.apache.ant:ant-jsch:1.7.1')
+    project.dependencies.add(sshAntTask.name, 'jsch:jsch:0.1.29')
+
+    project.ant.taskdef(name: 'scp',
+    classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+    classpath: sshAntTask.asPath)
+
+    def dl = project.task('download') << {
+      String baseURL = "http://dev.sourcecoded.info/jaci/maven/jaci/openrio/toast/Toast";
+      download("caches/toast", "${baseURL}/maven-metadata.xml", "toast-metadata.xml")
+      def latest = getLatest()
+      println "\tLatest Toast version: ${latest}"
+      download("caches/toast", "${baseURL}/${latest}/Toast-${latest}.jar", "toast.jar")
+      println "\tToast Download Successful!"
+    }
+
+    def dp = project.task('deploy') << {
+      if (teamNumber == null) teamNumber = project.team
+      File file = new File("caches/toast/toast.jar")
+      if (!file.exists())
+        throw new Exception("Could not deploy (file not found). Have you tried running 'gradlew download' first?")
+      try {
+        deploy(rioHost(project), file)
+      } catch (Exception e) {
+        println "\tCould not deploy to Hostname, attempting IP...."
+        deploy(rioIP(project), file)
+      }
+    }
+
+    project.task('combo') << {
+      def out = services.get(StyledTextOutputFactory).create("Toast")
+      out.withStyle(Style.Header).println "Connect to the internet and hit 'enter' to download Toast!"
+      System.console().readLine()
+      dl.execute()
+      out.withStyle(Style.Header).println "Please enter your Team Number and hit 'enter'"
+      teamNumber = System.console().readLine("\tTeam Number: ")
+      out.withStyle(Style.Header).println "Connect to the same network as the RoboRIO and hit 'enter' to deploy Toast!"
+      System.console().readLine()
+      dp.execute()
+      out.withStyle(Style.Header).println "Toast has been deployed to your RoboRIO successfully! Hit 'enter' to continue!"
+      System.console().readLine()
+    }
+  }
+
+  String getLatest() {
+    def xml = new XmlSlurper().parse("caches/toast/toast-metadata.xml").versioning.versions.depthFirst()
+    return (xml.toList() as Set).last()
+  }
+
+  void download(String dest, String from, String name) {
+    File output = new File(dest, name)
+    File f = new File(dest)
+    f.mkdirs()
+    def file = new FileOutputStream(output)
+    def out = new BufferedOutputStream(file)
+    HttpURLConnection httpcon = new URL(from).openConnection()
+    httpcon.addRequestProperty("User-Agent", "Toast-Deployment")
+    out << httpcon.getInputStream()
+    out.close()
+  }
+
+  void deploy(String host, File source) {
+    println "\tAttempting to send new code to RoboRIO... ${host}"
+
+    project.ant.scp(file: "${source.getAbsolutePath()}",
+    todir:"lvuser@${host}:FRCUserProgram.jar",
+    password:"",
+    port:22,
+    trust:true)
+
+    println "\tDeploy Successful!"
+  }
+
+  String rioHost(Project project) {
+    return "roboRIO-${teamNumber}.local"
+  }
+
+  String rioIP(Project project) {
+      String team = teamNumber
+      int length = team.length();
+      if (length < 4)
+      for (int i = 0; i < 4 - length; i++)
+      team = "0" + team;
+
+      return "10." + team.substring(0, 2) + "." + team.substring(2, 4) + ".20"
+  }
+}

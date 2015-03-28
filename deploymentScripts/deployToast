@@ -1,0 +1,3 @@
+#!/bin/bash
+cd gradle
+gradlew -q combo
