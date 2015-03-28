@@ -1,4 +1,6 @@
 language: java
 
+before_script: gradlew wpi
+
 jdk:
   - oraclejdk8
