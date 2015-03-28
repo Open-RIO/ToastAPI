@@ -1,6 +1,8 @@
 language: java
 
-before_script: echo Setting up WPI....
+install:
+  - "gradlew wpi"
+  - "gradlew assemble"
 
 jdk:
   - oraclejdk8
