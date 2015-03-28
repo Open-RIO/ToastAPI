@@ -1,7 +1,7 @@
 # ToastAPI
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
-  
-Master | Production | Development   
+
+Master | Production | Development  
 [![Build status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=master)](https://travis-ci.org/Open-RIO/ToastAPI/)
 [![Build status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=production)](https://travis-ci.org/Open-RIO/ToastAPI/)
 [![Build status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=development)](https://travis-ci.org/Open-RIO/ToastAPI/)  
@@ -60,7 +60,20 @@ Crash Information:
 Additionally, Toast uses the GradleRIO build system, allowing for robot code to be deployed through command line, and any IDE/Operating System can be used with Toast. A debugging server can also be hosted on the RoboRIO using 'gradlew modeDebug' that will allow IDEs to connect to the debugging server and hotswap code live, as well as add breakpoints and monitor code in-depth.
 
 ## Deploying Toast
-Currently, a Toast Deployment program is being made to easily deploy the latest version of Toast to the RoboRIO. This is expected to be released soon.  
+To deploy the latest (stable) version of Toast to the RoboRIO, follow these steps:
+- Download the latest [release](https://github.com/Open-RIO/ToastAPI/releases) named Toast-Deployment-Utility
+- Unzip the file to its own folder
+- Launch 'Toast-Deployment.jar'
+- Click 'Download'. When the download is complete, connect to the same network as your robot and click 'Deploy'
+- Done!  
+
+NOTE: If the computer you are using does not have a GUI, use the following steps:
+- When unzipped, open a command prompt and type:
+     - './deployToast' for Mac/Linux  
+     - 'deployToast.bat' for Windows  
+     - NOTE: Mac/Linux users may be required to run 'chmod 777' on the deployToast file and gradle directory if you are given permissions errors
+
+- Follow the instructions presented
 
 If you wish to build Toast from SRC and deploy it yourself, it's very simple.
 - Fork this Repo
