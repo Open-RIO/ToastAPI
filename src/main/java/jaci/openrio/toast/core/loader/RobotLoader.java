@@ -133,7 +133,7 @@ public class RobotLoader {
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
         }
     }
 

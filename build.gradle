@@ -126,6 +126,7 @@ task raw(type: Jar) {
 artifacts {
   //archives genJavadoc
   archives raw
+  archives src
 }
 uploadArchives {
   if (maven) {
