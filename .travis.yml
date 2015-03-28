@@ -1,8 +1,8 @@
 language: java
 
 install:
-  - "gradlew wpi"
-  - "gradlew assemble"
+  - "./gradlew wpi"
+  - "./gradlew assemble"
 
 jdk:
   - oraclejdk8
