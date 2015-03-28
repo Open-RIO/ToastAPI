@@ -1,7 +1,6 @@
 language: java
 
-before_script:
-  - "gradlew wpi"
+before_script: echo Setting up WPI....
 
 jdk:
   - oraclejdk8
