@@ -114,7 +114,7 @@ compileJava.dependsOn genPatches
 build.finalizedBy updateLatest
 
 task src(type: Jar) {
-  classifier = 'src'
+  classifier = 'sources'
   from sourceSets.main.allSource
 }
 
