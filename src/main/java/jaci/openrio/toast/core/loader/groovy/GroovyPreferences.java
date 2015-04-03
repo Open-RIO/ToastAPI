@@ -6,10 +6,6 @@ import groovy.util.ConfigSlurper;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Properties;
 
 /**
  * The class for all Groovy-Based preference files. Groovy preference files
@@ -48,6 +44,19 @@ public class GroovyPreferences {
             config = new ConfigSlurper().parse(file.toURI().toURL());
         } catch (Exception e) {
             GroovyLoader.logger.error("Could not load Preferences File: " + filename);
+            GroovyLoader.logger.exception(e);
+        }
+    }
+
+    public GroovyPreferences(File file) {
+        try {
+            if (!file.exists())
+                file.createNewFile();
+
+            parentObject = GroovyLoader.loadFile(file);
+            config = new ConfigSlurper().parse(file.toURI().toURL());
+        } catch (Exception e) {
+            GroovyLoader.logger.error("Could not load Preferences File: " + file);
             GroovyLoader.logger.exception(e);
         }
     }
@@ -130,6 +139,13 @@ public class GroovyPreferences {
      */
     public String getString(String key) {
         return (String) getPreferenceObject(key);
+    }
+
+    /**
+     * Get a boolean with the given key
+     */
+    public boolean getBoolean(String key) {
+        return (boolean) getPreferenceObject(key);
     }
 
 }

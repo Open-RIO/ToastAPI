@@ -4,9 +4,6 @@ import edu.wpi.first.wpilibj.hal.InterruptJNI;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A container object for what would be a DIO Interrupt. Because this is a simulation, we have to simulate the interrupt

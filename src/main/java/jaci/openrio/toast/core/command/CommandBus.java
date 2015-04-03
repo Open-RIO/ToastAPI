@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.command;
 
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
+import jaci.openrio.toast.core.command.cmd.CommandUSB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class CommandBus {
 
     private static void registerNatives() {
         registerCommand(new CommandGroovyScript());
+        registerCommand(new CommandUSB());
     }
 
     /**
@@ -44,7 +46,7 @@ public class CommandBus {
             if (split[0].equals(command.getCommandName())) {
                 String[] newSplit = new String[split.length - 1];
                 System.arraycopy(split, 1, newSplit, 0, split.length-1);
-                command.invokeCommand(split.length, newSplit, message);
+                command.invokeCommand(newSplit.length, newSplit, message);
             }
         }
 

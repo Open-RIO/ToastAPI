@@ -125,4 +125,7 @@ We're Open Source, which means we're open to contributions. Got something you wa
 - Credit yourself! Add @author to your JavaDoc comments so people can thank you
 - Submit it to us via Pull Request. This makes it easy for us to merge your changes
 
-Thanks for helping improving Toast!
+Thanks for helping improving Toast!  
+
+## Why did I call it 'Toast'?  
+Toast is modular. So is regular Toast. Want butter? Go ahead, add it! Jam more your style? Whatever, jam it up, baby! Want to make a sandwich? Make the best sandwich the world has ever seen.  

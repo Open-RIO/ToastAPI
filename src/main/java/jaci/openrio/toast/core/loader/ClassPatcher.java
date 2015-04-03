@@ -2,8 +2,9 @@ package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.ToastBootstrap;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;

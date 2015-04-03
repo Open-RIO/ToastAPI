@@ -1,12 +1,12 @@
 package edu.wpi.first.wpilibj.communication;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-
 import edu.wpi.first.wpilibj.hal.JNIWrapper;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 import jaci.openrio.toast.lib.state.RobotState;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 	public static interface tModuleType {

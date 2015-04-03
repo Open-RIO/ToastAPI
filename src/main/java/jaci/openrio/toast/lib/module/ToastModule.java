@@ -1,7 +1,6 @@
 package jaci.openrio.toast.lib.module;
 
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
-import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.core.loader.module.ModuleStorage;
 
 /**

@@ -3,11 +3,9 @@ package jaci.openrio.toast.lib.crash;
 import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.lib.module.GroovyScript;
-import jaci.openrio.toast.lib.module.ToastModule;
 
 import java.util.ArrayList;
 import java.util.Arrays;

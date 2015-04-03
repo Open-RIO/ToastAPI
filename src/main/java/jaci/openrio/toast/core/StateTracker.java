@@ -2,7 +2,6 @@ package jaci.openrio.toast.core;
 
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.state.RobotState;

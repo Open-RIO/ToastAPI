@@ -1,7 +1,5 @@
 package jaci.openrio.toast.core.loader.simulation;
 
-import jaci.openrio.toast.lib.state.RobotState;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;

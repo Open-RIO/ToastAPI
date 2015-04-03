@@ -28,6 +28,15 @@ gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the ma
 gradlerio.team = "5333"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
 //gradlerio.rioIP = "10.53.33.20"                         //Uncomment to specify the IP address of the RIO
 
+repositories {
+  maven {
+    name = "Jaci"
+    url = "http://dev.imjac.in/maven"
+  }
+  mavenCentral()
+}
+
+
 def maven = true
 
 try {
@@ -49,18 +58,14 @@ settings.withReader {
   project.ext.settings = new ConfigSlurper().parse prop
 }
 
-
 configurations {
     deployerJars
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
   compile fileTree(dir: 'libs/', include: '*.jar')
 
+  compile 'jaci.openrio.delegate:NetworkDelegate:1.1.0'
   compile 'org.codehaus.groovy:groovy:2.4.1'
   deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
 }

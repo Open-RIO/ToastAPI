@@ -1,6 +1,6 @@
-import org.gradle.logging.StyledTextOutput;
-import org.gradle.logging.StyledTextOutputFactory;
-import static org.gradle.logging.StyledTextOutput.Style;
+import org.gradle.logging.StyledTextOutputFactory
+
+import static org.gradle.logging.StyledTextOutput.Style
 
 apply plugin: Build
 

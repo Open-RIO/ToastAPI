@@ -1,10 +1,10 @@
 package edu.wpi.first.wpilibj.hal;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import edu.wpi.first.wpilibj.DriverStation;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class HALUtil extends JNIWrapper {
 	public static final int NULL_PARAMETER = -1005;

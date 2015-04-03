@@ -6,13 +6,9 @@ import jaci.openrio.toast.lib.state.RobotState;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Field;
-import java.util.Arrays;
 
 /**
  * This is the Rat's nest of code that is the Simulation GUI.

@@ -2,10 +2,8 @@ package edu.wpi.first.wpilibj.hal;
 
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 
 public class PWMJNI extends DIOJNI {
 	

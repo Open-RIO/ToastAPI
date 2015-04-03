@@ -1,6 +1,8 @@
 package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.io.usb.MassStorageDevice;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.lib.log.Logger;
@@ -9,11 +11,11 @@ import jaci.openrio.toast.lib.module.ToastModule;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -31,7 +33,7 @@ public class RobotLoader {
 
     static Logger log;
 
-    static String[] discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
+    static String[] discoveryDirs;
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
     static URLClassLoader sysLoader;
@@ -41,6 +43,7 @@ public class RobotLoader {
      */
     public static void init() {
         log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
+        discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
 
         sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
@@ -75,38 +78,56 @@ public class RobotLoader {
      * Look for candidates in the Discovery Directories
      */
     private static void loadCandidates() {
-        for (String currentDirectory : discoveryDirs) {
-            File dir = new File(currentDirectory);
-            dir.mkdirs();
-            File[] files = dir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".jar");
-                }
-            });
+        boolean usb_override = USBMassStorage.overridingModules();
+        if (!usb_override)
+            for (String currentDirectory : discoveryDirs) {
+                File dir = new File(currentDirectory);
+                dir.mkdirs();
+                search(dir);
+            }
 
-            if (files != null)
-                for (File file : files) {
-                    try {
-                        sJarFile(file);
-                    } catch (Exception e) {
-                    }
-                }
-
-            File[] otherFiles = dir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return !name.endsWith(".jar");
-                }
-            });
-
-            if (otherFiles != null)
-                for (File file : otherFiles) {
-                    try {
-                        addURL(file.toURI().toURL());
-                    } catch (Exception e) {}
-                }
+        for (MassStorageDevice device : USBMassStorage.connectedDevices) {
+            if (usb_override || device.concurrent_modules) {
+                File modulesDir = new File(device.toast_directory, "modules");
+                modulesDir.mkdirs();
+                search(modulesDir);
+            }
         }
+    }
+
+    /**
+     * Search for modules in the given directory
+     */
+    public static void search(File dir) {
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        });
+
+        if (files != null)
+            for (File file : files) {
+                try {
+                    sJarFile(file);
+                } catch (Exception e) {
+                }
+            }
+
+        File[] otherFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.endsWith(".jar");
+            }
+        });
+
+        if (otherFiles != null)
+            for (File file : otherFiles) {
+                try {
+                    addURL(file.toURI().toURL());
+                } catch (Exception e) {
+                }
+            }
     }
 
     /**

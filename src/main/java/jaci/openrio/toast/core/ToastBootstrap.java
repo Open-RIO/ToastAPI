@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
@@ -90,6 +91,8 @@ public class ToastBootstrap {
             SimulationGUI.main(args);
         }
 
+        GroovyLoader.init();
+        USBMassStorage.init();
         toastLogger.info("Nuking Toast...");
         RobotBase.main(args);
     }

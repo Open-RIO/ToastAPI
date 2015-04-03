@@ -1,25 +1,18 @@
 package jaci.openrio.toast.core.loader.groovy;
 
 import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.ToastBootstrap;
-import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.GroovyScript;
 import jaci.openrio.toast.lib.state.RobotState;
-import org.codehaus.groovy.tools.GroovyClass;
-import sun.tools.jar.resources.jar;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 /**
  * A Loader for loading classes beneath the toast/groovy/ tree. This allows for

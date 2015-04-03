@@ -1,16 +1,14 @@
 package jaci.openrio.toast.core;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.command.CommandBus;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
-import jaci.openrio.toast.core.shared.ModuleEventBus;
+import jaci.openrio.toast.core.network.SocketManager;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -75,11 +73,14 @@ public class Toast extends RobotBase {
             CrashHandler.init();
             RobotLoader.init();
             CommandBus.init();
-            GroovyLoader.init();
             GroovyPreferences.init();
+
+            SocketManager.init();
+            USBMassStorage.load();
 
             RobotLoader.prestart();
             GroovyLoader.prestart();
+            log().info("Total Initiation Time: " + (double)(System.currentTimeMillis() - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -102,6 +103,7 @@ public class Toast extends RobotBase {
             RobotLoader.start();
             GroovyLoader.start();
 
+            SocketManager.launch();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
