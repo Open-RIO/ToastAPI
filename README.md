@@ -10,7 +10,7 @@ Toast is an API designed for the RoboRIO and teams competing in the FIRST Roboti
 Toast is modular, and is designed with a core. This core is loaded no matter what and contains essential tools such as Logging, Crash Handling and of course, Module Loading. Modules are code that use Toast and WPILIb as a base API and can be loaded/unloaded at will. These are stored in .jar files much like any other program and are loaded at Runtime. This allows for an extremely modular workflow in Toast.  
 
 Teams create their own Module to control their robot, but might choose to load other modules as well, such as a WebUI, Autonomous Recorder or even Vision Tracking. Modules can be optional, or depend on each other. This allows for the FIRST community to share their code and creations on a whole new level. A brief visual representation of how Toast loads and organized modules is given below:
-![The 'pipline' of how Toast Modules work](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/Pipeline.png)
+![The 'pipeline' of how Toast Modules work](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/Pipeline.png)
 
 ## Simulation
 Simulation is part of the Toast Core, and is designed for people working in Development Environments to easily test their code instantly, instead of waiting for the code to deploy to the robot and waiting again for it to restart. Toast will dynamically patch WPILib classes at Runtime if running in a Developement Environment and allow for all the Inputs, Outputs and functions of the RoboRIO to be simulated. An example of the Simulation GUI is given below:  
@@ -20,14 +20,35 @@ Simulation is part of the Toast Core, and is designed for people working in Deve
 Ports such as DIO and Analog IN gain a Number Spinner, that allows the inputs to be changed. These spinners are enabled when they are registered through WPILib (DigitalInput/AnalogInput classes). Other things, such as PWM output, can be read as their raw values. This allows for the robots IO to be completely simulated. Additionally, the Simulation GUI will have support for XBox controllers and external Joysticks. In the future, simulated controllers will be supported through an optional module.  
 
 ## Other Tools
-Toast has support for many other tools out of the box as well. For example, Toast can load Groovy files and execute them. This means that teams can program
-their entire robot in the Groovy Programming Language. Groovy doesn't need to be compiled, which has the added benefit of not having to rebuild and
-redeploy your code each time you change something, instead, you can use editors like Sublime Text or Atom to remotely edit the script file and have
-your code ready within a few seconds.  
+Toast has support for many other tools out of the box as well. For example, Toast can load Groovy files and execute them. This means that teams can program their entire robot in the Groovy Programming Language. Groovy doesn't need to be compiled, which has the added benefit of not having to rebuild and redeploy your code each time you change something, instead, you can use editors like Sublime Text or Atom to remotely edit the script file and have your code ready within a few seconds.  
 
-Groovy is also used for Toast's Configuration Files. These .groovy config files can be used alongside normal java programming, and can load in variables
-defined in the groovy file. Methods can also be invoked in these config files if you so choose  
+Groovy is also used for Toast's Configuration Files. These .groovy config files can be used alongside normal java programming, and can load in variables defined in the groovy file. Methods can also be invoked in these config files if you so choose  
 ![A demo of the Groovy Config Files](http://puu.sh/gpZC5/bd99a3242a.png)
+
+## USB Mass Storage  
+In Toast v1.0.0, support for USB Mass Storage devices was introduced. USB Mass Storage devices (USB Flash Drives or External Hard Drives), contain a toast_autorun.conf file. This file is responsible for the behavior of the USB Drive. A typical toast_autorun.conf file is shown below.  
+```
+toast {
+    device_name = "Team #### USB Device"
+
+    directory = "toast"
+
+    override_modules = false
+
+    concurrent_modules = true
+}
+```
+USB Drives are loaded as soon as Toast is initialized. USB Drives can contain Modules and Groovy files to be loaded into Toast, and with the toast_autorun.conf file, they can be configured to either run Alongside those on the RoboRIO's local storage, or override them.
+
+If the 'override_modules' option is set to true, modules on the USB Drive will be loaded, but modules on the RoboRIO will not. This allows for teams to carry a USB drive on them at FRC Events that contain a backup of old, working code, or perhaps debugging tools, should the RoboRIO stop working for whatever reason. This will not only work for their robot, but can be done for ANY robots running Toast.
+
+Additionally, for specifically large modules (such as RubyOnWheels), the USB Drive can be used to expand the storage available. If 'override_modules' is false, and 'concurrent_modules' is set to true, then Modules on the RoboRIO will be loaded, as well as those on the USB Drive.
+
+USB Drives can also be used be used for Robot Backup, or retrieval of files. The command 'usb dump' will copy all Toast local files on the RoboRIO to every USB Drive connected. This allows for Logs to be dumped to a USB Drive instantly, as well as any modules or groovy files on the RoboRIO, or anything under the toast/ directory.  
+
+If used in a simulation environment, USB mass storage devices can be simulated, too. Folders 'usb_U', 'usb_V', 'usb_W' and 'usb_X' can be created in the same directory as the toast/ directory.  
+
+Finally, if a USB Drive does not contain a toast_autorun.conf file, running 'usb generate' will generate one for you with the default values. Keep in mind these autorun files are loaded in Groovy, meaning you can create your own init() method in the file and it will be run as soon as the USB Drive is detected.  
 
 ## Debugging Tools
 The Toast Core has inbuilt debugging tools included by default. This includes a FileLogger, that will split the System.out and System.err streams between the Console and a File. This allows for Logs to be recorded. Additionally, when the Robot is detected to have crashed, Toast will shutdown safely and save the Crash Log to a file, as well as identifying possible culprit modules that caused the crash. This allows for debugging to be done quick and easily.  An example crash log has been posted below:
