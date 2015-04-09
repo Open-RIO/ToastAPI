@@ -1,3 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd gradle
-gradlew -q combo
+chmod 777 gradlew
+./gradlew -q combo
