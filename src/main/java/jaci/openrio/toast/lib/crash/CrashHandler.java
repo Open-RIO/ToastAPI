@@ -88,7 +88,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
             Files.copy(recentLog.toPath(), cpFile.toPath());
 
-            Toast.getToast().shutdownSafely();
+            Toast.getToast().shutdownCrash();
         } catch (Exception e) {
         }
     }

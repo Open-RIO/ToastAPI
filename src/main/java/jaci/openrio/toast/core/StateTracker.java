@@ -3,6 +3,7 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
+import jaci.openrio.toast.core.loader.verification.VerificationWorker;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
@@ -44,6 +45,8 @@ public class StateTracker {
         UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Framework, FRCNetworkCommunicationsLibrary.tInstances.kFramework_Iterative);
         StateTracker.impl = impl;
         boolean isAlive;
+        if (ToastBootstrap.isVerification)
+            VerificationWorker.begin();
         while (true) {
             if (impl.isDisabled()) {
                 if (!_state_disabled_init) {

@@ -1,12 +1,10 @@
 language: java
 
 install:
-  - "./gradlew wpi"
   - "./gradlew assemble"
-  
+
 script:
   - "./gradlew verify"
-  
 jdk:
   - oraclejdk8
 

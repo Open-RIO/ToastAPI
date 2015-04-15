@@ -112,7 +112,16 @@ public class Toast extends RobotBase {
 
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
-        System.exit(1);
+        System.exit(0);
     }
+
+    public void shutdownCrash() {
+        log().info("Robot Error Detected... Shutting Down...");
+        System.exit(-1);
+    }
+
+    /** Verification Overrides **/
+
+
 
 }

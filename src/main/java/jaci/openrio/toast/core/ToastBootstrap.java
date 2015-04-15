@@ -32,6 +32,12 @@ public class ToastBootstrap {
     public static boolean isSimulation;
 
     /**
+     * Is this a verification? Verifications are headless routines to 'test' the
+     * build process.
+     */
+    public static boolean isVerification;
+
+    /**
      * Get the root folder for Toast. This is where logs, modules,
      * and just about everything for toast is saved.
      */
@@ -65,6 +71,9 @@ public class ToastBootstrap {
                     if (!nextArg.equals("."))
                         GroovyLoader.customClasses.add(nextArg);
                 } catch (Exception e) {}
+            } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {
+                isSimulation = true;
+                isVerification = true;
             }
         }
 
@@ -87,7 +96,7 @@ public class ToastBootstrap {
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
 
-        if (isSimulation) {
+        if (isSimulation && !isVerification) {
             SimulationGUI.main(args);
         }
 

@@ -177,5 +177,39 @@ class BuildGradle implements Plugin<Project> {
       }
       ant.zip(destfile: "releases/Toast-Deployment-Utility.zip", basedir: "build/deployment")
     }
+
+    project.getConfigurations().maybeCreate('verify')
+    project.task('verify') << {
+      File toast_dir = new File('run/verification')
+      if (toast_dir.exists()) {
+        project.ant.delete(dir: toast_dir.getAbsolutePath())
+      }
+
+      toast_dir.mkdirs()
+      File modules_dir = new File(toast_dir, "toast/modules")
+      modules_dir.mkdirs()
+
+      println "Beginning Assets Copying..."
+      File toast = new File(toast_dir, 'Toast.jar')
+      String archive = project.jar.archivePath
+      project.ant.copy(tofile: toast.getAbsolutePath(), file: archive)
+
+      project.getConfigurations().verify.resolve().each {
+        File file = it
+        File toFile = new File(modules_dir, file.getName())
+        project.ant.copy(tofile: toFile.getAbsolutePath(), file: file.getAbsolutePath())
+      }
+
+      println "Assets Copied..."
+      println "Beginning Verification..."
+
+      project.javaexec {
+        workingDir = toast_dir.getAbsolutePath()
+        args = ["Toast.jar", "-verify"]
+        main = '-jar'
+      }
+
+      println "Verification Complete..."
+    }
   }
 }
