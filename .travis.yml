@@ -2,7 +2,9 @@ language: java
 
 install:
   - "./gradlew wpi"
-  - "./gradlew assemble"
+  - "./gradlew build"
+  - "./gradlew generateExternalPatches"
+  - "./gradlew build"
   
 script:
   - "./gradlew verify"

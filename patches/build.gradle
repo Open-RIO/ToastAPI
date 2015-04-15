@@ -22,7 +22,9 @@ dependencies {
 }
 
 task genPatches << {
-  ant.delete(dir: "build/patches")
+  try {
+	ant.delete(dir: "build/patches")
+  } catch (Exception e) {}
   ant.copy(todir: "build/patches") {
     ant.fileset(dir: "build/classes/main")
     ant.mapper(type: "glob", from: "*.class", to: "*.sim")
