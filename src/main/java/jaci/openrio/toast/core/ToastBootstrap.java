@@ -11,6 +11,7 @@ import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * The Bootstrap class for launching Toast before WPILib. This makes simulation, class patching, crash handling
@@ -88,6 +89,8 @@ public class ToastBootstrap {
         new GlobalBlackboard();
         SysLogProxy.init();
 
+        if (args != null && args.length > 0)
+            toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
         toastLogger.info("Slicing Loaf...");
 
         ClassPatcher classLoader = new ClassPatcher();

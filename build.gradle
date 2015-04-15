@@ -90,6 +90,11 @@ task genJavadoc(type: Jar, dependsOn: javadoc) {
   from javadoc.destinationDir
 }
 
+task generateExternalPatches(type: GradleBuild) {
+  dir = 'patches'
+  tasks = ['genPatches']
+}
+
 task genPatches << {
   try {
     ant.copy(todir: "build/resources/main/assets/toast/patches/") {
@@ -114,6 +119,7 @@ task updateLatest << {
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
 }
 
+deletePatches.dependsOn generateExternalPatches
 genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
 build.finalizedBy updateLatest
