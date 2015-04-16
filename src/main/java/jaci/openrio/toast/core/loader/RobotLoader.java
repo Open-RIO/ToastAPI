@@ -1,10 +1,12 @@
 package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
+import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
 
@@ -38,14 +40,28 @@ public class RobotLoader {
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
     static URLClassLoader sysLoader = sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
+    static boolean threaded;
+    static ToastThreadPool pool;
+
     /**
      * Begin loading classes
      */
     public static void init() {
         discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
+        try {
+            threaded = ToastConfiguration.Property.THREADED_LOADING.asBoolean();
+            if (threaded) pool = new ToastThreadPool("Module-Worker");
+        } catch (Exception e) {}
+
         loadCandidates();
         parseEntries();
-        construct();
+
+        if (!threaded)
+            construct();
+        else {
+            pool.finish();
+            pool.waitForCompletion();
+        }
     }
 
     /**
@@ -132,14 +148,24 @@ public class RobotLoader {
     private static void parseEntries() {
         for (ModuleCandidate candidate : getCandidates()) {
             for (String clazz : candidate.getClassEntries()) {
-                parseClass(clazz, candidate);
+                handle(new Runnable() {
+                    @Override
+                    public void run() {
+                        parseClass(clazz, candidate);
+                    }
+                });
             }
         }
 
         for (String clazz : manualLoadedClasses) {
             ModuleCandidate candidate = new ModuleCandidate();
             candidate.addClassEntry(clazz);
-            parseClass(clazz, candidate);
+            handle(new Runnable() {
+                @Override
+                public void run() {
+                    parseClass(clazz, candidate);
+                }
+            });
         }
     }
 
@@ -149,6 +175,10 @@ public class RobotLoader {
             if (ToastModule.class.isAssignableFrom(c)) {
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
+                if (threaded) {
+                    container.construct();
+                    log.info("Module Loaded: " + container.getDetails());
+                }
             }
         } catch (Throwable e) {
         }
@@ -165,6 +195,13 @@ public class RobotLoader {
             } catch (Exception e) {
             }
         }
+    }
+
+    private static void handle(Runnable r) {
+        if (threaded)
+            pool.addWorker(r);
+        else
+            r.run();
     }
 
     /**

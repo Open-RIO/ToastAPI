@@ -15,4 +15,26 @@ public class MathHelper {
         return Math.rint(d * x) / x;
     }
 
+    public static String[] splitStringByWords(String string, int wordsPerLine) {
+        String[] strings = string.split(" ");
+        int last = strings.length % wordsPerLine;
+        int keys = strings.length / wordsPerLine;
+        if (last != 0) keys += 1;
+
+        String[] lines = new String[keys];
+
+        for (int i = 0; i < keys; i++) {
+            int iteration = wordsPerLine;
+            if (i == keys - 1 && last != 0)
+                iteration = last;
+            int offset = i * wordsPerLine;
+            String line = "";
+            for (int j = offset; j < offset + iteration; j++) {
+                line += strings[j] + " ";
+            }
+            lines[i] = line;
+        }
+        return lines;
+    }
+
 }

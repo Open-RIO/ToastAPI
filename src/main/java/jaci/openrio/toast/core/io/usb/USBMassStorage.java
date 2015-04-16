@@ -6,8 +6,8 @@ import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.lib.log.Logger;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * The class responsible for managing attached Mass Storage devices. This class will
@@ -29,8 +29,8 @@ public class USBMassStorage {
     static boolean override = false;
 
     public static void init() {
-        connectedDevices = new ArrayList<>();
-        invalidDrives = new ArrayList<>();
+        connectedDevices = new Vector<>();
+        invalidDrives = new Vector<>();
         if (ToastBootstrap.isSimulation)
             knownSymLinks = new String[] {"usb_U", "usb_V", "usb_W", "usb_X"};
         logger = new Logger("Toast|Mass-Storage", Logger.ATTR_DEFAULT);

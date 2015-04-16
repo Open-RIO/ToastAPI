@@ -3,7 +3,7 @@ package jaci.openrio.toast.core.loader.simulation.jni;
 import edu.wpi.first.wpilibj.hal.InterruptJNI;
 import jaci.openrio.toast.core.ToastBootstrap;
 
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * A container object for what would be a DIO Interrupt. Because this is a simulation, we have to simulate the interrupt
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class InterruptContainer {
 
-    public static ArrayList<InterruptContainer> interrupts = new ArrayList<>();
+    public static Vector<InterruptContainer> interrupts = new Vector<>();
 
     private int index;
     private InterruptJNI.InterruptJNIHandlerFunction func;

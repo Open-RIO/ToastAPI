@@ -32,7 +32,7 @@ public class VerificationWorker extends Thread {
     }
 
     public static void begin() {
-        logger = new Logger("Verification", Logger.ATTR_DEFAULT);
+        logger = new Logger("Verification", Logger.ATTR_TIME);
         worker = new VerificationWorker();
         worker.start();
     }

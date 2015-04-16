@@ -1,7 +1,7 @@
 package jaci.openrio.toast.core.loader.module;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * The ModuleManager is a static class that stores the loaded {@link ModuleCandidate} and
@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class ModuleManager {
 
-    static ArrayList<ModuleCandidate> candidates = new ArrayList<ModuleCandidate>();
-    static ArrayList<ModuleContainer> containers = new ArrayList<ModuleContainer>();
+    static Vector<ModuleCandidate> candidates = new Vector<ModuleCandidate>();
+    static Vector<ModuleContainer> containers = new Vector<ModuleContainer>();
 
     /**
      * Get a list of loaded {@link ModuleCandidate}

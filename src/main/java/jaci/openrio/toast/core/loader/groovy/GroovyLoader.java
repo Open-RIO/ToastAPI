@@ -12,6 +12,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 /**
@@ -28,7 +29,7 @@ public class GroovyLoader {
     static GroovyClassLoader gLoader = new GroovyClassLoader(loader);
     public static Pattern groovyFile = Pattern.compile("([^\\s$]+).groovy$");
 
-    public static ArrayList<GroovyScript> scripts = new ArrayList<>();
+    public static Vector<GroovyScript> scripts = new Vector<>();
     public static HashMap<File, GroovyObject> groovyFiles = new HashMap<>();
     public static HashMap<String, GroovyObject> groovyObjects = new HashMap<>();
 

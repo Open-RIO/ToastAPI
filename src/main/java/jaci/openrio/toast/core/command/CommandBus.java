@@ -4,9 +4,9 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
 import jaci.openrio.toast.core.command.cmd.CommandUSB;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 
 /**
  * The main pipeline for commands. This bus handles registering and invocation of commands. This allows for
@@ -19,8 +19,8 @@ import java.util.Scanner;
  */
 public class CommandBus {
 
-    private static List<AbstractCommand> commands = new ArrayList<>();
-    private static List<FuzzyCommand> parsers = new ArrayList<>();
+    private static List<AbstractCommand> commands = new Vector<>();
+    private static List<FuzzyCommand> parsers = new Vector<>();
 
     public static void init() {
         if (ToastBootstrap.isSimulation)

@@ -11,8 +11,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  * Handles crashes when the robot encounters an uncaught-exception. This simply adds details to the Logger
@@ -23,7 +23,7 @@ import java.util.Date;
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
-    static ArrayList<CrashInfoProvider> providers;
+    static Vector<CrashInfoProvider> providers;
     static File crashDir;
     static DateFormat dateFormat;
     static CrashHandler instance;
@@ -33,7 +33,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     public static void init() {
         try {
-            providers = new ArrayList<CrashInfoProvider>();
+            providers = new Vector<CrashInfoProvider>();
             crashDir = new File(ToastBootstrap.toastHome, "crash");
             crashDir.mkdirs();
         } catch (Exception e) {}

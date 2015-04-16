@@ -6,9 +6,9 @@ import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -112,11 +112,13 @@ public class Toast extends RobotBase {
 
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
+        ToastThreadPool.INSTANCE.finish();
         System.exit(0);
     }
 
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
+        ToastThreadPool.INSTANCE.getService().shutdownNow();
         System.exit(-1);
     }
 

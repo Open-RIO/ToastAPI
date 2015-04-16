@@ -3,8 +3,8 @@ package jaci.openrio.toast.lib.log;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  * A logging class for the robot. This class prefixes different attributes to the message, such as time,
@@ -30,8 +30,8 @@ public class Logger {
 
     public DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy-hh:mm:ss");
 
-    public static ArrayList<String> backlog = new ArrayList<String>();
-    public static ArrayList<LogHandler> handlers = new ArrayList<LogHandler>();
+    public static Vector<String> backlog = new Vector<String>();
+    public static Vector<LogHandler> handlers = new Vector<LogHandler>();
 
     int attr;
     String name;

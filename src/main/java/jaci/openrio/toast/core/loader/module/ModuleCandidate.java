@@ -1,7 +1,7 @@
 package jaci.openrio.toast.core.loader.module;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * A Candidate for a Module to be loaded by Toast. These are containers for Modules that are found, but not instantiated yet.
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class ModuleCandidate {
 
     File moduleFile;
-    ArrayList<String> classMembers = new ArrayList<>();
+    Vector<String> classMembers = new Vector<>();
 
     public void setFile(File file) {
         moduleFile = file;

@@ -41,8 +41,7 @@ public class GroovyPreferences {
             if (!parentFile.exists())
                 parentFile.createNewFile();
 
-            parentObject = GroovyLoader.loadFile(parentFile);
-            config = new ConfigSlurper().parse(parentFile.toURI().toURL());
+            load();
         } catch (Exception e) {
             GroovyLoader.logger.error("Could not load Preferences File: " + filename);
             GroovyLoader.logger.exception(e);
@@ -55,12 +54,16 @@ public class GroovyPreferences {
             if (!file.exists())
                 file.createNewFile();
 
-            parentObject = GroovyLoader.loadFile(file);
-            config = new ConfigSlurper().parse(file.toURI().toURL());
+            load();
         } catch (Exception e) {
             GroovyLoader.logger.error("Could not load Preferences File: " + file);
             GroovyLoader.logger.exception(e);
         }
+    }
+
+    public void load() throws IllegalAccessException, IOException, InstantiationException {
+        parentObject = GroovyLoader.loadFile(parentFile);
+        config = new ConfigSlurper().parse(parentFile.toURI().toURL());
     }
 
     /**
@@ -81,7 +84,7 @@ public class GroovyPreferences {
     }
 
     static Object prop(ConfigObject object, String key) {
-        if (object.containsKey(key)) {
+        if (object != null && object.containsKey(key)) {
             return object.getProperty(key);
         }
         return null;
@@ -121,6 +124,17 @@ public class GroovyPreferences {
      */
     public boolean keyExists(String key) {
         return getPreferenceObject(key) != null;
+    }
+
+    /**
+     * Get an object, with a default value if it doesn't exist
+     */
+    public Object getObject(String key, Object defaultValue, String... comment) {
+        if (keyExists(key))
+            return getPreferenceObject(key);
+        else
+            writeKey(key, defaultValue, comment);
+        return defaultValue;
     }
 
     /**

@@ -8,8 +8,8 @@ import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static jaci.openrio.toast.lib.state.RobotState.*;
 
@@ -35,8 +35,8 @@ public class StateTracker {
 
     private static Toast impl;
 
-    private static volatile List<StateListener.Ticker> tickers = new ArrayList<StateListener.Ticker>();
-    private static volatile List<StateListener.Transition> transitioners = new ArrayList<StateListener.Transition>();
+    private static volatile List<StateListener.Ticker> tickers = new Vector<StateListener.Ticker>();
+    private static volatile List<StateListener.Transition> transitioners = new Vector<StateListener.Transition>();
 
     /**
      * Start the StateTracker loop

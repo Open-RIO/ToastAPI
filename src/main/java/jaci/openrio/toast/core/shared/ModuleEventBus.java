@@ -1,6 +1,6 @@
 package jaci.openrio.toast.core.shared;
 
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * The Module Event Bus is a bus that allows for Modules to raise events
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class ModuleEventBus {
 
-    static volatile ArrayList<ModuleEventListener> listeners = new ArrayList<>();
+    static volatile Vector<ModuleEventListener> listeners = new Vector<>();
 
     /**
      * Register a {@link jaci.openrio.toast.core.shared.ModuleEventListener} to the
