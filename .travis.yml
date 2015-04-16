@@ -5,12 +5,17 @@ install:
   - "./gradlew build"
   - "./gradlew generateExternalPatches"
   - "./gradlew build"
-  
+
 script:
   - "./gradlew verify"
-  
+
 jdk:
   - oraclejdk8
 
 notifications:
   email: false
+  irc:
+    channels:
+      - "irc.comssa.org#OpenRIO-Builds"
+    template:
+      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} : (Completed In: %{duration}  %{build_url})"
