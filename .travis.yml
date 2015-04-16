@@ -16,6 +16,6 @@ notifications:
   email: false
   irc:
     channels:
-      - "irc.comssa.org#OpenRIO-Builds"
+      - "irc.comssa.org.au#OpenRIO-Builds"
     template:
       - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} : (Completed In: %{duration}  %{build_url})"
