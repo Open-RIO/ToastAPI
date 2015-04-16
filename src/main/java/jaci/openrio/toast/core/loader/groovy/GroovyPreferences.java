@@ -100,12 +100,15 @@ public class GroovyPreferences {
     /**
      * Write a key to the end of the file
      */
-    public void writeKey(String key, Object value) {
+    public void writeKey(String key, Object value, String... comment) {
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(parentFile, true)));
             if (value instanceof String)
                 value = "\"" + value + "\"";
+            if (comment != null)
+                for (String c : comment) out.println("// " + c);
             out.println(key + " = " + value);
+            out.println();
             out.close();
         } catch (IOException e) { }
 
@@ -174,62 +177,62 @@ public class GroovyPreferences {
     /**
      * Get a number, but create it if it does not exist.
      */
-    public Number getNumber(String key, Number defaultValue) {
+    public Number getNumber(String key, Number defaultValue, String... comment) {
         if (keyExists(key))
             return getNumber(key);
         else
-            writeKey(key, defaultValue);
+            writeKey(key, defaultValue, comment);
         return defaultValue;
     }
 
     /**
      * Get a string, but create it if it does not exist.
      */
-    public String getString(String key, String defaultValue) {
+    public String getString(String key, String defaultValue, String... comment) {
         if (keyExists(key))
             return getString(key);
         else
-            writeKey(key, defaultValue);
+            writeKey(key, defaultValue, comment);
         return defaultValue;
     }
 
     /**
      * Get a string, but create it if it does not exist.
      */
-    public boolean getBoolean(String key, boolean defaultValue) {
+    public boolean getBoolean(String key, boolean defaultValue, String... comment) {
         if (keyExists(key))
             return getBoolean(key);
         else
-            writeKey(key, defaultValue);
+            writeKey(key, defaultValue, comment);
         return defaultValue;
     }
 
     /**
      * Get an integer with the given key, but create it if it doesn't exist
      */
-    public int getInt(String key, int defaultValue) {
-        return getNumber(key, defaultValue).intValue();
+    public int getInt(String key, int defaultValue, String... comment) {
+        return getNumber(key, defaultValue, comment).intValue();
     }
 
     /**
      * Get a double with the given key, but create it if it doesn't exist
      */
-    public double getDouble(String key, double defaultValue) {
-        return getNumber(key, defaultValue).doubleValue();
+    public double getDouble(String key, double defaultValue, String... comment) {
+        return getNumber(key, defaultValue, comment).doubleValue();
     }
 
     /**
      * Get a float with the given key, but create it if it doesn't exist
      */
-    public float getFloat(String key, float defaultValue) {
-        return getNumber(key, defaultValue).floatValue();
+    public float getFloat(String key, float defaultValue, String... comment) {
+        return getNumber(key, defaultValue, comment).floatValue();
     }
 
     /**
      * Get a byte with the given key, but create it if it doesn't exist
      */
-    public byte getByte(String key, byte defaultValue) {
-        return getNumber(key, defaultValue).byteValue();
+    public byte getByte(String key, byte defaultValue, String... comment) {
+        return getNumber(key, defaultValue, comment).byteValue();
     }
 
 }

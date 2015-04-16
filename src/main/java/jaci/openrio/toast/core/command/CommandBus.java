@@ -19,13 +19,10 @@ import java.util.Scanner;
  */
 public class CommandBus {
 
-    private static List<AbstractCommand> commands;
-    private static List<FuzzyCommand> parsers;
+    private static List<AbstractCommand> commands = new ArrayList<>();
+    private static List<FuzzyCommand> parsers = new ArrayList<>();
 
     public static void init() {
-        commands = new ArrayList<>();
-        parsers = new ArrayList<>();
-
         if (ToastBootstrap.isSimulation)
             setupSim();
 

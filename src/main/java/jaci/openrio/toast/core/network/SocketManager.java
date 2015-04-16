@@ -17,16 +17,9 @@ import jaci.openrio.delegate.DelegateServer;
  */
 public class SocketManager {
 
-    static DelegateServer delegateServer;
+    static DelegateServer delegateServer = DelegateServer.createRange(5805, 5806, 5810);
 
     static boolean launch = false;
-
-    /**
-     * Initiate the Delegate Server, but do not Launch it. Leave this up to Toast to handle.
-     */
-    public static void init() {
-        delegateServer = DelegateServer.createRange(5805, 5806, 5810);
-    }
 
     /**
      * Register your own Delegate. The String 'id' parameter should be your module name, prepended

@@ -5,10 +5,13 @@ import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
+import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
+import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
+import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
 import java.util.Arrays;
@@ -49,7 +52,7 @@ public class ToastBootstrap {
     public static long startTimeMS;
 
     public static void main(String[] args) {
-        Thread.currentThread().setName("Toast-Bootstrap");
+        LoadPhase.BOOTSTRAP.transition();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             String nextArg = null;
@@ -85,12 +88,17 @@ public class ToastBootstrap {
 
         toastHome.mkdirs();
 
+        SysLogProxy.init();
+        CrashHandler.init();
+
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
-        SysLogProxy.init();
 
-        if (args != null && args.length > 0)
+        if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
+
+        // -------- NEW PHASE -------- //
+        LoadPhase.PRE_INIT.transition();
         toastLogger.info("Slicing Loaf...");
 
         ClassPatcher classLoader = new ClassPatcher();
@@ -103,8 +111,12 @@ public class ToastBootstrap {
             SimulationGUI.main(args);
         }
 
-        GroovyLoader.init();
+        GroovyPreferences.init();
         USBMassStorage.init();
+
+
+        // -------- NEW PHASE -------- //
+        LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
         RobotBase.main(args);
     }

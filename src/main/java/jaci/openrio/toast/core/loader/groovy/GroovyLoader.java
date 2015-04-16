@@ -23,25 +23,19 @@ import java.util.regex.Pattern;
 public class GroovyLoader {
 
     static String searchDir = "groovy";
-    static Logger logger;
-    static ClassLoader loader;
-    static GroovyClassLoader gLoader;
+    static Logger logger = new Logger("Toast|GroovyLoader", Logger.ATTR_DEFAULT);
+    static ClassLoader loader = ClassLoader.getSystemClassLoader();
+    static GroovyClassLoader gLoader = new GroovyClassLoader(loader);
     public static Pattern groovyFile = Pattern.compile("([^\\s$]+).groovy$");
 
-    public static ArrayList<GroovyScript> scripts;
-    public static HashMap<File, GroovyObject> groovyFiles;
-    public static HashMap<String, GroovyObject> groovyObjects;
+    public static ArrayList<GroovyScript> scripts = new ArrayList<>();
+    public static HashMap<File, GroovyObject> groovyFiles = new HashMap<>();
+    public static HashMap<String, GroovyObject> groovyObjects = new HashMap<>();
 
     public static ArrayList<File> customFiles = new ArrayList<>();
     public static ArrayList<String> customClasses = new ArrayList<>();
 
     public static void init() {
-        logger = new Logger("Toast|GroovyLoader", Logger.ATTR_DEFAULT);
-        loader = ClassLoader.getSystemClassLoader();
-        scripts = new ArrayList<>();
-        groovyFiles = new HashMap<>();
-        groovyObjects = new HashMap<>();
-
         loadScripts();
     }
 
@@ -51,7 +45,6 @@ public class GroovyLoader {
 
     static void loadScripts() {
         try {
-            gLoader = new GroovyClassLoader(loader);
             File search = new File(ToastBootstrap.toastHome, searchDir);
             search.mkdirs();
             search(search);

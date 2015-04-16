@@ -31,22 +31,18 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
  */
 public class RobotLoader {
 
-    static Logger log;
+    static Logger log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);;
 
     static String[] discoveryDirs;
 
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
-    static URLClassLoader sysLoader;
+    static URLClassLoader sysLoader = sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
     /**
      * Begin loading classes
      */
     public static void init() {
-        log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
         discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
-
-        sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
         loadCandidates();
         parseEntries();
         construct();

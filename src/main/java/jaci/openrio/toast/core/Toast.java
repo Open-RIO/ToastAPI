@@ -12,6 +12,7 @@ import jaci.openrio.toast.core.network.SocketManager;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.util.Random;
 
@@ -67,20 +68,18 @@ public class Toast extends RobotBase {
     @Override
     protected void prestart() {
         try {
-            Thread.currentThread().setName("Pre-Initialization");
+            // -------- NEW PHASE -------- //
+            LoadPhase.PRE_START.transition();
             log().info("Buttering Bread...");
-
-            CrashHandler.init();
+            GroovyLoader.init();
             RobotLoader.init();
+
             CommandBus.init();
-            GroovyPreferences.init();
 
-            SocketManager.init();
             USBMassStorage.load();
-
             RobotLoader.prestart();
             GroovyLoader.prestart();
-            log().info("Total Initiation Time: " + (double)(System.currentTimeMillis() - ToastBootstrap.startTimeMS) / 1000D + " seconds");
+            log().info("Total Preparation Time: " + (double)(System.currentTimeMillis() - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -93,17 +92,18 @@ public class Toast extends RobotBase {
     @Override
     public void startCompetition() {
         try {
-            Thread.currentThread().setName("Initialization");
+            // -------- NEW PHASE -------- //
+            LoadPhase.START.transition();
             log().info("Fabricating Sandwich...");
             PDPMonitor.init();
             StateTracker.addTicker(new ToastStateManager());
 
-            Thread.currentThread().setName("Main");
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
             GroovyLoader.start();
 
             SocketManager.launch();
+            LoadPhase.COMPLETE.transition();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -119,9 +119,5 @@ public class Toast extends RobotBase {
         log().info("Robot Error Detected... Shutting Down...");
         System.exit(-1);
     }
-
-    /** Verification Overrides **/
-
-
 
 }
