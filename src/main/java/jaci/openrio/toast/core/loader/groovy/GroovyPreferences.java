@@ -5,7 +5,7 @@ import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 import jaci.openrio.toast.core.ToastBootstrap;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * The class for all Groovy-Based preference files. Groovy preference files
@@ -26,6 +26,7 @@ public class GroovyPreferences {
 
     public GroovyObject parentObject;
     public ConfigObject config;
+    File parentFile;
 
     /**
      * Get an existing preferences file, or create a new one if it doesn't
@@ -36,12 +37,12 @@ public class GroovyPreferences {
         try {
             if (!filename.contains("."))
                 filename = filename + ".groovy";
-            File file = new File(baseFile, filename);
-            if (!file.exists())
-                file.createNewFile();
+            parentFile = new File(baseFile, filename);
+            if (!parentFile.exists())
+                parentFile.createNewFile();
 
-            parentObject = GroovyLoader.loadFile(file);
-            config = new ConfigSlurper().parse(file.toURI().toURL());
+            parentObject = GroovyLoader.loadFile(parentFile);
+            config = new ConfigSlurper().parse(parentFile.toURI().toURL());
         } catch (Exception e) {
             GroovyLoader.logger.error("Could not load Preferences File: " + filename);
             GroovyLoader.logger.exception(e);
@@ -50,6 +51,7 @@ public class GroovyPreferences {
 
     public GroovyPreferences(File file) {
         try {
+            this.parentFile = file;
             if (!file.exists())
                 file.createNewFile();
 
@@ -95,7 +97,28 @@ public class GroovyPreferences {
         return parentObject.invokeMethod(methodName, args);
     }
 
+    /**
+     * Write a key to the end of the file
+     */
+    public void writeKey(String key, Object value) {
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(parentFile, true)));
+            if (value instanceof String)
+                value = "\"" + value + "\"";
+            out.println(key + " = " + value);
+            out.close();
+        } catch (IOException e) { }
+
+    }
+
     // PRIMS //
+
+    /**
+     * Returns whether a key exists in the configuration
+     */
+    public boolean keyExists(String key) {
+        return getPreferenceObject(key) != null;
+    }
 
     /**
      * Get a number with the given key
@@ -117,7 +140,7 @@ public class GroovyPreferences {
      * Get a double with the given key
      */
     public double getDouble(String key) {
-            return getNumber(key).doubleValue();
+        return getNumber(key).doubleValue();
     }
 
     /**
@@ -146,6 +169,67 @@ public class GroovyPreferences {
      */
     public boolean getBoolean(String key) {
         return (boolean) getPreferenceObject(key);
+    }
+
+    /**
+     * Get a number, but create it if it does not exist.
+     */
+    public Number getNumber(String key, Number defaultValue) {
+        if (keyExists(key))
+            return getNumber(key);
+        else
+            writeKey(key, defaultValue);
+        return defaultValue;
+    }
+
+    /**
+     * Get a string, but create it if it does not exist.
+     */
+    public String getString(String key, String defaultValue) {
+        if (keyExists(key))
+            return getString(key);
+        else
+            writeKey(key, defaultValue);
+        return defaultValue;
+    }
+
+    /**
+     * Get a string, but create it if it does not exist.
+     */
+    public boolean getBoolean(String key, boolean defaultValue) {
+        if (keyExists(key))
+            return getBoolean(key);
+        else
+            writeKey(key, defaultValue);
+        return defaultValue;
+    }
+
+    /**
+     * Get an integer with the given key, but create it if it doesn't exist
+     */
+    public int getInt(String key, int defaultValue) {
+        return getNumber(key, defaultValue).intValue();
+    }
+
+    /**
+     * Get a double with the given key, but create it if it doesn't exist
+     */
+    public double getDouble(String key, double defaultValue) {
+        return getNumber(key, defaultValue).doubleValue();
+    }
+
+    /**
+     * Get a float with the given key, but create it if it doesn't exist
+     */
+    public float getFloat(String key, float defaultValue) {
+        return getNumber(key, defaultValue).floatValue();
+    }
+
+    /**
+     * Get a byte with the given key, but create it if it doesn't exist
+     */
+    public byte getByte(String key, byte defaultValue) {
+        return getNumber(key, defaultValue).byteValue();
     }
 
 }
