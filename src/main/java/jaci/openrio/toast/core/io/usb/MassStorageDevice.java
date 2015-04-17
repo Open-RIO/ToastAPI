@@ -32,6 +32,11 @@ public class MassStorageDevice {
      * The directory that Toast files should be stored in on the drive
      */
     public File toast_directory;
+
+    /**
+     * The directory that USB Dumps are kept in
+     */
+    public File dump_directory;
     public boolean override_modules;
     public boolean concurrent_modules;
 
@@ -40,6 +45,7 @@ public class MassStorageDevice {
         this.preferences = autorun;
         this.drive_name = name;
         this.toast_directory = new File(path, autorun.getString("toast.directory"));
+        this.dump_directory = new File(path, autorun.getString("toast.dumps"));
         this.toast_directory.mkdirs();
         this.override_modules = autorun.getBoolean("toast.override_modules");
         this.concurrent_modules = autorun.getBoolean("toast.concurrent_modules");

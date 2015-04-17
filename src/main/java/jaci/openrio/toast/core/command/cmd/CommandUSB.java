@@ -7,7 +7,10 @@ import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -20,7 +23,9 @@ public class CommandUSB extends AbstractCommand {
 
     @Override
     public void invokeCommand(int argLength, String[] args, String command) {
-        if (argLength == 1) {
+        if (argLength == 1 || argLength == 2) {
+            boolean specified = argLength == 2;
+
             if (args[0].equals("generate")) {
                 int count = 0;
                 for (File file : USBMassStorage.invalidDrives) {
@@ -39,30 +44,62 @@ public class CommandUSB extends AbstractCommand {
             } else if (args[0].equals("dump")) {
                 for (MassStorageDevice drive : USBMassStorage.connectedDevices) {
                     long time = System.currentTimeMillis();
-                    File root = new File(drive.toast_directory, "usb_dumps/dump_" + time);
+                    File root = new File(drive.dump_directory, "dump_" + time);
                     try {
-                        copyDirectory(ToastBootstrap.toastHome, root);
-                        Toast.log().info("Data Dump Successful: dump_" + time + " on drive: " + drive.drive_name);
+                        if (!specified || drive.drive_name.equalsIgnoreCase(args[1])) {
+                            copyDirectory(ToastBootstrap.toastHome, root);
+                            Toast.log().info("Data Dump Successful: dump_" + time + " on drive: " + drive.drive_name);
+                        }
                     } catch (IOException e) {
                         Toast.log().error("Could not Dump Toast Files on drive: " + drive.drive_name);
                         Toast.log().exception(e);
                     }
                 }
-            }
+            } else if (args[0].equals("load")) {
+                for (MassStorageDevice drive : USBMassStorage.connectedDevices) {
+                    try {
+                        if (!specified || drive.drive_name.equalsIgnoreCase(args[1])) {
+                            copyDirectory(drive.toast_directory, ToastBootstrap.toastHome);
+                            Toast.log().info("Data Load Successful From Drive: " + drive.drive_name);
+                        }
+                    } catch (IOException e) {
+                        Toast.log().error("Could not Load Toast Files from drive: " + drive.drive_name);
+                        Toast.log().exception(e);
+                    }
+                }
+            } else
+                usage();
         } else {
-            Toast.log().info("Usage: usb <generate|dump>");
+            usage();
         }
+    }
+
+    private void usage() {
+        Toast.log().warn("Usage: usb <generate|dump|load> [drive_name]");
     }
 
     private void copyDirectory(File source, File dest) throws IOException {
         for (File f : source.listFiles()) {
-            if (f.isDirectory())
-                copyDirectory(f, dest);
-            else {
-                Path resolve = dest.toPath().resolve(f.toPath());
-                resolve.toFile().getParentFile().mkdirs();
-                Files.copy(f.getAbsoluteFile().toPath(), resolve);
-            }
+            File sourceFile = new File(source, f.getName());
+            File destFile = new File(dest, f.getName());
+            if (f.isDirectory()) {
+                destFile.mkdirs();
+                copyDirectory(sourceFile, destFile);
+            } else
+                copyFile(sourceFile, destFile);
         }
     }
+
+    private void copyFile(File source, File dest) throws IOException {
+        FileInputStream inputStream = new FileInputStream(source);
+        FileOutputStream outputStream = new FileOutputStream(dest);
+        int lengthStream;
+        byte[] buff = new byte[1024];
+        while ((lengthStream = inputStream.read(buff)) > 0) {
+            outputStream.write(buff, 0, lengthStream);
+        }
+        outputStream.close();
+        inputStream.close();
+    }
+
 }

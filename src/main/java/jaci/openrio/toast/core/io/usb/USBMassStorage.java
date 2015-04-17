@@ -55,11 +55,11 @@ public class USBMassStorage {
             }
 
             GroovyPreferences pref = new GroovyPreferences(configuration);
-            String drive_name = pref.getString("toast.device_name");
+            String drive_name = pref.getString("toast.device_name").replace(" ", "_");
             MassStorageDevice device = new MassStorageDevice(canon, pref, drive_name);
             connectedDevices.add(device);
             if (device.override_modules && !device.concurrent_modules) override = true;
-            logger.info("USB Mass Storage Device Detected -- Valid! " + canon);
+            logger.info("USB Mass Storage Device Detected -- Valid! " + canon + " (" + device.drive_name + ")");
         } catch (Exception e) {
             e.printStackTrace();
         }

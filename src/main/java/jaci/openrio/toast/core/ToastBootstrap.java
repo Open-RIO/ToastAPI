@@ -83,8 +83,8 @@ public class ToastBootstrap {
         }
 
         if (isSimulation) {
-            toastHome = new File("toast/");
-            robotHome = new File("./");
+            toastHome = new File("toast/").getAbsoluteFile();
+            robotHome = new File("./").getAbsoluteFile();
         }
 
         toastHome.mkdirs();

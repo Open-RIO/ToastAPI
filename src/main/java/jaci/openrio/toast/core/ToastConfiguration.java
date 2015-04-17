@@ -20,8 +20,9 @@ public class ToastConfiguration {
 
     public static enum Property {
         THREAD_POOL_SIZE("threading.pool_size", 2, "The amount of threads in the Thread Pool. The more threads, the more concurrent operations. This should be kept at 2 for most cases, but can be bumped up if required."),
-        THREADED_LOADING("experimental.threaded_loading", false, "WARNING: EXPERIMENTAL CODE. DO NOT USE IN COMPETITION UNLESS YOU KNOW WHAT YOU ARE DOING! Should module loading be threaded? This has the advantage of speeding up loading times, but may be unstable for modules which aren't properly configured for concurrency."),
+        THREADED_LOADING("experimental.threaded_loading", false, "Should module loading be threaded? This has the advantage of speeding up loading times, but may be unstable for modules which aren't properly configured for concurrency."),
         //THREADED_TICKING("experimental.threaded_ticking", false, "Should ticking by the StateTracker (autonomous, teleop, test, disabled, etc), be Threaded for each listener? This makes ticking run quickly and concurrently, but may be unstable for modules that aren't properly configured for concurrent operations."),
+        JET_FUEL("jet.fuel", "steel beams", "JET FUEL CAN'T MELT STEEL BEAMS"),
         ;
 
         String key;
@@ -31,6 +32,8 @@ public class ToastConfiguration {
         Object value;
 
         Property(String key, Object defaultValue, String comment) {
+            if (key.startsWith("experimental."))
+                comment = "WARNING: EXPERIMENTAL CODE. DO NOT USE IN COMPETITION UNLESS YOU KNOW WHAT YOU ARE DOING! " + comment;
             this.key = key;
             this.defaultValue = defaultValue;
             this.comments = MathHelper.splitStringByWords(comment, 15);
