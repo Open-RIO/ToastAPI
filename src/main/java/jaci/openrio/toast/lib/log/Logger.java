@@ -30,7 +30,6 @@ public class Logger {
 
     public DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy-hh:mm:ss");
 
-    public static Vector<String> backlog = new Vector<String>();
     public static Vector<LogHandler> handlers = new Vector<LogHandler>();
 
     int attr;
@@ -71,10 +70,8 @@ public class Logger {
 
         ps.println(ts);
 
-        backlog.add(ts);
-
         for (LogHandler hand : handlers)
-            hand.onLog(level, message);
+            hand.onLog(level, message, ts, this);
     }
 
     public String getPrefix(String level) {

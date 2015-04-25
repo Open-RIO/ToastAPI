@@ -22,6 +22,14 @@ public class SocketManager {
     static boolean launch = false;
 
     /**
+     * Register the default BoundDelegates used by Toast
+     */
+    public static void registerNatives() {
+        LoggerDelegate.init();
+        CommandDelegate.init();
+    }
+
+    /**
      * Register your own Delegate. The String 'id' parameter should be your module name, prepended
      * by your package name. This is to make sure there are no conflicts. e.g. 'com.yourname.YourModule'
      */
@@ -34,6 +42,7 @@ public class SocketManager {
      * Launch the DelegateServer. This should be left to Toast to handle.
      */
     public static void launch() {
+        SocketManager.registerNatives();
         if (launch) {
             new Thread() {
                 public void run() {

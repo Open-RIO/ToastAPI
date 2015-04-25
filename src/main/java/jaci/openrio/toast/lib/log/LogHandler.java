@@ -12,6 +12,6 @@ public interface LogHandler {
     /**
      * Called after a message is logged. Use this to send data to your driver-station or whatever else
      */
-    public void onLog(String level, String message);
+    public void onLog(String level, String message, String formatted, Logger logger);
 
 }
