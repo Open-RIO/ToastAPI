@@ -6,6 +6,8 @@ import groovy.util.ConfigSlurper;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The class for all Groovy-Based preference files. Groovy preference files
@@ -106,8 +108,7 @@ public class GroovyPreferences {
     public void writeKey(String key, Object value, String... comment) {
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(parentFile, true)));
-            if (value instanceof String)
-                value = "\"" + value + "\"";
+            value = convertValue(value);
             if (comment != null)
                 for (String c : comment) out.println("// " + c);
             out.println(key + " = " + value);
@@ -115,6 +116,21 @@ public class GroovyPreferences {
             out.close();
         } catch (IOException e) { }
 
+    }
+
+    public Object convertValue(Object value) {
+        if (value instanceof String)
+            value = "\"" + value + "\"";
+        if (value instanceof List) {
+            convertValue(((List) value).toArray());
+        } else if (value.getClass().isArray()) {
+            Object[] array = (Object[]) value;
+            Object[] v = new Object[array.length];
+            for (int i = 0; i < array.length; i++)
+                v[i] = convertValue(array[i]);
+            return Arrays.toString(v);
+        }
+        return value;
     }
 
     // PRIMS //
@@ -130,11 +146,19 @@ public class GroovyPreferences {
      * Get an object, with a default value if it doesn't exist
      */
     public Object getObject(String key, Object defaultValue, String... comment) {
+        Object val = defaultValue;
         if (keyExists(key))
-            return getPreferenceObject(key);
-        else
+            val = getPreferenceObject(key);
+        else {
             writeKey(key, defaultValue, comment);
-        return defaultValue;
+            try {
+                load();
+                val = getPreferenceObject(key);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return val;
     }
 
     /**
