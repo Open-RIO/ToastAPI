@@ -13,6 +13,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * This command is used for USB Mass Storage devices. This will be responsible for generating missing autorun files,
+ * dumping Toast Local data to a USB Drive and loading a backup from a USB drive.
+ *
+ * command_name: 'usb'
+ * args:
+ *      generate  Generates a toast_autorun.conf file on every invalid USB drive connected
+ *      dump  Dumps the local Toast files to a USB device.
+ *          [drive_name]  Specify a USB drive to dump to. If not set, it will dump to all drives.
+ *      load  Copy all Toast files from USB drives to the local Toast directory (reload backup)
+ *          [drive_name]  Specify a USB drive to load from. If not set, it will load from all drives.
+ *
+ * @author Jaci
+ */
 public class CommandUSB extends AbstractCommand {
     @Override
     public String getCommandName() {

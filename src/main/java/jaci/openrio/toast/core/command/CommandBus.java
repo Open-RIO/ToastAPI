@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.command;
 
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
+import jaci.openrio.toast.core.command.cmd.CommandThreadPool;
 import jaci.openrio.toast.core.command.cmd.CommandUSB;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class CommandBus {
     private static void registerNatives() {
         registerCommand(new CommandGroovyScript());
         registerCommand(new CommandUSB());
+        registerCommand(new CommandThreadPool());
     }
 
     /**
@@ -71,7 +73,7 @@ public class CommandBus {
         Scanner scanner = new Scanner(System.in);
         Thread thread = new Thread() {
             public void run() {
-                Thread.currentThread().setName("Toast|SimulationCommands");
+                Thread.currentThread().setName("Toast|Sim");
                 try {
                     while (Thread.currentThread().isAlive()) {
                         parseMessage(scanner.nextLine());

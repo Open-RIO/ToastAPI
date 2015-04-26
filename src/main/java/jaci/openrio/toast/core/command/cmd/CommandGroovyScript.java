@@ -7,6 +7,16 @@ import jaci.openrio.toast.core.command.FuzzyCommand;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 
+/**
+ * This command is used for on-the-fly Groovy Scripting. For the most part, this is useless, but it's both fun to play
+ * around with, useful for debugging, and freaking awesome.
+ *
+ * command_name: 'script'
+ * args:
+ *      -c  Execute the script in the {@link jaci.openrio.toast.core.thread.ToastThreadPool}, concurrently
+ *
+ * @author Jaci
+ */
 public class CommandGroovyScript extends FuzzyCommand {
     @Override
     public boolean shouldInvoke(String message) {

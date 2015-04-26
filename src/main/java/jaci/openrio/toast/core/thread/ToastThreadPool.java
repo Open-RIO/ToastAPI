@@ -52,7 +52,7 @@ public class ToastThreadPool {
      * Initialize the Thread Pool. This is handled by Toast, do not call this yourself.
      */
     public static void init() {
-        INSTANCE = new ToastThreadPool("Pool-Worker");
+        INSTANCE = new ToastThreadPool("Toast|Pool");
     }
 
     /**
