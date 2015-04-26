@@ -38,7 +38,7 @@ public class GroovyPreferences {
     public GroovyPreferences(String filename) {
         try {
             if (!filename.contains("."))
-                filename = filename + ".groovy";
+                filename = filename + ".conf";
             parentFile = new File(baseFile, filename);
             if (!parentFile.exists())
                 parentFile.createNewFile();

@@ -1,7 +1,9 @@
 package jaci.openrio.toast.core.network;
 
 import jaci.openrio.delegate.BoundDelegate;
+import jaci.openrio.delegate.Security;
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.lib.log.LogHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
@@ -28,6 +30,14 @@ public class LoggerDelegate implements BoundDelegate.ConnectionCallback, LogHand
 
     public static void init() {
         server = SocketManager.register("TOAST_logger");
+        String pass = ToastConfiguration.Property.LOGGER_DELEGATE_PASSWORD.asString();
+        String algorithm = ToastConfiguration.Property.LOGGER_DELEGATE_ALGORITHM.asString();
+        if (pass != null && !pass.equals("")) {
+            if (algorithm != null && Security.HashType.match(algorithm) != null)
+                server.setPassword(pass, Security.HashType.match(algorithm));
+            else
+                server.setPassword(pass);
+        }
         clients = new Vector<>();
         LoggerDelegate instance = new LoggerDelegate();
         server.callback(instance);

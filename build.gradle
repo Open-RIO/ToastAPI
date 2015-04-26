@@ -65,7 +65,7 @@ configurations {
 dependencies {
   compile fileTree(dir: 'libs/', include: '*.jar')
 
-  compile 'jaci.openrio.delegate:NetworkDelegate:1.1.0'
+  compile 'jaci.openrio.delegate:NetworkDelegate:1.2.0'
   compile 'org.codehaus.groovy:groovy:2.4.1'
   deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
 }

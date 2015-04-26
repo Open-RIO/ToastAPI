@@ -104,6 +104,7 @@ public class Toast extends RobotBase {
 
             SocketManager.launch();
             LoadPhase.COMPLETE.transition();
+            ToastConfiguration.jetfuel();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
