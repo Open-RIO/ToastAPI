@@ -19,3 +19,4 @@ cards:
   enabled:
     - "master"
     - "development"
+  title: "Toast"
