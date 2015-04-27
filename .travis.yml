@@ -14,3 +14,8 @@ jdk:
 
 notifications:
   email: false
+
+cards:
+  enabled:
+    - "master"
+    - "development"
