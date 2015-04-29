@@ -2,7 +2,7 @@
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
 
 Travis CI Build Status:  
-[![Build status](http://dev.imjac.in/travis/Open-RIO/ToastAPI)](https://travis-ci.org/Open-RIO/ToastAPI/)
+[![Build status](http://dev.imjac.in/travisalt/Open-RIO/ToastAPI)](https://travis-ci.org/Open-RIO/ToastAPI/)
 ## What is Toast?
 Toast is an API designed for the RoboRIO and teams competing in the FIRST Robotics Competition. Toast is built on top of WPILib and provides useful tools for increased stability, ease of use and usability. Toast also features a full Robot Simulation tool, meaning Robot Code can be tested at school, home, or even on the plane to the next match.
 
