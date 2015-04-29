@@ -95,6 +95,10 @@ public class ToastBootstrap {
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
 
+        GroovyLoader.preinit();
+        if (GroovyLoader.coreScriptsLoaded)
+            toastLogger.info("Groovy Core Scripts Loaded.");
+
         if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
 

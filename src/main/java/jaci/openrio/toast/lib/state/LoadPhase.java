@@ -1,5 +1,8 @@
 package jaci.openrio.toast.lib.state;
 
+import java.util.Vector;
+import java.util.function.Function;
+
 /**
  * The different phases of the Toast lifecycle. These are all passed through before the robot is ready to start.
  *
@@ -45,6 +48,7 @@ public enum LoadPhase {
     COMPLETE("Main");
 
     String threadName;
+    static LoadPhase currentPhase;
 
     LoadPhase(String threadName) {
         this.threadName = threadName;
@@ -52,5 +56,14 @@ public enum LoadPhase {
 
     public void transition() {
         Thread.currentThread().setName(threadName);
+        currentPhase = this;
+        for (Function<LoadPhase, Void> callback : callbacks)
+            callback.apply(this);
     }
+
+    public static void addCallback(Function<LoadPhase, Void> callback) {
+        callbacks.add(callback);
+    }
+
+    static Vector<Function<LoadPhase, Void>> callbacks = new Vector<>();
 }

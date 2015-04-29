@@ -36,7 +36,16 @@ public class GroovyLoader {
     public static ArrayList<File> customFiles = new ArrayList<>();
     public static ArrayList<String> customClasses = new ArrayList<>();
 
+    static boolean loadingCore = false;
+    public static boolean coreScriptsLoaded = false;
+
     public static void init() {
+        loadingCore = false;
+        loadScripts();
+    }
+
+    public static void preinit() {
+        loadingCore = true;
         loadScripts();
     }
 
@@ -67,7 +76,10 @@ public class GroovyLoader {
         File[] groovy = file.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".groovy");
+                if (!loadingCore)
+                    return name.endsWith(".groovy");
+                else
+                    return name.endsWith(".corescript");
             }
         });
         loadFiles(groovy);
@@ -87,6 +99,8 @@ public class GroovyLoader {
             for (File file : files) {
                 try {
                     GroovyObject object = loadFile(file);
+                    if (loadingCore)
+                        coreScriptsLoaded = true;
                 } catch (Exception e) {
                     logger.error("Could not load Groovy Script: " + file.getName());
                     logger.exception(e);
