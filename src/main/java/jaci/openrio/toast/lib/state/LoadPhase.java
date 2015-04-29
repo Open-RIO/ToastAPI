@@ -54,11 +54,16 @@ public enum LoadPhase {
         this.threadName = threadName;
     }
 
+    public String getLocalized() {
+        return threadName;
+    }
+
     public void transition() {
         Thread.currentThread().setName(threadName);
         currentPhase = this;
         for (Function<LoadPhase, Void> callback : callbacks)
             callback.apply(this);
+
     }
 
     public static void addCallback(Function<LoadPhase, Void> callback) {

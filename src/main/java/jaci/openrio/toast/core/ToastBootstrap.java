@@ -79,6 +79,11 @@ public class ToastBootstrap {
             } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {
                 isSimulation = true;
                 isVerification = true;
+            } else if (arg.equalsIgnoreCase("-core")) {
+                try {
+                    if (!nextArg.equals("."))
+                        RobotLoader.coreClasses.add(nextArg);
+                } catch (Exception e) { }
             }
         }
 
@@ -96,6 +101,7 @@ public class ToastBootstrap {
         new GlobalBlackboard();
 
         GroovyLoader.preinit();
+        RobotLoader.preinit();
         if (GroovyLoader.coreScriptsLoaded)
             toastLogger.info("Groovy Core Scripts Loaded.");
 

@@ -18,7 +18,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
@@ -43,11 +45,12 @@ public class RobotLoader {
     static boolean threaded;
     static ToastThreadPool pool;
 
+    static boolean coreLoading = false;
+
     /**
      * Begin loading classes
      */
     public static void init() {
-        discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
         try {
             threaded = ToastConfiguration.Property.THREADED_LOADING.asBoolean();
             if (threaded) pool = new ToastThreadPool("Module-Worker");
@@ -64,11 +67,19 @@ public class RobotLoader {
         }
     }
 
+    public static void preinit() {
+        discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
+        loadCoreCandidates();
+        parseCoreEntries();
+    }
+
     /**
      * A List containing a list of class names that are already in the classpath and should be loaded. This is
      * what makes Debug-Simulation possible in Development Environments
      */
     public static ArrayList<String> manualLoadedClasses = new ArrayList<>();
+
+    public static ArrayList<String> coreClasses = new ArrayList<>();
 
     /**
      * Load a *jar file
@@ -76,20 +87,56 @@ public class RobotLoader {
     static void sJarFile(File file) throws IOException {
         JarFile jar = new JarFile(file);
         ModuleCandidate container = new ModuleCandidate();
-        container.setFile(file);
-        for (ZipEntry ze : Collections.list(jar.entries())) {
-            if (classFile.matcher(ze.getName()).matches()) {
-                container.addClassEntry(ze.getName());
+
+        boolean core = false;
+        Manifest mf = jar.getManifest();
+        if (mf != null) {
+            Attributes attr = mf.getMainAttributes();
+            if (attr != null) {
+                if (attr.getValue("Toast-Core-Plugin-Class") != null && coreLoading) {
+                    String clazz = (String) attr.getValue("Toast-Core-Plugin-Class");
+                    container.setCorePlugin(true, clazz);
+                    coreClasses.add(clazz);
+                    core = true;
+                    log.info("Injected Core Plugin: " + file.getName());
+                }
+                if (attr.getValue("Toast-Plugin-Class") != null) {
+                    String bypassClass = (String) attr.getValue("Toast-Plugin-Class");
+                    container.setBypass(true, bypassClass);
+                }
             }
         }
-        getCandidates().add(container);
-        addURL(file.toURI().toURL());
+
+        if (core && coreLoading || !core && !coreLoading) {
+            container.setFile(file);
+            for (ZipEntry ze : Collections.list(jar.entries())) {
+                if (classFile.matcher(ze.getName()).matches()) {
+                    container.addClassEntry(ze.getName());
+                }
+            }
+
+            getCandidates().add(container);
+            addURL(file.toURI().toURL());
+        }
+    }
+
+    /**
+     * Load CorePlugins from the Discovery Directories.
+     */
+    private static void loadCoreCandidates() {
+        coreLoading = true;
+        for (String currentDirectory : discoveryDirs) {
+            File dir = new File(currentDirectory);
+            dir.mkdirs();
+            search(dir);
+        }
     }
 
     /**
      * Look for candidates in the Discovery Directories
      */
     private static void loadCandidates() {
+        coreLoading = false;
         boolean usb_override = USBMassStorage.overridingModules();
         if (!usb_override)
             for (String currentDirectory : discoveryDirs) {
@@ -147,14 +194,22 @@ public class RobotLoader {
      */
     private static void parseEntries() {
         for (ModuleCandidate candidate : getCandidates()) {
-            for (String clazz : candidate.getClassEntries()) {
+            if (candidate.isBypass()) {
                 handle(new Runnable() {
                     @Override
                     public void run() {
-                        parseClass(clazz, candidate);
+                        parseClass(candidate.getBypassClass(), candidate);
                     }
                 });
-            }
+            } else
+                for (String clazz : candidate.getClassEntries()) {
+                    handle(new Runnable() {
+                        @Override
+                        public void run() {
+                            parseClass(clazz, candidate);
+                        }
+                    });
+                }
         }
 
         for (String clazz : manualLoadedClasses) {
@@ -166,6 +221,22 @@ public class RobotLoader {
                     parseClass(clazz, candidate);
                 }
             });
+        }
+    }
+
+    /**
+     * Load CorePlugin classes and instantiate them.
+     */
+    private static void parseCoreEntries() {
+        for (String clazz : coreClasses) {
+            try {
+                Class c = Class.forName(clazz);
+                Object object = c.newInstance();
+                c.getDeclaredMethod("init").invoke(object);
+            } catch (Throwable e) {
+                log.error("Could not load Core Class: " + clazz);
+                log.exception(e);
+            }
         }
     }
 
