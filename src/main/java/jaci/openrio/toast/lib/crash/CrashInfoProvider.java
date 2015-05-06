@@ -1,5 +1,7 @@
 package jaci.openrio.toast.lib.crash;
 
+import java.util.List;
+
 /**
  * An interface for classes that wish to add custom information to crash logs.
  * Registered in {@link jaci.openrio.toast.lib.crash.CrashHandler}
@@ -26,6 +28,6 @@ public interface CrashInfoProvider {
      *
      * @param t The exception encountered
      */
-    public String getCrashInfo(Throwable t);
+    public List<String> getCrashInfo(Throwable t);
 
 }

@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -43,6 +44,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.currentThread().setUncaughtExceptionHandler(instance);
 
         providers.add(new CrashInfoToast());
+        providers.add(new CrashInfoEnvironment());
     }
 
     /**
@@ -75,7 +77,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.println("Crash Information: ");
             for (CrashInfoProvider provider : providers) {
                 out.println("\t" + provider.getName() + ": ");
-                out.println("\t" + provider.getCrashInfo(t));
+                List<String> info = provider.getCrashInfo(t);
+                if (info != null)
+                    for (String s : info) {
+                        out.println("\t\t" + s);
+                    }
+                out.println();
             }
             out.println();
             out.println("*******************");

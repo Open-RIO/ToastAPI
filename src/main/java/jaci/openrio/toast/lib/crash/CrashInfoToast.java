@@ -9,6 +9,7 @@ import jaci.openrio.toast.lib.module.GroovyScript;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class CrashInfoToast implements CrashInfoProvider {
@@ -48,24 +49,20 @@ public class CrashInfoToast implements CrashInfoProvider {
     }
 
     @Override
-    public String getCrashInfo(Throwable t) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("\tLoaded Modules: \n");
+    public List<String> getCrashInfo(Throwable t) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Loaded Modules:");
         for (ModuleContainer module : ModuleManager.getContainers())
-            builder.append("\t\t\t" + module.getDetails() + "\n");
+            list.add("\t" + module.getDetails());
 
-        builder.append("\n\t\tLoaded Groovy Scripts:\n");
+        list.add("Loaded Groovy Scripts:");
         for (GroovyScript script : GroovyLoader.scripts)
-            builder.append("\t\t\t" + script.getClass() + "\n");
+            list.add("\t" + script.getClass());
 
-        builder.append("\n\t\tLoaded Groovy Files:\n");
+        list.add("Loaded Groovy Files:");
         for (Map.Entry<String, GroovyObject> entry : GroovyLoader.groovyObjects.entrySet())
-            builder.append("\t\t\t" + entry.getKey() + " : " + entry.getValue() + "\n");
+            list.add("\t" + entry.getKey() + " : " + entry.getValue());
 
-
-        builder.append("\n\t\tEnvironment Status: \n");
-        builder.append("\t\t\t" + (ToastBootstrap.isSimulation ? "Simulation" : "Normal Deployment") + "\n");
-        return builder.toString();
+        return list;
     }
 }
