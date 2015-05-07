@@ -1,10 +1,10 @@
 package jaci.openrio.toast.lib.crash;
 
 import groovy.lang.GroovyObject;
-import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.loader.module.ModuleManager;
+import jaci.openrio.toast.lib.Version;
 import jaci.openrio.toast.lib.module.GroovyScript;
 
 import java.util.ArrayList;
@@ -51,6 +51,7 @@ public class CrashInfoToast implements CrashInfoProvider {
     @Override
     public List<String> getCrashInfo(Throwable t) {
         ArrayList<String> list = new ArrayList<>();
+        list.add("Toast Version: " + Version.version().get());
         list.add("Loaded Modules:");
         for (ModuleContainer module : ModuleManager.getContainers())
             list.add("\t" + module.getDetails());

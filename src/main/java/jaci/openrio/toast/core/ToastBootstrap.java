@@ -9,6 +9,7 @@ import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.lib.Version;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
@@ -99,6 +100,8 @@ public class ToastBootstrap {
 
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
+
+        Version.init();
 
         GroovyLoader.preinit();
         RobotLoader.preinit();

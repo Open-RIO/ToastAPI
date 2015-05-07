@@ -114,6 +114,15 @@ task deletePatches << {
   } catch (Exception e) {}
 }
 
+task genVersion << {
+  try {
+    new File("src/main/resources/assets/toast/toast.version").withWriter {
+      it.writeLine(settings.toast.version)
+    }
+  } catch (Exception e) {
+  }
+}
+
 task updateLatest << {
   ant.delete(dir: "build/latest/")
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
@@ -121,6 +130,7 @@ task updateLatest << {
 
 genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
+compileJava.dependsOn genVersion
 build.finalizedBy updateLatest
 
 task src(type: Jar) {

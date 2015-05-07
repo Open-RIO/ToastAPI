@@ -73,7 +73,6 @@ public class Toast extends RobotBase {
             // -------- NEW PHASE -------- //
             LoadPhase.PRE_START.transition();
             log().info("Buttering Bread...");
-            int i = 1 / 0;
             GroovyLoader.init();
             RobotLoader.init();
 
