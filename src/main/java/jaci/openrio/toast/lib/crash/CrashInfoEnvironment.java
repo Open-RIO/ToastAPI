@@ -7,6 +7,13 @@ import java.util.List;
 
 import static jaci.openrio.toast.core.Environment.*;
 
+/**
+ * A CrashInfoProvider that contains information about the Environment. This includes things like
+ * Toast Version, OS Version/Arch, Environment Type (sim, verification, robot), Java details and
+ * FMS connectivity.
+ *
+ * @author Jaci
+ */
 public class CrashInfoEnvironment implements CrashInfoProvider {
 
     @Override

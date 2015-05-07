@@ -7,6 +7,15 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The versioning manager for Toast. This allows for modules to easily parse what version of Toast is running
+ * on the Robot.
+ *
+ * Keep in mind this isn't enforced in {@link jaci.openrio.toast.lib.module.ToastModule}, since some modules
+ * may choose to respect an 'irregular' version formatting scheme
+ *
+ * @author Jaci
+ */
 public class Version implements Comparable<Version> {
 
     static String version = "1.3.0";
@@ -27,14 +36,24 @@ public class Version implements Comparable<Version> {
         }
     }
 
+    /**
+     * Returns true if we know what version Toast is, or false if we don't. This will only return false if
+     * there was an error reading the /assets/toast/toast.version file.
+     */
     public static boolean versionKnown() {
         return known;
     }
 
+    /**
+     * Get Toast's current version.
+     */
     public static Version version() {
         return vers;
     }
 
+    /**
+     * Returns true if 'version' is equal to or newer than 'required'
+     */
     public static boolean requireOrNewer(Version version, Version required) {
         int compare = version.compareTo(required);
         return compare == 0 || compare == 1;
@@ -52,6 +71,16 @@ public class Version implements Comparable<Version> {
 
     boolean parsed;
 
+    /**
+     * Create a new Version and Parse it. The version object should be in the form
+     * 'major.minor.build[-prebuild]', with everything in square brackets being
+     * optional. 'prebuild' should consist of a build number following a letter
+     * regarding the build type (A for Alpha, B for Beta, etc).
+     *
+     * e.g.
+     * "1.3.0"
+     * "1.3.0-10a"
+     */
     public Version(String versionString) {
         versString = versionString;
         parsed = false;
@@ -73,6 +102,9 @@ public class Version implements Comparable<Version> {
         parsed = true;
     }
 
+    /**
+     * Get the parsed version as a formatted string
+     */
     public String get() {
         if (!preRelease)
             return String.format("%s.%s.%s", major, minor, build);
@@ -80,6 +112,9 @@ public class Version implements Comparable<Version> {
             return String.format("%s.%s.%s-%s%s", major, minor, build, prebuild, prereleaseType);
     }
 
+    /**
+     * Get the raw version passed into the constructor (unparsed)
+     */
     public String raw() {
         return versString;
     }
@@ -94,6 +129,7 @@ public class Version implements Comparable<Version> {
     }
 
     /**
+     * Compare 2 versions against each other.
      * @return 0 if versions are equal, -1 if older than 'o', 1 if newer than 'o'
      */
     @Override
@@ -116,19 +152,31 @@ public class Version implements Comparable<Version> {
         return 0;
     }
 
+    /**
+     * Returns true if this version is newer than 'o'
+     */
     public boolean newerThan(Version o) {
         return compareTo(o) == 1;
     }
 
+    /**
+     * Returns true if this version is older than 'o'
+     */
     public boolean olderThan(Version o) {
         return compareTo(o) == -1;
     }
 
+    /**
+     * Returns true if versions are equal
+     */
     public boolean equals(Version o) {
         return o.preRelease == preRelease && !(o.major != major || o.minor != minor || o.build != build) && (!preRelease || o.prereleaseType == prereleaseType && o.prebuild == prebuild);
     }
 
-    public static class VersionFormatException extends RuntimeException {
-    }
+    /**
+     * Thrown if a supplied version does not pass the Regex Matcher (is malformed).
+     * @see {@link jaci.openrio.toast.lib.Version#Version(String)}
+     */
+    public static class VersionFormatException extends RuntimeException { }
 
 }

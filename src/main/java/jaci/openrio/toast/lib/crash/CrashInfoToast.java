@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A CrashInfoProvider that gives data about Toast and modules loaded.
+ *
+ * @link Jaci
+ */
 public class CrashInfoToast implements CrashInfoProvider {
     @Override
     public String getName() {
