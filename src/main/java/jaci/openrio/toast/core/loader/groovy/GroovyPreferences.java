@@ -64,7 +64,7 @@ public class GroovyPreferences {
     }
 
     public void load() throws IllegalAccessException, IOException, InstantiationException {
-        parentObject = GroovyLoader.loadFile(parentFile);
+        parentObject = GroovyLoader.loadFile(parentFile, false);
         config = new ConfigSlurper().parse(parentFile.toURI().toURL());
     }
 

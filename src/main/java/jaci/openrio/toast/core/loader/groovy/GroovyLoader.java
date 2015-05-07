@@ -126,6 +126,10 @@ public class GroovyLoader {
     }
 
     public static GroovyObject loadFile(File file) throws IOException, IllegalAccessException, InstantiationException {
+        return loadFile(file, true);
+    }
+
+    public static GroovyObject loadFile(File file, boolean register) throws IOException, IllegalAccessException, InstantiationException {
         Class groovyClass = gLoader.parseClass(file);
         GroovyObject object = (GroovyObject) groovyClass.newInstance();
 
@@ -134,8 +138,10 @@ public class GroovyLoader {
             script.loadScript();
             scripts.add(script);
         }
-        groovyFiles.put(file, object);
-        groovyObjects.put(object.getClass().getName(), object);
+        if (register) {
+            groovyFiles.put(file, object);
+            groovyObjects.put(object.getClass().getName(), object);
+        }
 
         try {
             object.invokeMethod("init", new Object[0]);
