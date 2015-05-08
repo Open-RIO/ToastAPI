@@ -23,8 +23,6 @@ import java.util.Random;
  */
 public class Toast extends RobotBase {
 
-    //TODO: Heartbeat
-
     private static String[] tastes = new String[] {"Delicious", "Yummy", "Like a buttery heaven", "Needs more salt", "Hot, Hot, HOT!!", "TOTE-aly delicious"};
 
     private static Toast instance;
