@@ -6,6 +6,7 @@ import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
+import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
@@ -35,7 +36,8 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
  */
 public class RobotLoader {
 
-    static Logger log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);;
+    static Logger log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
+    ;
 
     static String[] discoveryDirs;
 
@@ -54,7 +56,8 @@ public class RobotLoader {
         try {
             threaded = ToastConfiguration.Property.THREADED_LOADING.asBoolean();
             if (threaded) pool = new ToastThreadPool("Module-Worker");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         loadCandidates();
         parseEntries();
@@ -65,6 +68,8 @@ public class RobotLoader {
             pool.finish();
             pool.waitForCompletion();
         }
+
+        branches();
     }
 
     public static void preinit() {
@@ -268,11 +273,26 @@ public class RobotLoader {
         }
     }
 
+    private static void branches() {
+        for (ModuleContainer container : getContainers()) {
+            container.resolve_branches();
+        }
+    }
+
     private static void handle(Runnable r) {
         if (threaded)
             pool.addWorker(r);
         else
             r.run();
+    }
+
+    public static boolean classExists(String clazz) {
+        try {
+            Class.forName(clazz);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**

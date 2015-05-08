@@ -34,7 +34,7 @@ public class ModuleManager {
      */
     public static ModuleContainer getContainerForName(String name) {
         for (ModuleContainer container : getContainers())
-            if (container.getName().equalsIgnoreCase(name))
+            if (container.getName() != null && container.getName().equalsIgnoreCase(name))
                 return container;
         return null;
     }
