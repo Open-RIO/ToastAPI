@@ -100,6 +100,7 @@ public class ToastBootstrap {
 
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
+        GlobalBlackboard.INSTANCE.put("runtime_args", args);
 
         Version.init();
 

@@ -1,13 +1,16 @@
 package jaci.openrio.toast.core.command;
 
+import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
+import jaci.openrio.toast.core.command.cmd.CommandScanTest;
 import jaci.openrio.toast.core.command.cmd.CommandThreadPool;
 import jaci.openrio.toast.core.command.cmd.CommandUSB;
 
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.function.Function;
 
 /**
  * The main pipeline for commands. This bus handles registering and invocation of commands. This allows for
@@ -40,6 +43,19 @@ public class CommandBus {
      * Parse the given message and invoke any commands matching it
      */
     public static void parseMessage(String message) {
+        try {
+            if (messageRequested()) {
+                synchronized (requestLock) {
+                    requestLock.notify();
+                }
+                return;
+            }
+        } catch (Exception e) {
+            Toast.log().error("Could not do Custom Message implementation -- Falling back to regular command bus");
+            Toast.log().exception(e);
+        }
+
+        inCommand = true;
         String[] split = message.split(" ");
         for (AbstractCommand command : commands) {
             if (split[0].equals(command.getCommandName())) {
@@ -53,6 +69,7 @@ public class CommandBus {
             if (command.shouldInvoke(message))
                 command.invokeCommand(message);
         }
+        inCommand = false;
     }
 
     /**
@@ -69,19 +86,53 @@ public class CommandBus {
         commands.add(command);
     }
 
+    static boolean nextLineRequested = false;
+    static boolean inCommand = false;
+    static Scanner scanner;
+    static String ln;
+    static final Object requestLock = new Object();
+    static Thread t;
+
+    /**
+     * Will bypass the CommandBus and give the next Console line or Command Message to you. Use this
+     * to get data from the user. Keep in mind this is a blocking method.
+     *
+     * @throws InterruptedException Something wrong happened. This should never trigger
+     */
+    public static String requestNextMessage() throws InterruptedException {
+        if (inCommand) {
+            ln = scanner.nextLine();
+            return ln;
+        }
+        synchronized (requestLock) {
+            nextLineRequested = true;
+            requestLock.wait();
+            nextLineRequested = false;
+            return ln;
+        }
+    }
+
+    /**
+     * Returns true if the {@link #requestNextMessage()} has been called
+     */
+    public static boolean messageRequested() {
+        return nextLineRequested;
+    }
+
     private static void setupSim() {
-        Scanner scanner = new Scanner(System.in);
-        Thread thread = new Thread() {
+        scanner = new Scanner(System.in);
+        t = new Thread() {
             public void run() {
                 Thread.currentThread().setName("Toast|Sim");
                 try {
                     while (Thread.currentThread().isAlive()) {
-                        parseMessage(scanner.nextLine());
+                        ln = scanner.nextLine();
+                        parseMessage(ln);
                     }
                 } catch (Exception e) {}
             };
         };
-        thread.start();
+        t.start();
     }
 
 }

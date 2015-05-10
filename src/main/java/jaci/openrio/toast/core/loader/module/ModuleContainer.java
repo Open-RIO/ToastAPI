@@ -4,7 +4,6 @@ import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.annotation.Branch;
 import jaci.openrio.toast.core.loader.annotation.Tree;
-import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.module.ToastModule;
 
 /**

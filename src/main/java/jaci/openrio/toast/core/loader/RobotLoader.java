@@ -6,7 +6,6 @@ import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
-import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
