@@ -3,7 +3,6 @@ package jaci.openrio.toast.core.command;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
-import jaci.openrio.toast.core.command.cmd.CommandScanTest;
 import jaci.openrio.toast.core.command.cmd.CommandThreadPool;
 import jaci.openrio.toast.core.command.cmd.CommandUSB;
 

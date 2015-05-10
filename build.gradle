@@ -128,17 +128,29 @@ task updateLatest << {
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
 }
 
+task externalWPI_impl(type: GradleBuild) {
+  dir = '../WPILib/Open-WPI'
+  tasks = ['extractWPI']
+}
+
+task externalWPI << {
+  if (new File("../WPILib/Open-WPI").exists()) {
+    externalWPI_impl.execute()
+  }
+}
+
 genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
 compileJava.dependsOn genVersion
 build.finalizedBy updateLatest
+wpi.finalizedBy externalWPI
 
-task src(type: Jar) {
+task src(type: Jar, dependsOn: classes) {
   classifier = 'sources'
   from sourceSets.main.allSource
 }
 
-task raw(type: Jar) {
+task raw(type: Jar, dependsOn: classes) {
   classifier = 'raw'
   from sourceSets.main.output
 }
