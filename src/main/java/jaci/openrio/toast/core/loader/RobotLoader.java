@@ -237,8 +237,8 @@ public class RobotLoader {
             try {
                 Class c = Class.forName(clazz);
                 Object object = c.newInstance();
-                c.getDeclaredMethod("preinit").invoke(object);
                 coreObjects.add(object);
+                c.getDeclaredMethod("preinit").invoke(object);
             } catch (Throwable e) {
             }
         }

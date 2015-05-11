@@ -82,8 +82,10 @@ public class ToastBootstrap {
                 isVerification = true;
             } else if (arg.equalsIgnoreCase("-core")) {
                 try {
-                    if (!nextArg.equals("."))
+                    if (!nextArg.equals(".")) {
                         RobotLoader.coreClasses.add(nextArg);
+                        RobotLoader.manualLoadedClasses.add(nextArg);
+                    }
                 } catch (Exception e) { }
             }
         }
