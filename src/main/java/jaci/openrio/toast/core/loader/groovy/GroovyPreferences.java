@@ -109,10 +109,12 @@ public class GroovyPreferences {
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(parentFile, true)));
             value = convertValue(value);
-            if (comment != null)
+            if (comment != null) {
+                if (comment.length > 0)
+                    out.println();
                 for (String c : comment) out.println("// " + c);
+            }
             out.println(key + " = " + value);
-            out.println();
             out.close();
         } catch (IOException e) { }
 
