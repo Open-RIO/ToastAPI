@@ -7,6 +7,8 @@ package jaci.openrio.toast.core.thread;
  *
  * Functions inside of this interface should be Thread-Safe
  *
+ * Also known as the 'Stethoscope' class
+ * 
  * @author Jaci
  */
 public interface HeartbeatListener {
