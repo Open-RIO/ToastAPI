@@ -78,6 +78,9 @@ Crash Information:
 
 Additionally, Toast uses the GradleRIO build system, allowing for robot code to be deployed through command line, and any IDE/Operating System can be used with Toast. A debugging server can also be hosted on the RoboRIO using 'gradlew modeDebug' that will allow IDEs to connect to the debugging server and hotswap code live, as well as add breakpoints and monitor code in-depth.
 
+## Quick Start
+You can access our Quick Start documentation [here](https://github.com/Open-RIO/Quick-Start), if you want a quick and easy way to get started with Toast development.
+
 ## Deploying Toast
 To deploy the latest (stable) version of Toast to the RoboRIO, follow these steps:
 - Download the latest [release](https://github.com/Open-RIO/ToastAPI/releases) named Toast-Deployment-Utility
