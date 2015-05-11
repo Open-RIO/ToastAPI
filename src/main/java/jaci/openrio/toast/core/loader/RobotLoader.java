@@ -84,6 +84,7 @@ public class RobotLoader {
     public static ArrayList<String> manualLoadedClasses = new ArrayList<>();
 
     public static ArrayList<String> coreClasses = new ArrayList<>();
+    public static ArrayList<Object> coreObjects = new ArrayList<>();
 
     /**
      * Load a *jar file
@@ -236,10 +237,18 @@ public class RobotLoader {
             try {
                 Class c = Class.forName(clazz);
                 Object object = c.newInstance();
-                c.getDeclaredMethod("init").invoke(object);
+                c.getDeclaredMethod("preinit").invoke(object);
+                coreObjects.add(object);
             } catch (Throwable e) {
-                log.error("Could not load Core Class: " + clazz);
-                log.exception(e);
+            }
+        }
+    }
+
+    public static void initCore() {
+        for (Object core : coreObjects) {
+            try {
+                core.getClass().getDeclaredMethod("init").invoke(core);
+            } catch (Throwable e) {
             }
         }
     }

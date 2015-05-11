@@ -18,6 +18,18 @@ public enum LoadPhase {
     BOOTSTRAP("Bootstrap"),
 
     /**
+     * Called when the Core Modules are starting to be loaded into the classpath. This is between the absolute necessities
+     * of Toast being loaded, and the Pre-WPILib State of Toast's Loading.
+     */
+    CORE_PREINIT("Core-Pre-Initialization"),
+
+    /**
+     * Called when all the Core Modules are loaded into the classpath, instantiated and are now doing their post-loading
+     * process. All core modules will be loaded before this step, meaning Core Modules can now use their dependencies.
+     */
+    CORE_INIT("Core-Initialization"),
+
+    /**
      * The Pre-Initialization phase is used to instantiate classes and objects. This is run before any external modules
      * or files are loaded so that no NullPointers are triggered when trying to access static variables
      */

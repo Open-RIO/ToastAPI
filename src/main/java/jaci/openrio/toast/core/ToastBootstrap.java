@@ -104,8 +104,15 @@ public class ToastBootstrap {
 
         Version.init();
 
+        // -------- NEW PHASE -------- //
+        LoadPhase.CORE_PREINIT.transition();
         GroovyLoader.preinit();
         RobotLoader.preinit();
+
+        // -------- NEW PHASE -------- //
+        LoadPhase.CORE_INIT.transition();
+        RobotLoader.initCore();
+
         if (GroovyLoader.coreScriptsLoaded)
             toastLogger.info("Groovy Core Scripts Loaded.");
 
