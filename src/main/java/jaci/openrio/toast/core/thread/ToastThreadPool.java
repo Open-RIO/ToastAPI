@@ -2,10 +2,7 @@ package jaci.openrio.toast.core.thread;
 
 import jaci.openrio.toast.core.ToastConfiguration;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,8 +58,18 @@ public class ToastThreadPool {
       * @param runnable The Runnable Instance to trigger when running. This can be an anonymous member, which is the intended
      *                  implementation, although you can extend this interface and it will work just as well.
      */
-    public void addWorker(Runnable runnable) {
-        threadPool.execute(runnable);
+    public Future addWorker(Runnable runnable) {
+        return threadPool.submit(runnable);
+    }
+
+    /**
+     * Add a new Worker to the Thread Pool. For basic usage, this is the only function you should call. This will schedule
+     * a task to run when the Thread is not busy (add it to the queue).
+     * @param callable  The Callable Instance to trigger when running. This can be an anonymous member, which is the intended
+     *                  implementation, although you can extend this interface and it will work just as well.
+     */
+    public Future addWorker(Callable callable) {
+        return threadPool.submit(callable);
     }
 
     /**
