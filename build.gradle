@@ -179,6 +179,7 @@ uploadArchives {
 			  packaging 'jar'
 			  description 'Toast API Module Loader '
 		  }
+		  pom*.whenConfigured { pom -> pom.dependencies.clear() }
       }
     }
   }
