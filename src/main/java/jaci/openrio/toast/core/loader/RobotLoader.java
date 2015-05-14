@@ -307,16 +307,29 @@ public class RobotLoader {
      * Prestart all modules
      */
     public static void prestart() {
-        for (ModuleContainer container : getContainers())
-            container.getModule().prestart();
+//        for (ModuleContainer container : getContainers())
+//            container.getModule().prestart();
+        dispatch("prestart");
     }
 
     /**
      * Start all modules
      */
     public static void start() {
-        for (ModuleContainer container : getContainers())
-            container.getModule().start();
+        dispatch("start");
+    }
+
+    static MethodExecutor exec;
+
+    public static void dispatch(String method) {
+        if (exec == null) {
+            ToastModule[] mods = new ToastModule[getContainers().size()];
+            for (int i = 0; i < mods.length; i++) {
+                mods[i] = getContainers().get(i).getModule();
+            }
+            exec = new MethodExecutor(mods);
+        }
+        exec.call(method);
     }
 
     /**
