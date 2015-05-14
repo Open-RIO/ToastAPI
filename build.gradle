@@ -148,6 +148,8 @@ wpi.finalizedBy externalWPI
 task src(type: Jar, dependsOn: classes) {
   classifier = 'sources'
   from sourceSets.main.allSource
+  from(zipTree("${System.getProperty("user.home")}/wpilib/java/extracted/library/lib/WPILib-sources.jar"))
+  from(zipTree("${System.getProperty("user.home")}/wpilib/java/extracted/library/lib/NetworkTables-sources.jar"))
 }
 
 task raw(type: Jar, dependsOn: classes) {
