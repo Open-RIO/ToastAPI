@@ -171,14 +171,14 @@ uploadArchives {
       }
 
       pom {
-        groupId = project.group
-              version = project.version
-              artifactId = project.archivesBaseName
-              project {
-                  name project.archivesBaseName
-                  packaging 'jar'
-                  description 'Toast API Module Loader '
-              }
+	      groupId = project.group
+		  version = project.version
+		  artifactId = project.archivesBaseName
+		  project {
+			  name project.archivesBaseName
+			  packaging 'jar'
+			  description 'Toast API Module Loader '
+		  }
       }
     }
   }
