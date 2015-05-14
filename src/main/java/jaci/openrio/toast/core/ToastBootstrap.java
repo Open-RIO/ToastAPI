@@ -16,6 +16,8 @@ import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 
 /**
@@ -64,8 +66,13 @@ public class ToastBootstrap {
             if (arg.equalsIgnoreCase("-simulation") || arg.equals("-sim")) {
                 isSimulation = true;
                 try {
-                    if (!nextArg.equals("."))
-                        RobotLoader.manualLoadedClasses.add(nextArg);
+                    if (!nextArg.equals(".")) {
+                        if (nextArg.equalsIgnoreCase("--search")) {
+                            RobotLoader.search = true;
+                        } else {
+                            RobotLoader.manualLoadedClasses.add(nextArg);
+                        }
+                    }
                 } catch (Exception e) { }
             } else if (arg.equalsIgnoreCase("-groovy") || arg.equalsIgnoreCase("-g")) {
                 try {

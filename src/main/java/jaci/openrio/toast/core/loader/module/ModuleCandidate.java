@@ -70,7 +70,7 @@ public class ModuleCandidate {
     }
 
     public void addClassEntry(String classEntry) {
-        classMembers.add(classEntry.substring(0, classEntry.lastIndexOf('.')).replace('/', '.'));
+        classMembers.add(classEntry.substring(0, classEntry.lastIndexOf('.')).replace('/', '.').replace('\\', '.'));
     }
 
     public String[] getClassEntries() {

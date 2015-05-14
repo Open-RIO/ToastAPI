@@ -14,8 +14,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.jar.Attributes;
@@ -36,7 +39,6 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
 public class RobotLoader {
 
     static Logger log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
-    ;
 
     static String[] discoveryDirs;
 
@@ -47,6 +49,7 @@ public class RobotLoader {
     static ToastThreadPool pool;
 
     static boolean coreLoading = false;
+    public static boolean search = false;
 
     /**
      * Begin loading classes
@@ -72,6 +75,9 @@ public class RobotLoader {
     }
 
     public static void preinit() {
+        if (search) {
+            loadDevEnv();
+        }
         discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
         loadCoreCandidates();
         parseCoreEntries();
@@ -85,6 +91,44 @@ public class RobotLoader {
 
     public static ArrayList<String> coreClasses = new ArrayList<>();
     public static ArrayList<Object> coreObjects = new ArrayList<>();
+
+    static void loadDevEnv() {
+        for (URL url : sysLoader.getURLs()) {
+            try {
+                File f = new File(url.toURI());
+                if (f.isDirectory()) {
+                    ModuleCandidate candidate = new ModuleCandidate();
+                    sDirectory(f, candidate);
+                    getCandidates().add(candidate);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    static void sDirectory(File file, ModuleCandidate candidate) throws IOException {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                sSubDirectory(file, f, candidate);
+            }
+        }
+    }
+
+    static void sSubDirectory(File main, File dig, ModuleCandidate candidate) {
+        if (dig.isDirectory()) {
+            File[] files = dig.listFiles();
+            if (files != null)
+                for (File f : files) {
+                    sSubDirectory(main, f, candidate);
+                }
+        } else if (classFile.matcher(dig.getName()).matches()) {
+            Path pathCurrent = Paths.get(dig.getAbsolutePath());
+            Path pathMain = Paths.get(main.getAbsolutePath());
+            Path relative = pathMain.relativize(pathCurrent);
+            candidate.addClassEntry(relative.toString());
+        }
+    }
 
     /**
      * Load a *jar file
