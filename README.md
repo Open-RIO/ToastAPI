@@ -9,12 +9,12 @@ Toast is an API designed for the RoboRIO and teams competing in the FIRST Roboti
 Toast is modular, and is designed with a core. This core is loaded no matter what and contains essential tools such as Logging, Crash Handling and of course, Module Loading. Modules are code that use Toast and WPILIb as a base API and can be loaded/unloaded at will. These are stored in .jar files much like any other program and are loaded at Runtime. This allows for an extremely modular workflow in Toast.  
 
 Teams create their own Module to control their robot, but might choose to load other modules as well, such as a WebUI, Autonomous Recorder or even Vision Tracking. Modules can be optional, or depend on each other. This allows for the FIRST community to share their code and creations on a whole new level. A brief visual representation of how Toast loads and organized modules is given below:
-![The 'pipeline' of how Toast Modules work](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/Pipeline.png)
+![The 'pipeline' of how Toast Modules work](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/resources/Pipeline.png)
 
 ## Simulation
 Simulation is part of the Toast Core, and is designed for people working in Development Environments to easily test their code instantly, instead of waiting for the code to deploy to the robot and waiting again for it to restart. Toast will dynamically patch WPILib classes at Runtime if running in a Developement Environment and allow for all the Inputs, Outputs and functions of the RoboRIO to be simulated. An example of the Simulation GUI is given below:  
 
-![An early prototype of the Simulation GUI for Toast](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/SimulationGUI.png)
+![An early prototype of the Simulation GUI for Toast](https://raw.githubusercontent.com/Open-RIO/ToastAPI/master/doc/resources/SimulationGUI.png)
 
 Ports such as DIO and Analog IN gain a Number Spinner, that allows the inputs to be changed. These spinners are enabled when they are registered through WPILib (DigitalInput/AnalogInput classes). Other things, such as PWM output, can be read as their raw values. This allows for the robots IO to be completely simulated. Additionally, the Simulation GUI will have support for XBox controllers and external Joysticks. In the future, simulated controllers will be supported through an optional module.  
 
