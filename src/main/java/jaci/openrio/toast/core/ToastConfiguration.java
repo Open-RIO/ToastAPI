@@ -34,6 +34,9 @@ public class ToastConfiguration {
         LOGGER_DELEGATE_PASSWORD("delegate.logger.password", "", "The password to use for the Logger delegate"),
         LOGGER_DELEGATE_ALGORITHM("delegate.logger.algorithm", "SHA256", "The algorithm used to hash the Logger delegate password with. Default: SHA256, Options: [SHA1, MD5, SHA256]"),
 
+        OPTIMIZATION_GC("optimization.gc.enabled", false, "Should Toast regularly perform System Garbage Collection every 'optimization.gc.time' seconds? This allows the RAM Heap Space to be freed more regularly, but at the cost of a little bit of performance every GC cycle. This may or may not change performance for RAM-hungry applications"),
+        OPTIMIZATION_GC_TIME("optimization.gc.time", 30, "The time per Garbage Collection cycle"),
+
         JET_FUEL("jet.fuel", "Steel Beams", "JET FUEL CAN'T MELT STEEL BEAMS"),
         ;
 

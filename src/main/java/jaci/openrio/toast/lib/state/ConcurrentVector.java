@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib.state;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -12,20 +13,26 @@ import java.util.Vector;
  *
  * @author Jaci
  */
-public class ConcurrentVector<E> extends Vector<E> {
+public class ConcurrentVector<E> extends ArrayList<E> {
 
-    Vector<E> joinQueue = new Vector<E>();
-    Vector<E> removeQueue = new Vector<E>();
+    ArrayList<E> joinQueue = new ArrayList<E>();
+    ArrayList<E> removeQueue = new ArrayList<E>();
+
+    boolean changed = false;
 
     public void addConcurrent(E element) {
         joinQueue.add(element);
+        changed = true;
     }
 
     public void removeConcurrent(E element) {
         removeQueue.add(element);
+        changed = true;
     }
 
-    public synchronized void tick() {
+    public void tick() {
+        if (!changed) return;
+
         Iterator<E> joinIt = joinQueue.iterator();
         while (joinIt.hasNext()) {
             this.add(joinIt.next());
@@ -37,6 +44,9 @@ public class ConcurrentVector<E> extends Vector<E> {
             this.remove(removeIt.next());
             removeIt.remove();
         }
+        changed = false;
+        removeIt = null;
+        joinIt = null;
     }
 
 }

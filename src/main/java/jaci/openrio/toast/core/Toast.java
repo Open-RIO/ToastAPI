@@ -8,6 +8,8 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.core.thread.Heartbeat;
+import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
@@ -103,12 +105,31 @@ public class Toast extends RobotBase {
             GroovyLoader.start();
 
             SocketManager.launch();
+
+            if (ToastConfiguration.Property.OPTIMIZATION_GC.asBoolean()) {
+                registerGC(ToastConfiguration.Property.OPTIMIZATION_GC_TIME.asDouble());
+            }
+
             LoadPhase.COMPLETE.transition();
             ToastConfiguration.jetfuel();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
+    }
+
+    void registerGC(double time) {
+        Heartbeat.add(new HeartbeatListener() {
+            int count = 0;
+            @Override
+            public void onHeartbeat(int skipped) {
+                count++;
+                if (count >= 10 * time) {
+                    System.gc();
+                    count = 0;
+                }
+            }
+        });
     }
 
     public void shutdownSafely() {
