@@ -8,6 +8,7 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
@@ -118,7 +119,7 @@ public class Toast extends RobotBase {
         }
     }
 
-    void registerGC(double time) {
+    void registerGC(final double time) {
         Heartbeat.add(new HeartbeatListener() {
             int count = 0;
             @Override
@@ -135,12 +136,14 @@ public class Toast extends RobotBase {
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
         ToastThreadPool.INSTANCE.finish();
+        MotorRegistry.stopAll();
         System.exit(0);
     }
 
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
         ToastThreadPool.INSTANCE.getService().shutdownNow();
+        MotorRegistry.stopAll();
         System.exit(-1);
     }
 

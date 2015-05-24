@@ -49,7 +49,7 @@ public class Heartbeat implements Runnable {
                     if (consecutive < 3) {
                         log().warn(String.format("Heartbeat skipped %s beats, (took %sms of max %sms)", skipped_beats, tick_time, heart_rate));
                     } else if (consecutive == 3) {
-                        log().warn(String.format("Too many consecutive skipped Heartbeats, suppressing log."));
+                        log().warn("Too many consecutive skipped Heartbeats, suppressing log.");
                     }
                     Thread.sleep(tick_time % heart_rate);
                 }
