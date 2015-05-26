@@ -5,6 +5,8 @@ Dir Mappings
   - Used in the Toast Deployment Utility, contains the gradle bindings and shell scripts
 - doc
   - Contains documentation resources
+- examples
+  - Basic examples without the wrapping gradle files or java projects. Kind of like a 'quick reference'.
 - manuals
   - Contains things like Delegate Mappings and such
 - patches

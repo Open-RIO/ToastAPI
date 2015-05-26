@@ -1,6 +1,7 @@
 package jaci.openrio.toast.lib.module;
 
 import jaci.openrio.toast.core.StateTracker;
+import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
 
 /**
@@ -22,5 +23,7 @@ public abstract class ToastStateModule extends ToastModule implements StateListe
         StateTracker.addTicker(this);
         StateTracker.addTransition(this);
     }
+
+    public void transitionState(RobotState state, RobotState oldState) {}
 
 }
