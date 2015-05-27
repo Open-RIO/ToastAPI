@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.command;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
+import jaci.openrio.toast.core.command.cmd.CommandInvokeCrash;
 import jaci.openrio.toast.core.command.cmd.CommandThreadPool;
 import jaci.openrio.toast.core.command.cmd.CommandUSB;
 
@@ -35,6 +36,7 @@ public class CommandBus {
         registerCommand(new CommandGroovyScript());
         registerCommand(new CommandUSB());
         registerCommand(new CommandThreadPool());
+        registerCommand(new CommandInvokeCrash());
     }
 
     /**

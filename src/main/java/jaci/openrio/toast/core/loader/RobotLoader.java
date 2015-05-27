@@ -100,6 +100,8 @@ public class RobotLoader {
                     ModuleCandidate candidate = new ModuleCandidate();
                     sDirectory(f, candidate);
                     getCandidates().add(candidate);
+                } else if (EnvJars.isLoadable(f)) {
+                    sJarFile(f, false);
                 }
             } catch (Exception e) {
             }
@@ -133,7 +135,7 @@ public class RobotLoader {
     /**
      * Load a *jar file
      */
-    static void sJarFile(File file) throws IOException {
+    static void sJarFile(File file, boolean newDep) throws IOException {
         JarFile jar = new JarFile(file);
         ModuleCandidate container = new ModuleCandidate();
 
@@ -165,7 +167,8 @@ public class RobotLoader {
             }
 
             getCandidates().add(container);
-            addURL(file.toURI().toURL());
+            if (newDep)
+                addURL(file.toURI().toURL());
         }
     }
 
@@ -217,7 +220,7 @@ public class RobotLoader {
         if (files != null)
             for (File file : files) {
                 try {
-                    sJarFile(file);
+                    sJarFile(file, true);
                 } catch (Exception e) {
                 }
             }
