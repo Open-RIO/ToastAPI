@@ -25,7 +25,7 @@ public class ToastConfiguration {
     }
 
     public static enum Property {
-        THREAD_POOL_SIZE("threading.pool_size", 2, "The amount of threads in the Thread Pool. The more threads, the more concurrent operations. This should be kept at 2 for most cases, but can be bumped up if required."),
+        THREAD_POOL_SIZE("threading.pool_size", 4, "The amount of threads in the Thread Pool. The more threads, the more concurrent operations. This should be kept at 4 for most cases, but can be bumped up if required."),
         THREADED_LOADING("experimental.threaded_loading", false, "Should module loading be threaded? This has the advantage of speeding up loading times, but may be unstable for modules which aren't properly configured for concurrency."),
         //THREADED_TICKING("experimental.threaded_ticking", false, "Should ticking by the StateTracker (autonomous, teleop, test, disabled, etc), be Threaded for each listener? This makes ticking run quickly and concurrently, but may be unstable for modules that aren't properly configured for concurrent operations."),
 

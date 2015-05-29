@@ -6,7 +6,6 @@ import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.network.SocketManager;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.core.thread.Heartbeat;
@@ -98,8 +97,6 @@ public class Toast extends RobotBase {
             // -------- NEW PHASE -------- //
             LoadPhase.START.transition();
             log().info("Fabricating Sandwich...");
-            PDPMonitor.init();
-            StateTracker.addTicker(new ToastStateManager());
 
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
