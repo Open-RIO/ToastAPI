@@ -3,6 +3,8 @@ package jaci.openrio.toast.core.command.cmd;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.command.AbstractCommand;
+import jaci.openrio.toast.core.command.IHelpable;
+import jaci.openrio.toast.core.command.UsageException;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 
@@ -27,7 +29,7 @@ import java.nio.file.StandardCopyOption;
  *
  * @author Jaci
  */
-public class CommandUSB extends AbstractCommand {
+public class CommandUSB extends AbstractCommand implements IHelpable {
     @Override
     public String getCommandName() {
         return "usb";
@@ -87,7 +89,8 @@ public class CommandUSB extends AbstractCommand {
     }
 
     private void usage() {
-        Toast.log().warn("Usage: usb <generate|dump|load> [drive_name]");
+        //Toast.log().warn("Usage: usb <generate|dump|load> [drive_name]");
+        throw new UsageException("usb <generate|dump|load> [drive_name]");
     }
 
     private void copyDirectory(File source, File dest) throws IOException {
@@ -114,4 +117,11 @@ public class CommandUSB extends AbstractCommand {
         inputStream.close();
     }
 
+    @Override
+    public String getHelp() {
+        return "Used for dealing with USB Mass Storage devices connected to the RoboRIO. Args: [generate, dump, load]\n" +
+                "\tgenerate: Will generate a toast_autorun.conf file on the USB Device\n" +
+                "\tdump: Dump all Toast local files to the USB Device\n" +
+                "\tload: Copy all Toast files from the USB Device to the local RoboRIO";
+    }
 }

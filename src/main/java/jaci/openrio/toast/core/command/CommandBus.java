@@ -2,10 +2,7 @@ package jaci.openrio.toast.core.command;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
-import jaci.openrio.toast.core.command.cmd.CommandGroovyScript;
-import jaci.openrio.toast.core.command.cmd.CommandInvokeCrash;
-import jaci.openrio.toast.core.command.cmd.CommandThreadPool;
-import jaci.openrio.toast.core.command.cmd.CommandUSB;
+import jaci.openrio.toast.core.command.cmd.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,8 +19,8 @@ import java.util.Vector;
  */
 public class CommandBus {
 
-    private static List<AbstractCommand> commands = new Vector<>();
-    private static List<FuzzyCommand> parsers = new Vector<>();
+    public static List<AbstractCommand> commands = new Vector<>();
+    public static List<FuzzyCommand> parsers = new Vector<>();
 
     public static void init() {
         if (ToastBootstrap.isSimulation)
@@ -37,6 +34,8 @@ public class CommandBus {
         registerCommand(new CommandUSB());
         registerCommand(new CommandThreadPool());
         registerCommand(new CommandInvokeCrash());
+        registerCommand(new CommandList());
+        registerCommand(new CommandHelp());
     }
 
     /**
@@ -56,18 +55,46 @@ public class CommandBus {
         }
 
         inCommand = true;
+        boolean commandFound = false;
         String[] split = message.split(" ");
         for (AbstractCommand command : commands) {
-            if (split[0].equals(command.getCommandName())) {
-                String[] newSplit = new String[split.length - 1];
-                System.arraycopy(split, 1, newSplit, 0, split.length-1);
-                command.invokeCommand(newSplit.length, newSplit, message);
+            boolean alias = false;
+            String[] aliases = command.getAlias();
+            if (aliases != null) {
+                for (String a : aliases)
+                    if (a.equals(split[0])) alias = true;
+            }
+            if (split[0].equals(command.getCommandName()) || alias) {
+                try {
+                    String[] newSplit = new String[split.length - 1];
+                    System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+                    command.invokeCommand(newSplit.length, newSplit, message);
+                } catch (UsageException e) {
+                    Toast.log().warn(e.getMessage());
+                } catch (Exception e) {
+                    Toast.log().error("Error while executing command: " + e);
+                    Toast.log().exception(e);
+                }
+                commandFound = true;
             }
         }
 
         for (FuzzyCommand command : parsers) {
-            if (command.shouldInvoke(message))
-                command.invokeCommand(message);
+            if (command.shouldInvoke(message)) {
+                try {
+                    command.invokeCommand(message);
+                } catch (UsageException e) {
+                    Toast.log().warn(e.getMessage());
+                } catch (Exception e) {
+                    Toast.log().error("Error while executing command: " + e);
+                    Toast.log().exception(e);
+                }
+                commandFound = true;
+            }
+        }
+
+        if (!commandFound) {
+            Toast.log().warn("Command not found");
         }
         inCommand = false;
     }

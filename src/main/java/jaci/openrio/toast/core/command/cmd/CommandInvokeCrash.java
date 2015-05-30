@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.command.cmd;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.command.AbstractCommand;
+import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 
 /**
@@ -9,7 +10,7 @@ import jaci.openrio.toast.lib.crash.CrashHandler;
  *
  * @author Jaci
  */
-public class CommandInvokeCrash extends AbstractCommand {
+public class CommandInvokeCrash extends AbstractCommand implements IHelpable {
     @Override
     public String getCommandName() {
         return "crash";
@@ -19,5 +20,10 @@ public class CommandInvokeCrash extends AbstractCommand {
     public void invokeCommand(int argLength, String[] args, String command) {
         Toast.log().error("Goodbye cruel world!");
         CrashHandler.handle(new Exception("Invoked Debug Crash"));
+    }
+
+    @Override
+    public String getHelp() {
+        return "Invokes a debugging crash";
     }
 }

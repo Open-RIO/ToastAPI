@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.command.FuzzyCommand;
+import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 
@@ -17,7 +18,7 @@ import jaci.openrio.toast.core.thread.ToastThreadPool;
  *
  * @author Jaci
  */
-public class CommandGroovyScript extends FuzzyCommand {
+public class CommandGroovyScript extends FuzzyCommand implements IHelpable {
     @Override
     public boolean shouldInvoke(String message) {
         return message.startsWith("script ") || message.startsWith("script -c");
@@ -46,4 +47,13 @@ public class CommandGroovyScript extends FuzzyCommand {
         else shell.evaluate(groovy);
     }
 
+    @Override
+    public String getCommandName() {
+        return "script";
+    }
+
+    @Override
+    public String getHelp() {
+        return "Executes a groovy script on-the-fly. Run with -c to execute concurrently. Example: \"script -c println 'Hello World'\"";
+    }
 }
