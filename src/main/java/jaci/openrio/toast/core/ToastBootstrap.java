@@ -54,8 +54,11 @@ public class ToastBootstrap {
 
     public static long startTimeNS;
     public static long startTimeMS;
+    public static long endTimeMS;
 
     public static void main(String[] args) {
+        startTimeNS = System.nanoTime();
+        startTimeMS = System.currentTimeMillis();
         LoadPhase.BOOTSTRAP.transition();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -137,9 +140,6 @@ public class ToastBootstrap {
 
         ClassPatcher classLoader = new ClassPatcher();
         classLoader.identifyPatches(isSimulation);
-
-        startTimeNS = System.nanoTime();
-        startTimeMS = System.currentTimeMillis();
 
         if (isSimulation && !isVerification) {
             SimulationGUI.main(args);

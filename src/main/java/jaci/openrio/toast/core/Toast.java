@@ -81,7 +81,6 @@ public class Toast extends RobotBase {
             USBMassStorage.load();
             RobotLoader.prestart();
             GroovyLoader.prestart();
-            log().info("Total Preparation Time: " + (double)(System.currentTimeMillis() - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -110,6 +109,8 @@ public class Toast extends RobotBase {
 
             LoadPhase.COMPLETE.transition();
             ToastConfiguration.jetfuel();
+            ToastBootstrap.endTimeMS = System.currentTimeMillis();
+            log().info("Total Initiation Time: " + (double)(ToastBootstrap.endTimeMS - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
