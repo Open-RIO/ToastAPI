@@ -47,7 +47,11 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
                     while (true)
                         CommandBus.parseMessage(reader.readLine());
 
-                } catch (Throwable e) { }
+                } catch (Throwable e) {
+                    try {
+                        clientSocket.close();           // Close the socket in case it hasn't been already
+                    } catch (Exception ignored) {}
+                }
             }
         }.start();
     }
