@@ -63,7 +63,10 @@ public class ModuleContainer {
                     if (branch.isAnnotationPresent(Branch.class)) {
                         for (Branch dep : (Branch[]) branch.getAnnotationsByType(Branch.class)) {
                             if (ModuleManager.moduleExists(dep.dependency()) || RobotLoader.classExists(dep.dependency())) {
-                                branch.getMethod(dep.method()).invoke(null);
+                                if (dep.immediate())
+                                    branch.getMethod(dep.method()).invoke(null);
+                                else
+                                    RobotLoader.queuedPrestart.add(branch.getMethod(dep.method()));
                             }
                         }
                     }

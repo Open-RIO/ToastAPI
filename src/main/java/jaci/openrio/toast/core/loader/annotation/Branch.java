@@ -36,4 +36,10 @@ public @interface Branch {
      * method should take no arguments.
      */
     String method();
+
+    /**
+     * Should the method be immediately executed? If true, the method won't be hit at prestart, but will, however, be executed
+     * as soon as the annotation is constructed
+     */
+    boolean immediate() default false;
 }
