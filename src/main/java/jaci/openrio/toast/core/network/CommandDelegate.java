@@ -44,8 +44,17 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
                 this.setName("CommandDelegate");
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    while (true)
-                        CommandBus.parseMessage(reader.readLine());
+                    while (true) {
+                        String line = reader.readLine();
+                        if (line != null)
+                            CommandBus.parseMessage(line);
+                        else {
+                            try {
+                                clientSocket.close();
+                            } catch (Exception e) {}
+                            break;
+                        }
+                    }
                 } catch (Throwable e) {
                     Toast.log().error("Could not read Command Client: ");
                 }
