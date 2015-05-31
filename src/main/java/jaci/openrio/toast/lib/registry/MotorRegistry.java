@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class MotorRegistry {
 
-    private static List<SpeedController> motors = new LinkedList<>();
+    public static List<SpeedController> motors = new LinkedList<>();
 
     public static void register(Object motor) {
         if (motor instanceof SpeedController)

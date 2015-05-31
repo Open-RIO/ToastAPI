@@ -38,7 +38,7 @@ public class MotorSafetyHelper {
         m_stopTime = Timer.getFPGATimestamp();
         m_nextHelper = m_headHelper;
         m_headHelper = this;
-        MotorRegistry.register(safeObject);
+        MotorRegistry.register((Object)safeObject);
     }
 
     /**
