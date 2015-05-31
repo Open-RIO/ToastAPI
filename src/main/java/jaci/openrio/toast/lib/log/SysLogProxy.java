@@ -26,31 +26,36 @@ public class SysLogProxy {
     public static File recentOut;
     public static File recentErr;
 
+    static boolean init = false;
+
     public static void init() {
         try {
-            logDir = new File(ToastBootstrap.toastHome, "log");
-            logDir.mkdirs();
+            if (!init) {
+                init = true;
+                logDir = new File(ToastBootstrap.toastHome, "log");
+                logDir.mkdirs();
 
-            recentOut = new File(logDir, "recent.txt");
-            recentErr = new File(logDir, "recentErr.txt");
+                recentOut = new File(logDir, "recent.txt");
+                recentErr = new File(logDir, "recentErr.txt");
 
-            if (recentOut.exists())
-                recentOut.delete();
+                if (recentOut.exists())
+                    recentOut.delete();
 
-            if (recentErr.exists())
-                recentErr.delete();
+                if (recentErr.exists())
+                    recentErr.delete();
 
-            fileOut = new FileOutputStream(recentOut);
-            fileErr = new FileOutputStream(recentErr);
+                fileOut = new FileOutputStream(recentOut);
+                fileErr = new FileOutputStream(recentErr);
 
-            sysOut = System.out;
-            sysErr = System.err;
+                sysOut = System.out;
+                sysErr = System.err;
 
-            outStream = new PrintStream(new SplitStream(fileOut, sysOut));
-            errStream = new PrintStream(new SplitStream(fileOut, sysErr, fileErr));
+                outStream = new PrintStream(new SplitStream(fileOut, sysOut));
+                errStream = new PrintStream(new SplitStream(fileOut, sysErr, fileErr));
 
-            System.setOut(outStream);
-            System.setErr(errStream);
+                System.setOut(outStream);
+                System.setErr(errStream);
+            }
         } catch (Exception e) {
             Toast.log().warn("Could not split System Outputs to File");
             Toast.log().exception(e);

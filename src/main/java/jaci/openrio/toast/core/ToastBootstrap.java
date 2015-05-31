@@ -104,7 +104,6 @@ public class ToastBootstrap {
             toastHome = new File("toast/").getAbsoluteFile();
             robotHome = new File("./").getAbsoluteFile();
         }
-
         toastHome.mkdirs();
 
         SysLogProxy.init();

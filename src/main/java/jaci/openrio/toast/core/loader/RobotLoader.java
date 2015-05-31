@@ -42,7 +42,7 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
  */
 public class RobotLoader {
 
-    static Logger log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
+    static Logger log;
 
     static String[] discoveryDirs;
 
@@ -79,6 +79,7 @@ public class RobotLoader {
     }
 
     public static void preinit() {
+        log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
         if (search) {
             loadDevEnv();
         }
