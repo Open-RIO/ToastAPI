@@ -4,21 +4,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * The child classes of {@link jaci.openrio.toast.core.loader.annotation.Tree}
- *
  * Branches are classes that are loaded as optionals. Branches specify a Module name or a Class name. If that
  * module or class exists, the Branch class is loaded and the method defined called. If not, the branch is ignored.
  *
  * This allows for modules to have 'optional' dependencies. Classes can have multiple Branch annotations on them, allowing
  * for one class to be responsible for all optional loading.
  *
- * This annotation, Branch, is placed on your 'Branch' classes, classes that are optionally loaded depending on whether a module
- * or class is present or not. Your class can have multiple of these annotations.
+ * This annotation, Branch, is placed on your Main Module class. If the dependency() class or module exists, then the branch()
+ * class is invoked with the method() method.
  *
  * @author Jaci
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Branch {
+
+    /**
+     * The fully quantified class name of the branch class to use in loading.
+     *
+     * This is the class to be loaded if the dependency() argument is met
+     */
+    String branch();
 
     /**
      * Either:

@@ -3,7 +3,6 @@ package jaci.openrio.toast.core.loader.module;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.annotation.Branch;
-import jaci.openrio.toast.core.loader.annotation.Tree;
 import jaci.openrio.toast.lib.module.ToastModule;
 
 /**
@@ -11,7 +10,7 @@ import jaci.openrio.toast.lib.module.ToastModule;
  * .class object for a module if it is a subtype of {@link jaci.openrio.toast.lib.module.ToastModule} and will be instantiated
  * during the {@link #construct} phase and then the module is ready to be handed
  * off to Toast to be used.
- * <p>
+ * <p/>
  * Keep in mind this container doesn't subclass the {@link jaci.openrio.toast.lib.module.ToastModule} class, but the
  * underlying module instance can be accessed through {@link #getModule}
  *
@@ -55,20 +54,16 @@ public class ModuleContainer {
     }
 
     public void resolve_branches() {
-        if (moduleClass.isAnnotationPresent(Tree.class)) {
-            for (Tree tree : moduleClass.getAnnotationsByType(Tree.class)) {
-                String clazz = tree.branch();
+        if (moduleClass.isAnnotationPresent(Branch.class)) {
+            for (Branch br : moduleClass.getAnnotationsByType(Branch.class)) {
+                String clazz = br.branch();
                 try {
-                    Class branch = Class.forName(clazz);
-                    if (branch.isAnnotationPresent(Branch.class)) {
-                        for (Branch dep : (Branch[]) branch.getAnnotationsByType(Branch.class)) {
-                            if (ModuleManager.moduleExists(dep.dependency()) || RobotLoader.classExists(dep.dependency())) {
-                                if (dep.immediate())
-                                    branch.getMethod(dep.method()).invoke(null);
-                                else
-                                    RobotLoader.queuedPrestart.add(branch.getMethod(dep.method()));
-                            }
-                        }
+                    if (ModuleManager.moduleExists(br.dependency()) || RobotLoader.classExists(br.dependency())) {
+                        Class branch = Class.forName(clazz);
+                        if (br.immediate())
+                            branch.getMethod(br.method()).invoke(null);
+                        else
+                            RobotLoader.queuedPrestart.add(branch.getMethod(br.method()));
                     }
                 } catch (Exception e) {
                     Toast.log().error("Could not resolve branch: " + clazz + " for module: " + getName());
@@ -107,7 +102,7 @@ public class ModuleContainer {
 
     /**
      * Get the {@link ModuleStorage} object for this container.
-     * <p>
+     * <p/>
      * ModuleStorage is a means by which Module authors can store data and have it accessible to other
      * modules. This is a black-board type implementation, where objects are stored by identifier.
      */
