@@ -1,7 +1,7 @@
 package jaci.openrio.toast.core.loader.simulation;
 
-import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;
+import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
 
 /**

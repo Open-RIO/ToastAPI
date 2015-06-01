@@ -3,7 +3,6 @@ package toast.examples;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.lib.module.ToastStateModule;
 import jaci.openrio.toast.lib.state.RobotState;
 

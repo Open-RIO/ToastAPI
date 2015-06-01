@@ -3,9 +3,7 @@ package jaci.openrio.toast.core.loader;
 import jaci.openrio.toast.core.Environment;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

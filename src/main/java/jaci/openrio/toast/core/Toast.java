@@ -7,13 +7,13 @@ import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.network.SocketManager;
-import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.util.Random;

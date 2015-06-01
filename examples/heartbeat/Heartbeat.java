@@ -1,9 +1,9 @@
 package toast.examples;
 
-import jaci.openrio.toast.core.thread.HeartbeatListener;
-import jaci.openrio.toast.lib.module.ToastModule;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.thread.Heartbeat;
+import jaci.openrio.toast.core.thread.HeartbeatListener;
+import jaci.openrio.toast.lib.module.ToastModule;
 
 public class HeartbeatModule extends ToastModule {
 

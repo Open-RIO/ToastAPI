@@ -2,7 +2,6 @@ package jaci.openrio.toast.lib.state;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Why the extra Join and Remove Queues you ask? Well, if a module that is currently in a ticking or transition state wants

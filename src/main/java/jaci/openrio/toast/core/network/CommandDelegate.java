@@ -2,12 +2,10 @@ package jaci.openrio.toast.core.network;
 
 import jaci.openrio.delegate.BoundDelegate;
 import jaci.openrio.delegate.Security;
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.command.CommandBus;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 

@@ -1,6 +1,5 @@
 package jaci.openrio.toast.lib.registry;
 
-import edu.wpi.first.wpilibj.MotorSafety;
 import edu.wpi.first.wpilibj.SpeedController;
 import jaci.openrio.toast.core.Toast;
 

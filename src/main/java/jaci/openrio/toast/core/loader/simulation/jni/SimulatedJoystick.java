@@ -1,7 +1,5 @@
 package jaci.openrio.toast.core.loader.simulation.jni;
 
-import jaci.openrio.toast.core.Toast;
-
 /**
  * An instance of a Simulated Joystick Controller. This is used to simulate joystick control in a simulation environment,
  * as the default FRC driver station does not work in Simulated Environments.

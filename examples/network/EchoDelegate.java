@@ -2,7 +2,6 @@ package toast.examples;
 
 import jaci.openrio.delegate.BoundDelegate;
 import jaci.openrio.delegate.Security;
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.network.SocketManager;
 
 import java.io.BufferedReader;
