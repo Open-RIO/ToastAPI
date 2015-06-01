@@ -26,25 +26,30 @@ public class CommandGroovyScript extends FuzzyCommand implements IHelpable {
 
     @Override
     public void invokeCommand(String message) {
-        String groovy;
-        boolean concurrent = false;
-        if (message.startsWith("script -c")) {
-            groovy = message.replaceFirst("script -c", "");
-            concurrent = true;
-        } else groovy = message.replaceFirst("script", "");
+        try {
+            String groovy;
+            boolean concurrent = false;
+            if (message.startsWith("script -c")) {
+                groovy = message.replaceFirst("script -c", "");
+                concurrent = true;
+            } else groovy = message.replaceFirst("script", "");
 
-        Binding binding = new Binding();
-        binding.setVariable("_global", GlobalBlackboard.INSTANCE);
-        binding.setVariable("_toast", Toast.getToast());
-        GroovyShell shell = new GroovyShell(binding);
-        if (concurrent)
-            ToastThreadPool.INSTANCE.addWorker(new Runnable() {
-                @Override
-                public void run() {
-                    shell.evaluate(groovy);
-                }
-            });
-        else shell.evaluate(groovy);
+            Binding binding = new Binding();
+            binding.setVariable("_global", GlobalBlackboard.INSTANCE);
+            binding.setVariable("_toast", Toast.getToast());
+            GroovyShell shell = new GroovyShell(binding);
+            if (concurrent)
+                ToastThreadPool.INSTANCE.addWorker(new Runnable() {
+                    @Override
+                    public void run() {
+                        shell.evaluate(groovy);
+                    }
+                });
+            else shell.evaluate(groovy);
+        } catch (Exception e) {
+            Toast.log().error("Failed to execute script");
+            Toast.log().exception(e);
+        }
     }
 
     @Override

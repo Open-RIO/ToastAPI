@@ -1,6 +1,8 @@
 package jaci.openrio.toast.lib.log;
 
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -91,12 +93,9 @@ public class Logger {
     }
 
     public void exception(Throwable e) {
-        String s = "";
-        s += e.toString() + "\n";
-        for (StackTraceElement element : e.getStackTrace())
-            s += "\tat " + element + "\n";
-
-        error(s);
+        StringWriter writer = new StringWriter();
+        e.printStackTrace(new PrintWriter(writer));
+        error(writer.toString());
     }
 
     /**
