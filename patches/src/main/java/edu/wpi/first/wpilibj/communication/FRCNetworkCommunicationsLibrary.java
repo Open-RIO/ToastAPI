@@ -2,6 +2,7 @@ package edu.wpi.first.wpilibj.communication;
 
 import edu.wpi.first.wpilibj.hal.JNIWrapper;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
+import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
 
 import java.nio.ByteBuffer;
@@ -184,13 +185,15 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 	public static int kMaxJoystickAxes = 12;
 	public static int kMaxJoystickPOVs = 12;
 	public static short[] HALGetJoystickAxes(byte joystickNum) {
-		return new short[]{0, 0, 0};
+		return SimulationData.getJoystick(joystickNum).encodeAxis();
 	}
 	public static short[] HALGetJoystickPOVs(byte joystickNum) {
-		return new short[]{0, 0, 0};
+		return SimulationData.getJoystick(joystickNum).encodePOV();
 	}
 	public static int HALGetJoystickButtons(byte joystickNum, ByteBuffer count) {
-		return 12;
+		SimulatedJoystick joystick = SimulationData.getJoystick(joystickNum);
+		count.put(0, (byte) joystick.getButtons().length);
+		return joystick.encodeButtons();
 	}
 	public static int HALSetJoystickOutputs(byte joystickNum, int outputs, short leftRumble, short rightRumble) {
 		return 0;

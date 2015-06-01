@@ -1,5 +1,7 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
+import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
 
 /**
@@ -74,6 +76,19 @@ public class SimulationData {
 
     /** BUTTONS **/
     public static boolean userButtonPressed = false;
+
+    /** JOYSTICKS **/
+    public static SimulatedJoystick[] joysticks = new SimulatedJoystick[6];
+
+    public static void simulatedJoystick(int id, SimulatedJoystick stick) {
+        joysticks[id] = stick;
+    }
+
+    public static SimulatedJoystick getJoystick(int id) {
+        if (joysticks[id] == null)
+            joysticks[id] = new DummyJoystick();
+        return joysticks[id];
+    }
 
     public static RobotState currentState = RobotState.DISABLED;
 
