@@ -148,6 +148,7 @@ public class ToastBootstrap {
         // -------- NEW PHASE -------- //
         LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
+        RobotLoader.postCore();
         RobotBase.main(args);
     }
 

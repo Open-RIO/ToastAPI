@@ -305,6 +305,15 @@ public class RobotLoader {
         }
     }
 
+    public static void postCore() {
+        for (Object core : coreObjects) {
+            try {
+                core.getClass().getDeclaredMethod("postinit").invoke(core);
+            } catch (Throwable e) {
+            }
+        }
+    }
+
     static void parseClass(String clazz, ModuleCandidate candidate) {
         try {
             Class c = Class.forName(clazz);
