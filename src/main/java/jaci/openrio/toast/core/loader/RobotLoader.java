@@ -9,6 +9,7 @@ import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.module.ToastIterativeModule;
 import jaci.openrio.toast.lib.module.ToastModule;
 import jaci.openrio.toast.lib.module.ToastStateModule;
 
@@ -320,7 +321,7 @@ public class RobotLoader {
     }
 
     static boolean isNotDefault(Class clazz) {
-        return !(clazz.equals(ToastModule.class) || clazz.equals(ToastStateModule.class));
+        return !(clazz.equals(ToastModule.class) || clazz.equals(ToastStateModule.class) || clazz.equals(ToastIterativeModule.class));
     }
 
     /**
@@ -373,6 +374,7 @@ public class RobotLoader {
                 Toast.log().exception(e);
             }
         }
+        queuedPrestart.clear();
     }
 
     /**
