@@ -16,8 +16,6 @@ import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 
 /**
@@ -54,8 +52,11 @@ public class ToastBootstrap {
 
     public static long startTimeNS;
     public static long startTimeMS;
+    public static long endTimeMS;
 
     public static void main(String[] args) {
+        startTimeNS = System.nanoTime();
+        startTimeMS = System.currentTimeMillis();
         LoadPhase.BOOTSTRAP.transition();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -101,7 +102,6 @@ public class ToastBootstrap {
             toastHome = new File("toast/").getAbsoluteFile();
             robotHome = new File("./").getAbsoluteFile();
         }
-
         toastHome.mkdirs();
 
         SysLogProxy.init();
@@ -138,9 +138,6 @@ public class ToastBootstrap {
         ClassPatcher classLoader = new ClassPatcher();
         classLoader.identifyPatches(isSimulation);
 
-        startTimeNS = System.nanoTime();
-        startTimeMS = System.currentTimeMillis();
-
         if (isSimulation && !isVerification) {
             SimulationGUI.main(args);
         }
@@ -151,6 +148,7 @@ public class ToastBootstrap {
         // -------- NEW PHASE -------- //
         LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
+        RobotLoader.postCore();
         RobotBase.main(args);
     }
 

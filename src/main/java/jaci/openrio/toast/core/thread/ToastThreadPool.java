@@ -68,7 +68,7 @@ public class ToastThreadPool {
      * @param callable  The Callable Instance to trigger when running. This can be an anonymous member, which is the intended
      *                  implementation, although you can extend this interface and it will work just as well.
      */
-    public Future addWorker(Callable callable) {
+    public <T> Future<T> addWorker(Callable<T> callable) {
         return threadPool.submit(callable);
     }
 

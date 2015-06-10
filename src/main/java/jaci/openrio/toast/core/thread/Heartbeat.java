@@ -5,10 +5,10 @@ import jaci.openrio.toast.lib.state.ConcurrentVector;
 
 /**
  * The 'Heartbeat' is a class that keeps a constant ticking routine. The timing between these routines is the same for each
- * tick, (20ms/50Hz), meaning tasks that require a scheduled timer may find this useful. Additionally, the Heartbeat will keep track
- * of the time required for each 'beat'. If a beat takes longer than the Heart Rate (20ms), the heartbeat will 'skip', and will
+ * tick, (100ms/50Hz), meaning tasks that require a scheduled timer may find this useful. Additionally, the Heartbeat will keep track
+ * of the time required for each 'beat'. If a beat takes longer than the Heart Rate (100ms), the heartbeat will 'skip', and will
  * pass an argument to all the listeners that contains the number of beat(s) that were skipped. The difference in time between
- * each beat is therefore guaranteed to be a modulus of the Heart Rate (20ms).
+ * each beat is therefore guaranteed to be a modulus of the Heart Rate (100ms).
  *
  * Additionally, the Heartbeat Thread will only be alive if there are Listeners in the array. This means the Heartbeat will
  * not tick if there is nothing to execute, making sure not to waste system resources.
@@ -18,7 +18,7 @@ import jaci.openrio.toast.lib.state.ConcurrentVector;
 public class Heartbeat implements Runnable {
 
     static ConcurrentVector<HeartbeatListener> aorta = new ConcurrentVector<>();
-    static long heart_rate = 20;
+    static long heart_rate = 100;
     static Logger nervous_system;
     int skipped_beats;
     static boolean running;
@@ -49,7 +49,7 @@ public class Heartbeat implements Runnable {
                     if (consecutive < 3) {
                         log().warn(String.format("Heartbeat skipped %s beats, (took %sms of max %sms)", skipped_beats, tick_time, heart_rate));
                     } else if (consecutive == 3) {
-                        log().warn(String.format("Too many consecutive skipped Heartbeats, suppressing log."));
+                        log().warn("Too many consecutive skipped Heartbeats, suppressing log.");
                     }
                     Thread.sleep(tick_time % heart_rate);
                 }

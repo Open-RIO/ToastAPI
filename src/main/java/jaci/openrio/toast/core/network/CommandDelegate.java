@@ -2,12 +2,10 @@ package jaci.openrio.toast.core.network;
 
 import jaci.openrio.delegate.BoundDelegate;
 import jaci.openrio.delegate.Security;
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.command.CommandBus;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
@@ -46,9 +44,11 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     while (true)
                         CommandBus.parseMessage(reader.readLine());
-                } catch (IOException e) {
-                    Toast.log().error("Could not read Command Client: ");
-                    Toast.log().exception(e);
+
+                } catch (Throwable e) {
+                    try {
+                        clientSocket.close();           // Close the socket in case it hasn't been already
+                    } catch (Exception ignored) {}
                 }
             }
         }.start();

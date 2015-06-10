@@ -28,7 +28,7 @@ public class ClassPatcher extends URLClassLoader {
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         String simulation = "assets/toast/patches/" + name.replace(".", "/") + ".sim";
-        String patch = "assets/toast/patches/" + name.replace(".", "/" + ".pat");
+        String patch = "assets/toast/patches/" + name.replace(".", "/") + ".pat";
         InputStream stream = null;
         if (this.getResource(simulation) != null)
             stream = this.getResourceAsStream(simulation);

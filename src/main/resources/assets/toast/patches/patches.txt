@@ -13,3 +13,4 @@ edu/wpi/first/wpilibj/hal/InterruptJNI.sim
 edu/wpi/first/wpilibj/hal/PDPJNI.sim
 edu/wpi/first/wpilibj/hal/PowerJNI.sim
 edu/wpi/first/wpilibj/hal/PWMJNI.sim
+edu/wpi/first/wpilibj/MotorSafetyHelper.pat

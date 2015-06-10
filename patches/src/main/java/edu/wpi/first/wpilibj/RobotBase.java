@@ -25,6 +25,8 @@ import java.util.Arrays;
  * as the match proceeds. In the current implementation, the Autonomous code will run to
  * completion before the OperatorControl code could start. In the future the Autonomous code
  * might be spawned as a task, then killed at the end of the Autonomous period.
+ *
+ * -- TOAST SIMULATION PATCH--
  */
 public abstract class RobotBase {
 	/**

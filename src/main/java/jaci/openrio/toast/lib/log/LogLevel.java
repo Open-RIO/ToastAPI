@@ -11,10 +11,12 @@ import java.io.PrintStream;
 public class LogLevel {
 
     String name;
-    PrintStream stream = System.out;
+    PrintStream stream;
 
     public LogLevel(String name) {
+        SysLogProxy.init();
         this.name = name;
+        stream = System.out;
     }
 
     public LogLevel setName(String n) {

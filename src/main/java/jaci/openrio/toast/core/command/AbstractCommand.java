@@ -18,6 +18,11 @@ public abstract class AbstractCommand {
     public abstract String getCommandName();
 
     /**
+     * Returns the 'alias' for the command (other names)
+     */
+    public String[] getAlias() {return null;}
+
+    /**
      * Invoke the command if the name matches the one to be triggered
      * @param argLength The amount of arguments in the 'args' param
      * @param args The arguments the command was invoked with. This can be empty if
@@ -26,5 +31,4 @@ public abstract class AbstractCommand {
      * @param command The full command message
      */
     public abstract void invokeCommand(int argLength, String[] args, String command);
-
 }

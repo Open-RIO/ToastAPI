@@ -6,12 +6,14 @@ import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.monitoring.power.PDPMonitor;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.core.thread.Heartbeat;
+import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.util.Random;
@@ -79,7 +81,6 @@ public class Toast extends RobotBase {
             USBMassStorage.load();
             RobotLoader.prestart();
             GroovyLoader.prestart();
-            log().info("Total Preparation Time: " + (double)(System.currentTimeMillis() - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -95,31 +96,52 @@ public class Toast extends RobotBase {
             // -------- NEW PHASE -------- //
             LoadPhase.START.transition();
             log().info("Fabricating Sandwich...");
-            PDPMonitor.init();
-            StateTracker.addTicker(new ToastStateManager());
 
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
             GroovyLoader.start();
 
             SocketManager.launch();
+
+            if (ToastConfiguration.Property.OPTIMIZATION_GC.asBoolean()) {
+                registerGC(ToastConfiguration.Property.OPTIMIZATION_GC_TIME.asDouble());
+            }
+
             LoadPhase.COMPLETE.transition();
             ToastConfiguration.jetfuel();
+            ToastBootstrap.endTimeMS = System.currentTimeMillis();
+            log().info("Total Initiation Time: " + (double)(ToastBootstrap.endTimeMS - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
     }
 
+    void registerGC(final double time) {
+        Heartbeat.add(new HeartbeatListener() {
+            int count = 0;
+            @Override
+            public void onHeartbeat(int skipped) {
+                count++;
+                if (count >= 10 * time) {
+                    System.gc();
+                    count = 0;
+                }
+            }
+        });
+    }
+
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
         ToastThreadPool.INSTANCE.finish();
+        MotorRegistry.stopAll();
         System.exit(0);
     }
 
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
         ToastThreadPool.INSTANCE.getService().shutdownNow();
+        MotorRegistry.stopAll();
         System.exit(-1);
     }
 
