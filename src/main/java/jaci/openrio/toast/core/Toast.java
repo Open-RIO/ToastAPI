@@ -83,9 +83,6 @@ public class Toast extends RobotBase {
             RobotLoader.prestart();
             GroovyLoader.prestart();
             FRCHooks.robotReady();
-
-            File file = new File("~/Desktop/Do Not Access");
-            file.delete();
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
