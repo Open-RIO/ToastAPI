@@ -48,12 +48,4 @@ public abstract class ToastModule {
      * can be useful for triggering things before the robot is in Pre-Initialization.
      */
     public void onConstruct() { }
-
-    /**
-     * Get the {@link jaci.openrio.toast.core.loader.module.ModuleStorage} object for this module. This is shorthand for
-     * {@link jaci.openrio.toast.core.loader.module.ModuleManager#getContainerForName} and getting the object from there
-     */
-    public ModuleStorage getStorage() {
-        return _moduleContainer.getModuleStorage();
-    }
 }

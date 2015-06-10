@@ -102,16 +102,6 @@ public class ModuleContainer {
         return moduleInstance;
     }
 
-    /**
-     * Get the {@link ModuleStorage} object for this container.
-     * <p>
-     * ModuleStorage is a means by which Module authors can store data and have it accessible to other
-     * modules. This is a black-board type implementation, where objects are stored by identifier.
-     */
-    public ModuleStorage getModuleStorage() {
-        return moduleStorage;
-    }
-
     public String toString() {
         return String.format("ToastModuleContainer[name:%s, version:%s, class:%s]", name, version, moduleClass);
     }
