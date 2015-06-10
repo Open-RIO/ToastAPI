@@ -24,13 +24,14 @@ public class ToastSecurityManager extends SecurityManager {
     public static ToastSecurityManager INSTANCE;
 
     public static void init() {
-        INSTANCE = new ToastSecurityManager();
-        System.setSecurityManager(INSTANCE);
+        if (SecurityPolicy.get() != SecurityPolicy.NONE) {
+            INSTANCE = new ToastSecurityManager();
+            System.setSecurityManager(INSTANCE);
+        }
     }
 
     @Override
     public void checkPermission(Permission perm) {
-        if (SecurityPolicy.get() == SecurityPolicy.NONE) return;        //Don't bother wasting CPU Time
         if (perm instanceof FilePermission) {
             FilePermission fp = (FilePermission) perm;
             h_File(fp);
@@ -57,6 +58,8 @@ public class ToastSecurityManager extends SecurityManager {
         }
     }
     private boolean isException(String filepath) {
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        if (tmpdir != null && filepath.startsWith(tmpdir)) return true;
         return exceptionFiles.matcher(filepath).matches();
     }
 
