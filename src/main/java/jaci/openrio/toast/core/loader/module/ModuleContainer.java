@@ -99,7 +99,7 @@ public class ModuleContainer {
     public ToastModule getModule() {
         return moduleInstance;
     }
-
+    
     public String toString() {
         return String.format("ToastModuleContainer[name:%s, version:%s, class:%s]", name, version, moduleClass);
     }
