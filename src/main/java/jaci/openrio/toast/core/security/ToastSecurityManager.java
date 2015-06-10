@@ -30,6 +30,7 @@ public class ToastSecurityManager extends SecurityManager {
 
     @Override
     public void checkPermission(Permission perm) {
+        if (SecurityPolicy.get() == SecurityPolicy.NONE) return;        //Don't bother wasting CPU Time
         if (perm instanceof FilePermission) {
             FilePermission fp = (FilePermission) perm;
             h_File(fp);
