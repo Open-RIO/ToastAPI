@@ -1,7 +1,6 @@
 package jaci.openrio.toast.lib.module;
 
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
-import jaci.openrio.toast.core.loader.module.ModuleStorage;
 
 /**
  * The Base class for all Toast Modules. This should be extending instead of {@link edu.wpi.first.wpilibj.RobotBase} if you wish

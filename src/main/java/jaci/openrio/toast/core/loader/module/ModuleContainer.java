@@ -24,7 +24,6 @@ public class ModuleContainer {
     String name = "{undefined}";
     String version = "{undefined}";
 
-    ModuleStorage moduleStorage;
     ModuleCandidate moduleCandidate;
 
     public ModuleContainer(Class<? extends ToastModule> moduleClass, ModuleCandidate candidate) {
@@ -48,7 +47,6 @@ public class ModuleContainer {
         name = moduleInstance.getModuleName();
         version = moduleInstance.getModuleVersion();
 
-        moduleStorage = new ModuleStorage(name);
         moduleInstance._moduleContainer = this;
         moduleInstance.onConstruct();
     }
@@ -99,7 +97,7 @@ public class ModuleContainer {
     public ToastModule getModule() {
         return moduleInstance;
     }
-    
+
     public String toString() {
         return String.format("ToastModuleContainer[name:%s, version:%s, class:%s]", name, version, moduleClass);
     }

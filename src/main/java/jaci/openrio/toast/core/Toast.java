@@ -16,6 +16,7 @@ import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
+import java.io.File;
 import java.util.Random;
 
 /**
@@ -82,6 +83,9 @@ public class Toast extends RobotBase {
             RobotLoader.prestart();
             GroovyLoader.prestart();
             FRCHooks.robotReady();
+
+            File file = new File("~/Desktop/Do Not Access");
+            file.delete();
         } catch (Exception e) {
             CrashHandler.handle(e);
         }

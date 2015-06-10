@@ -37,6 +37,8 @@ public class ToastConfiguration {
         OPTIMIZATION_GC("optimization.gc.enabled", false, "Should Toast regularly perform System Garbage Collection every 'optimization.gc.time' seconds? This allows the RAM Heap Space to be freed more regularly, but at the cost of a little bit of performance every GC cycle. This may or may not change performance for RAM-hungry applications"),
         OPTIMIZATION_GC_TIME("optimization.gc.time", 30, "The time per Garbage Collection cycle"),
 
+        SECURITY_POLICY("security.policy", "LOOSE", "The Security Policy to use with the SecurityManager. There are 3 possible values: NONE, LOOSE and STRICT. NONE will ignore any violations, LOOSE will warn in the Logger, and STRICT will deny access."),
+
         JET_FUEL("jet.fuel", "Steel Beams", "JET FUEL CAN'T MELT STEEL BEAMS"),
         ;
 

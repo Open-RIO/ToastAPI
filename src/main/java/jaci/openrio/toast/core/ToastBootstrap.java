@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
+import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.Version;
@@ -104,6 +105,7 @@ public class ToastBootstrap {
         }
         toastHome.mkdirs();
 
+        GroovyPreferences.init();
         SysLogProxy.init();
         CrashHandler.init();
 
@@ -112,6 +114,7 @@ public class ToastBootstrap {
         GlobalBlackboard.INSTANCE.put("runtime_args", args);
 
         Version.init();
+        ToastSecurityManager.init();
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_PREINIT.transition();
@@ -131,7 +134,6 @@ public class ToastBootstrap {
         // -------- NEW PHASE -------- //
         LoadPhase.PRE_INIT.transition();
         toastLogger.info("Slicing Loaf...");
-        GroovyPreferences.init();
         ToastConfiguration.init();
         ToastThreadPool.init();
 
