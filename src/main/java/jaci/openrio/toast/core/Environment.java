@@ -1,5 +1,7 @@
 package jaci.openrio.toast.core;
 
+import java.io.File;
+
 public class Environment {
 
     public static boolean isVerification() {
@@ -8,6 +10,10 @@ public class Environment {
 
     public static boolean isSimulation() {
         return ToastBootstrap.isSimulation;
+    }
+
+    public static File getHome() {
+        return ToastBootstrap.toastHome;
     }
 
     public static boolean isEmbedded() {
