@@ -44,12 +44,49 @@ public class Environment {
         return System.getProperty("java.vendor");
     }
 
+    public static OS getOS() {
+        String nm = getOS_Name();
+        for (OS os : OS.values()) {
+            if (os.equals(nm))
+                return os;
+        }
+        return OS.UNKNOWN;
+    }
+
     public static String getJava_version() {
         return System.getProperty("java.version");
     }
 
     public static String getJava_home() {
         return System.getProperty("java.home");
+    }
+
+    public static enum OS {
+        WINDOWS("Win", false),
+        MAC("Mac", true),
+        LINUX("Nux", true),
+        UNKNOWN("", false);
+
+        String m;
+        boolean u;
+
+        OS(String match, boolean isUnix) {
+            u = isUnix;
+            m = match;
+        }
+
+        public boolean isUnix() {
+            return u;
+        }
+
+        public String getMatcher() {
+            return m;
+        }
+
+        public boolean equals(String s) {
+            return s.toLowerCase().contains(m.toLowerCase());
+        }
+
     }
 
 }
