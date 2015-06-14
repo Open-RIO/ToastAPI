@@ -138,6 +138,10 @@ public class GroovyLoader {
             }
     }
 
+    /**
+     * Get a class with the given name. This is used when a Groovy File is already in the classpath and doesn't need to be
+     * loaded from an external file, and so only the class name is required to load and register the Groovy File.
+     */
     public static GroovyObject loadClassName(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class groovyClass = loader.loadClass(name);
         GroovyObject object = (GroovyObject) groovyClass.newInstance();

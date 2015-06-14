@@ -98,6 +98,10 @@ public class LoggerDelegate implements BoundDelegate.ConnectionCallback, LogHand
         }.start();
     }
 
+    /**
+     * Called when a message is logged. This is delegated to this network connection and broadcasted to
+     * all listening clients. This is directly called from the {@link Logger} class
+     */
     @Override
     public void onLog(String level, String message, String formatted, Logger logger) {
         broadcast(formatted);
