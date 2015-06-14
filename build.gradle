@@ -149,6 +149,14 @@ task externalWPI << {
   }
 }
 
+task genMetrics << {
+  javaexec {
+    workingDir = file('tools')
+    args = ["Documentation.jar", "../src/main/java"]
+    main = "-jar"
+  }
+}
+
 genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
 compileJava.dependsOn genVersion
