@@ -18,11 +18,21 @@ import java.util.Map;
  * @link Jaci
  */
 public class CrashInfoToast implements CrashInfoProvider {
+
+    /**
+     * The name of the provider
+     */
     @Override
     public String getName() {
         return "Toast";
     }
 
+    /**
+     * The same as {@link #getCrashInfo}, but is done before the crash is logged.
+     * Keep in mind this data is not appended with {@link #getName}
+     *
+     * @param t The exception encountered
+     */
     @Override
     public String getCrashInfoPre(Throwable t) {
         StringBuilder builder = new StringBuilder();
@@ -53,6 +63,11 @@ public class CrashInfoToast implements CrashInfoProvider {
         return builder.toString();
     }
 
+    /**
+     * The information to append to the crash log
+     *
+     * @param t The exception encountered
+     */
     @Override
     public List<String> getCrashInfo(Throwable t) {
         ArrayList<String> list = new ArrayList<>();

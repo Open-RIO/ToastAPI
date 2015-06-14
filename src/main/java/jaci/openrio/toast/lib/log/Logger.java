@@ -56,11 +56,19 @@ public class Logger {
         this.name = name;
     }
 
+    /**
+     * Formats the current time data of the system into the [dd/MM/yy-hh:mm:ss] format
+     */
     String getTime() {
         return dateFormat.format(new Date());
     }
 
     /* LOGGING BEGIN */
+
+    /**
+     * Log a new message on the selected printstream with the given method and level. This is where all other
+     * 'log' type methods in this class delegate to.
+     */
     private void log(String message, String level, PrintStream ps) {
         StringBuilder builder = new StringBuilder();
 
@@ -76,6 +84,10 @@ public class Logger {
             hand.onLog(level, message, ts, this);
     }
 
+    /**
+     * Get the prefix for all messages on this logger. This adds the DateTime, as well as the
+     * Thread ID and Logger Name if they are enabled in the Logger Attributes
+     */
     public String getPrefix(String level) {
         StringBuilder builder = new StringBuilder();
 
@@ -92,6 +104,11 @@ public class Logger {
         return builder.toString();
     }
 
+    /**
+     * Format and print a stack trace on the Logger Object. This calls the StackTrace directly, meaning
+     * underlying causes and other factors are included in the log. This is the equivalent of calling
+     * e.printStackTrace(), but redirecting it to the logger object.
+     */
     public void exception(Throwable e) {
         StringWriter writer = new StringWriter();
         e.printStackTrace(new PrintWriter(writer));

@@ -17,3 +17,4 @@ libs/groovy-2.4.1.jar
 releases/
 deploymentScripts/gradle/gradle/wrapper/gradle-wrapper.properties
 patches_full/gradle/libs/GradleRIO.jar
+tools/stats/

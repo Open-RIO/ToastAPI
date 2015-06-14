@@ -51,6 +51,10 @@ public class ModuleContainer {
         moduleInstance.onConstruct();
     }
 
+    /**
+     * Resolve the @Branch annotations on the Candidate. This is used for Optional dependencies using the
+     * Branch and Tree model described on the {@link Branch} class.
+     */
     public void resolve_branches() {
         if (moduleClass.isAnnotationPresent(Branch.class)) {
             for (Branch br : moduleClass.getAnnotationsByType(Branch.class)) {
@@ -98,6 +102,9 @@ public class ModuleContainer {
         return moduleInstance;
     }
 
+    /**
+     * Convert the ModuleContainer to a String to be displayed in a console or other implementation
+     */
     public String toString() {
         return String.format("ToastModuleContainer[name:%s, version:%s, class:%s]", name, version, moduleClass);
     }

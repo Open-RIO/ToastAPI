@@ -23,6 +23,10 @@ import java.util.regex.Pattern;
  */
 public class GroovyLoader {
 
+    /* Disclaimer: The documentation of this code is better described in the Whitepaper. The documentation present
+        is hard to justify due to the difficult nature of Classpath manipulation and Loading of external files.
+     */
+
     static String searchDir = "groovy";
     static Logger logger = new Logger("Toast|GroovyLoader", Logger.ATTR_DEFAULT);
     static ClassLoader loader = ClassLoader.getSystemClassLoader();
@@ -39,20 +43,36 @@ public class GroovyLoader {
     static boolean loadingCore = false;
     public static boolean coreScriptsLoaded = false;
 
+    /**
+     * Initialize the Loader. This starts the loading of regular, non-core scripts.
+     */
     public static void init() {
         loadingCore = false;
         loadScripts();
     }
 
+    /**
+     * Preinit the Loader. This loads the CoreScripts and prepares the other scripts
+     * for loading and candidacy.
+     */
     public static void preinit() {
         loadingCore = true;
         loadScripts();
     }
 
+    /**
+     * Return the GroovyClassLoader used to load Groovy Scripts. This is based off the System
+     * Class Loader.
+     */
     public static GroovyClassLoader getGLoader() {
         return gLoader;
     }
 
+    /**
+     * Load the scripts. This is a common method for both Core and Non-Core scripts.
+     * This method works by searching the ToastHome for Groovy Scripts. This also loads
+     * scripts that have been manually added by the User through Runtime arguments.
+     */
     static void loadScripts() {
         try {
             File search = new File(ToastBootstrap.toastHome, searchDir);
@@ -72,6 +92,12 @@ public class GroovyLoader {
         }
     }
 
+    /**
+     * Recursively search a directory for Groovy Scripts to load. This works on the premise
+     * of File Extensions, matching .groovy for regular scripts and .corescript for scripts
+     * to be loaded at Core Runtime. These are passed to the {@link #loadFiles(File[])} method
+     * to be dealt with.
+     */
     public static void search(File file) {
         File[] groovy = file.listFiles(new FilenameFilter() {
             @Override
@@ -94,6 +120,10 @@ public class GroovyLoader {
             search(f);
     }
 
+    /**
+     * Recursively load all files in the given File array. This passes to the {@link #loadFile(File)} method to be
+     * parsed and registered on the ClassPath.
+     */
     public static void loadFiles(File[] files) {
         if (files != null)
             for (File file : files) {
@@ -108,6 +138,10 @@ public class GroovyLoader {
             }
     }
 
+    /**
+     * Get a class with the given name. This is used when a Groovy File is already in the classpath and doesn't need to be
+     * loaded from an external file, and so only the class name is required to load and register the Groovy File.
+     */
     public static GroovyObject loadClassName(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class groovyClass = loader.loadClass(name);
         GroovyObject object = (GroovyObject) groovyClass.newInstance();
@@ -125,10 +159,20 @@ public class GroovyLoader {
         return object;
     }
 
+    /**
+     * Link to {@link #loadFile(File, boolean)}, with the 'register' boolean argument defaulting to 'true'
+     */
     public static GroovyObject loadFile(File file) throws IOException, IllegalAccessException, InstantiationException {
         return loadFile(file, true);
     }
 
+    /**
+     * Load a single file into the classpath and parse the groovy file. This method will register the file on the groovyFiles and groovyObjects
+     * lists if required, as well as instantiate it if it is a subclass of {@link GroovyScript}. The init() static method is called when this
+     * method occurs.
+     * @param file      The File to load. This should point to a .groovy or .corescript file.
+     * @param register  Should we register this? This is true for scripts, but false for things like Autorun and Preferences files.
+     */
     public static GroovyObject loadFile(File file, boolean register) throws IOException, IllegalAccessException, InstantiationException {
         Class groovyClass = gLoader.parseClass(file);
         GroovyObject object = (GroovyObject) groovyClass.newInstance();
@@ -149,6 +193,9 @@ public class GroovyLoader {
         return object;
     }
 
+    /**
+     * Call prestartRobot() on all the objects registered.
+     */
     public static void prestart() {
         for (GroovyObject object : groovyObjects.values()) {
             try {
@@ -157,6 +204,9 @@ public class GroovyLoader {
         }
     }
 
+    /**
+     * Call startRobot() on all the objects registered.
+     */
     public static void start() {
         for (GroovyObject object : groovyObjects.values()) {
             try {
@@ -165,6 +215,9 @@ public class GroovyLoader {
         }
     }
 
+    /**
+     * Call tickState() on all the objects registered.
+     */
     public static void tick(RobotState state) {
         for (GroovyObject object : groovyObjects.values()) {
             try {
@@ -173,6 +226,9 @@ public class GroovyLoader {
         }
     }
 
+    /**
+     * Call transitionState() on all the objects registered.
+     */
     public static void transition(RobotState state) {
         for (GroovyObject object : groovyObjects.values()) {
             try {
@@ -181,6 +237,9 @@ public class GroovyLoader {
         }
     }
 
+    /**
+     * Get an Object with the Given Class or Filename that has been registered.
+     */
     public static GroovyObject getObject(String name) {
         return groovyObjects.get(name);
     }

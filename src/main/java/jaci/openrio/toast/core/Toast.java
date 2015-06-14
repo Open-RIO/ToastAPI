@@ -118,6 +118,9 @@ public class Toast extends RobotBase {
         }
     }
 
+    /**
+     * Register the Garbage Collector to trigger on a regular basis.
+     */
     void registerGC(final double time) {
         Heartbeat.add(new HeartbeatListener() {
             int count = 0;
@@ -132,6 +135,10 @@ public class Toast extends RobotBase {
         });
     }
 
+    /**
+     * Shutdown the robot safely with exit code 0. This will stop all motors and
+     * ensure all actions on the ThreadPool are completed
+     */
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
         ToastThreadPool.INSTANCE.finish();
@@ -139,6 +146,11 @@ public class Toast extends RobotBase {
         System.exit(0);
     }
 
+    /**
+     * Shutdown the robot when the exit code should not be 0. This is usually when
+     * the robot has crashed or encountered and error. This will forcefully stop the ThreadPool,
+     * all motors and yield the exit code -1
+     */
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
         ToastThreadPool.INSTANCE.getService().shutdownNow();

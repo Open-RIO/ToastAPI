@@ -19,11 +19,20 @@ import jaci.openrio.toast.core.thread.ToastThreadPool;
  * @author Jaci
  */
 public class CommandGroovyScript extends FuzzyCommand implements IHelpable {
+
+    /**
+     * Should this Command be invoked with the given message?
+     */
     @Override
     public boolean shouldInvoke(String message) {
         return message.startsWith("script ") || message.startsWith("script -c");
     }
 
+    /**
+     * Invokes the command if {@link #shouldInvoke} returns true.
+     * @param message The full command message. This is left un-parsed so you can handle
+     *                it yourself
+     */
     @Override
     public void invokeCommand(String message) {
         try {
@@ -52,11 +61,18 @@ public class CommandGroovyScript extends FuzzyCommand implements IHelpable {
         }
     }
 
+    /**
+     * Get the command name
+     * e.g. 'cmd' for a command such as 'cmd <your args>
+     */
     @Override
     public String getCommandName() {
         return "script";
     }
 
+    /**
+     * Returns a help message to display with the 'help' command
+     */
     @Override
     public String getHelp() {
         return "Executes a groovy script on-the-fly. Run with -c to execute concurrently. Example: \"script -c println 'Hello World'\"";

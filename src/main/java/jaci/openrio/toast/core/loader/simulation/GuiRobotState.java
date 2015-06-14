@@ -36,11 +36,19 @@ public class GuiRobotState extends JComponent implements MouseListener {
         this.setForeground(fgPassive);
     }
 
+    /**
+     * Paints the component. This calls the super as well as calling the second 'paint()' method that will
+     * draw the button based on the state given in {@link SimulationData}
+     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         paint((Graphics2D) g);
     }
 
+    /**
+     * Paints the object with the new Graphics2D object. This takes data from the {@link SimulationData} class in order
+     * to paint the correct button.
+     */
     public void paint(Graphics2D g) {
         g.setColor(this.getBackground());
         g.fillRect(0, 0, width, height);
@@ -50,14 +58,23 @@ public class GuiRobotState extends JComponent implements MouseListener {
         g.drawString(state.state, (float) ((width - textBounds.getWidth()) / 2), (float) ((height - textBounds.getHeight()) / 2 + metrics.getAscent()));
     }
 
+    /**
+     * Does a check for whether or not the Mouse exists within the bounds of the button.
+     */
     public boolean inBounds(MouseEvent e) {
         return e.getX() > x && e.getX() < x + width && e.getY() > y && e.getY() < y + height;
     }
 
+    /**
+     * Stub Method - Not Used
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
     }
 
+    /**
+     * Serves to change the colour of the button to indicate it being depressed.
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         if (inBounds(e)) {
@@ -66,6 +83,9 @@ public class GuiRobotState extends JComponent implements MouseListener {
         this.repaint();
     }
 
+    /**
+     * Invokes the new state change
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         if (inBounds(e))
@@ -75,10 +95,16 @@ public class GuiRobotState extends JComponent implements MouseListener {
         this.repaint();
     }
 
+    /**
+     * Stub Method - Not Used
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * Stub Method - Not Used
+     */
     @Override
     public void mouseExited(MouseEvent e) {
     }

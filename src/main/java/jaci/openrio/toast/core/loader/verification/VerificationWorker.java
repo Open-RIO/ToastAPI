@@ -31,12 +31,18 @@ public class VerificationWorker extends Thread {
         this.setName("Verification Worker");
     }
 
+    /**
+     * Begin the Verification Routine. This is called automatically by Toast when launched with the --verify arguments
+     */
     public static void begin() {
         logger = new Logger("Verification", Logger.ATTR_TIME);
         worker = new VerificationWorker();
         worker.start();
     }
 
+    /**
+     * Run a single loop of the Verification Routine.
+     */
     @Override
     public void run() {
         try {
@@ -62,6 +68,9 @@ public class VerificationWorker extends Thread {
         }
     }
 
+    /**
+     * Print relevant environmental data to the console.
+     */
     void echoEnvironment() {
         logger.info("\tLoaded Modules:");
         for (ModuleContainer module : ModuleManager.getContainers())

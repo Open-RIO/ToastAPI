@@ -21,15 +21,26 @@ public class ModuleCandidate {
     boolean bypass;
     String bypassClass;
 
+    /**
+     * Set the file (.jar) of the module candidate.
+     */
     public void setFile(File file) {
         moduleFile = file;
     }
 
+    /**
+     * Set true if this candidate is noted as a CorePlugin, and therefore should be
+     * loaded early.
+     */
     public void setCorePlugin(boolean state, String pluginClass) {
         coreplugin = state;
         this.pluginClass = pluginClass;
     }
 
+    /**
+     * Set true if the Toast-Plugin-Class manifest attribute is present, bypassing the
+     * searching of a ToastModule file to save CPU Time on larger modules.
+     */
     public void setBypass(boolean state, String bypassClass) {
         bypass = state;
         this.bypassClass = bypassClass;
@@ -46,6 +57,9 @@ public class ModuleCandidate {
         return coreplugin;
     }
 
+    /**
+     * Get the class name of the Core Plugin instance.
+     */
     public String getCorePluginClass() {
         return pluginClass;
     }
@@ -61,18 +75,31 @@ public class ModuleCandidate {
         return bypass;
     }
 
+    /**
+     * Get the class name of the Bypass class (the ToastModule class)
+     */
     public String getBypassClass() {
         return bypassClass;
     }
 
+    /**
+     * Get the file (.jar) of the Module Candidate
+     */
     public File getModuleFile() {
         return moduleFile;
     }
 
+    /**
+     * Add a class entry to the candidate. This is a list of all the .class files a module contains
+     * to aid in culprit detection and class loading. This is not called if it is a bypass.
+     */
     public void addClassEntry(String classEntry) {
         classMembers.add(classEntry.substring(0, classEntry.lastIndexOf('.')).replace('/', '.').replace('\\', '.'));
     }
 
+    /**
+     * Get the list of class entries this module contains.
+     */
     public String[] getClassEntries() {
         return classMembers.toArray(new String[0]);
     }

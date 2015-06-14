@@ -22,6 +22,10 @@ public class CommandBus {
     public static List<AbstractCommand> commands = new Vector<>();
     public static List<FuzzyCommand> parsers = new Vector<>();
 
+    /**
+     * Start the command bus. This is done by Toast, this shouldn't be triggered by Modules.
+     * This also starts the Simulation Scanner to listen from an IDE's console
+     */
     public static void init() {
         if (ToastBootstrap.isSimulation)
             setupSim();
@@ -29,6 +33,9 @@ public class CommandBus {
         registerNatives();
     }
 
+    /**
+     * Register the default commands that come with Toast by default.
+     */
     private static void registerNatives() {
         registerCommand(new CommandGroovyScript());
         registerCommand(new CommandUSB());
@@ -147,6 +154,9 @@ public class CommandBus {
         return nextLineRequested;
     }
 
+    /**
+     * Setup the simulation environment scanner for the IDE's console
+     */
     private static void setupSim() {
         scanner = new Scanner(System.in);
         t = new Thread() {

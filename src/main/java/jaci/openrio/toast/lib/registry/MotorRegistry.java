@@ -15,6 +15,10 @@ public class MotorRegistry {
 
     public static List<SpeedController> motors = new LinkedList<>();
 
+    /**
+     * Register a new SpeedController on the registry. This is automatically done in the patches
+     * MotorSafetyHelper.
+     */
     public static void register(Object motor) {
         if (motor instanceof SpeedController)
             motors.add((SpeedController) motor);

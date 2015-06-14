@@ -24,6 +24,9 @@ public class Heartbeat implements Runnable {
     static boolean running;
     int consecutive;
 
+    /**
+     * Run the Heartbeat thread. This only occurs when there are actual Listeners registered to ensure we don't waste resources
+     */
     @Override
     public void run() {
         log().info("Heartbeat started!");
@@ -89,6 +92,9 @@ public class Heartbeat implements Runnable {
 
     static Thread heart;
 
+    /**
+     * Check if the heartbeat is active, and start it if it is not.
+     */
     static void checkActive() {
         if (!running) {
             heart = new Thread(new Heartbeat());

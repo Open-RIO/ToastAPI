@@ -66,10 +66,17 @@ public enum LoadPhase {
         this.threadName = threadName;
     }
 
+    /**
+     * Get the localized, human-readable name of the LoadPhase.
+     */
     public String getLocalized() {
         return threadName;
     }
 
+    /**
+     * Transition into the given load phase. This method changes the current Thread Name, sets the Current Phase and
+     * updates any callbacks registered
+     */
     public void transition() {
         Thread.currentThread().setName(threadName);
         currentPhase = this;
@@ -78,6 +85,11 @@ public enum LoadPhase {
 
     }
 
+    /**
+     * Register a callback on the LoadPhase callback handler system. A callback is called when the Robot undergoes a change
+     * of LoadPhase. The intended use for this is with CoreModules, which may choose to use the LoadPhase system to trigger
+     * Indicator LEDs, or certain methods where a method hook is not provided.
+     */
     public static void addCallback(Function<LoadPhase, Void> callback) {
         callbacks.add(callback);
     }

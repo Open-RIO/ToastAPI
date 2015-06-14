@@ -25,11 +25,17 @@ public class SimulationData {
     public static byte[] dioValues = new byte[10];
     public static byte[] dioDirections = new byte[10];
 
+    /**
+     * Set the Digital IO on the given port with the given value
+     */
     public static void setDIO(byte port, byte val) {
         dioValues[port] = val;
         SimulationGUI.INSTANCE.dioSpinners[port].setValue(val);
     }
 
+    /**
+     * Set the digital IO direction on the given port, as Input or Output
+     */
     public static void setDIODir(byte port, byte val) {
         dioDirections[port] = val;
         SimulationGUI.INSTANCE.dioSpinners[port].setEditable(val == 1);
@@ -40,10 +46,12 @@ public class SimulationData {
      */
     public static double[] pwmValues = new double[10];
 
+    /**
+     * Set the PWM value on the given port with the given value
+     */
     public static void setPWM(byte port, double val) {
         pwmValues[port] = val;
         SimulationGUI.INSTANCE.pwmSpinners[port].setValue(val);
-
     }
 
     /**
@@ -80,10 +88,16 @@ public class SimulationData {
     /** JOYSTICKS **/
     public static SimulatedJoystick[] joysticks = new SimulatedJoystick[6];
 
+    /**
+     * Register a Simulated Joystick on the Data class
+     */
     public static void simulatedJoystick(int id, SimulatedJoystick stick) {
         joysticks[id] = stick;
     }
 
+    /**
+     * Get a Simulated Joystick interface for the joystick ID, or create a dummy if it doesn't exist.
+     */
     public static SimulatedJoystick getJoystick(int id) {
         if (joysticks[id] == null)
             joysticks[id] = new DummyJoystick();

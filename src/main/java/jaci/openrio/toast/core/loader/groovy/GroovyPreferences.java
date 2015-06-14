@@ -21,6 +21,10 @@ public class GroovyPreferences {
 
     static File baseFile;
 
+    /**
+     * Initialize the File System for the Preferences 'root' file on the RoboRIO's local FileSystem.
+     * This is done by Toast, so calling this method yourself is not necessary.
+     */
     public static void init() {
         baseFile = new File(ToastBootstrap.toastHome, "preferences");
         baseFile.mkdirs();
@@ -63,6 +67,10 @@ public class GroovyPreferences {
         }
     }
 
+    /**
+     * Load the configuration file, and store the read values. This is handled automatically when the
+     * object is created, but you may choose to call it again if you want to 'reload' the configuration file.
+     */
     public void load() throws IllegalAccessException, IOException, InstantiationException {
         parentObject = GroovyLoader.loadFile(parentFile, false);
         config = new ConfigSlurper().parse(parentFile.toURI().toURL());
@@ -85,6 +93,9 @@ public class GroovyPreferences {
         return object;
     }
 
+    /**
+     * Get the property, assuming it exists
+     */
     static Object prop(ConfigObject object, String key) {
         if (object != null && object.containsKey(key)) {
             return object.getProperty(key);
@@ -120,6 +131,10 @@ public class GroovyPreferences {
 
     }
 
+    /**
+     * Convert the given value to a type that can be written to the Groovy File. This handles
+     * the quotations around Strings, and the square brackets around array or list types.
+     */
     public Object convertValue(Object value) {
         if (value instanceof String)
             value = "\"" + value + "\"";

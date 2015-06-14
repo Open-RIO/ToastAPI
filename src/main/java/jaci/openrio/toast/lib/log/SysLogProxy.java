@@ -28,6 +28,10 @@ public class SysLogProxy {
 
     static boolean init = false;
 
+    /**
+     * Initialize the proxy if it has not already been started. This splits the System.out and System.err streams
+     * to Files in the filesystem.
+     */
     public static void init() {
         try {
             if (!init) {

@@ -21,15 +21,28 @@ public class MethodExecutor {
         callStacks = new HashMap<>();
     }
 
+    /**
+     * Add an object to the MethodExecutor. This means the Object's methods will be triggered
+     * when the MethodExecutor is called.
+     */
     public void addObject(Object obj) {
         objects.add(obj);
         changed = true;
     }
 
+    /**
+     * Call the specified method on all listening objects. This is assuming the object takes no Arguments for the
+     * method defined.
+     * @param method    The name of the method to execute.
+     */
     public void call(String method) {
         call(method, new Class[0]);
     }
 
+    /**
+     * Parse the callstack from the registered objects. This caches the callstack so reflection doesn't look up the
+     * Object's definition each time.
+     */
     MethodIdentifier parse(String method, Class[] argTypes) {
         MethodIdentifier id = new MethodIdentifier(method, argTypes);
         if (changed) {
@@ -63,6 +76,12 @@ public class MethodExecutor {
         return id;
     }
 
+    /**
+     * Call the specified method on all listening objects.
+     * @param method    The name of the method to invoke and execute
+     * @param argTypes  The types of args the method uses.
+     * @param args      The arg values to pass to the newly invoked method
+     */
     public void call(String method, Class[] argTypes, Object... args) {
         MethodIdentifier id = parse(method, argTypes);
         for (MethodContainer container : callStacks.get(id)) {
@@ -85,6 +104,9 @@ public class MethodExecutor {
             this.obj = obj;
         }
 
+        /**
+         * Compare the priority of this method to another
+         */
         @Override
         public int compareTo(MethodContainer o) {
             return priority > o.priority ? -1 : priority == o.priority ? 0 : 1;
@@ -102,6 +124,10 @@ public class MethodExecutor {
             this.args = args;
         }
 
+        /**
+         * Returns true if the two Method Identifiers match each other, keeping in mind method name
+         * and argument types.
+         */
         public boolean equals(MethodIdentifier o) {
             return o.method.equals(method) && Arrays.equals(args, o.args);
         }

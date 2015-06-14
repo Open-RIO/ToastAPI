@@ -25,6 +25,11 @@ public class ClassPatcher extends URLClassLoader {
         super(new URL[0], parent);
     }
 
+    /**
+     * Patch a class for the given name. This is called whenever Class.forName is called, or Class.newInstance. This is
+     * responsible for loading and defining patches if they exist, otherwise loading the standard file or throwing
+     * an exception if it does not exist.
+     */
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         String simulation = "assets/toast/patches/" + name.replace(".", "/") + ".sim";
@@ -44,7 +49,7 @@ public class ClassPatcher extends URLClassLoader {
                 m.setAccessible(true);
                 m.invoke(getParent(), name, buf, 0, len);
             } catch (Exception e) {
-                ToastBootstrap.toastLogger.error("Could not load Simulation Patch: " + name);
+                ToastBootstrap.toastLogger.error("Could not load Patch: " + name);
                 ToastBootstrap.toastLogger.exception(e);
             }
         }

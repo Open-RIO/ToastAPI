@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib.module;
 
+import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 
 /**
@@ -8,6 +9,7 @@ import jaci.openrio.toast.core.loader.module.ModuleContainer;
  *
  * @author Jaci
  */
+@NoLoad
 public abstract class ToastModule {
 
     /**

@@ -11,18 +11,28 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * This is the Rat's nest of code that is the Simulation GUI.
+ * This is the Rat's nest of code that is the Simulation GUI. There is no clean way to programmatically create a GUI
+ * with Swing. Most of the code called in this class is only called once, at runtime. This class is mostly self-contained
+ * in terms of functionality, with hooks to {@link SimulationData}
  *
  * @author Jaci
  */
 public class SimulationGUI extends JPanel {
     public static SimulationGUI INSTANCE;
 
+    /**
+     * The 'test' main method for testing how the Simulation GUI looks without invoking the rest of the Toast
+     * Framework. This is really only used in Development environments when we change the layout or content of the GUI.
+     */
     public static void main(String[] args) {
-        //Test
+        //Test main method, never invoked outside of development environments
         create();
     }
 
+    /**
+     * Create the Simulation GUI. This inflates the GUI and sets all the constants. This also
+     * hooks into the Toast.shudownSafely method for when the GUI is closed.
+     */
     public static JPanel create() {
         JFrame frame = new JFrame("Toast Simulation GUI");
         JPanel panel = new SimulationGUI();
@@ -61,11 +71,18 @@ public class SimulationGUI extends JPanel {
         initElements();
     }
 
+    /**
+     * Completely reinflate the GUI. This replaces all JComponents in the GUI.
+     */
     public void reinitElements() {
         this.removeAll();
         initElements();
     }
 
+    /**
+     * Inflate the GUI. This does everything from adding all the elements, to adding the background image and setting up
+     * the GUI. This is where most of the work is done, and is only called once: upon creation of the GUI.
+     */
     public void initElements() {
         Image logo;
         try {
@@ -155,6 +172,9 @@ public class SimulationGUI extends JPanel {
         GuiRobotState test = new GuiRobotState(575, 110, RobotState.TEST, this);
     }
 
+    /**
+     * Create a JLabel to place next to various components.
+     */
     public JLabel createLabel(String text, int x, int y, int width, int fontSize, Color color) {
         JLabel label = new JLabel(text);
         label.setForeground(color);
@@ -164,17 +184,25 @@ public class SimulationGUI extends JPanel {
         return label;
     }
 
+    /**
+     * Paint the components on the GUI. This is called whenever a global simulation Refresh is required, however most
+     * repainting is done in the actual components themselves when required.
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         paint((Graphics2D) g);
     }
 
+    /**
+     * Paint extra components. This is used for the small 'credit' label near the bottom of the GUI, as well as extra
+     * details in the future when they are required.
+     */
     public void paint(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setColor(new Color(180, 180, 180));
         g.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 9));
-        g.drawString("Toast Simulation GUI      -by Jaci-", 540, 490);
+        g.drawString("Toast Simulation GUI      -by OpenRIO-", 540, 490);
     }
 
 }

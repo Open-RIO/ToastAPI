@@ -55,6 +55,12 @@ public class ToastBootstrap {
     public static long startTimeMS;
     public static long endTimeMS;
 
+    /**
+     * The Main Method. Called when the Toast Program is started. This contains multiple arguments, such as
+     * -sim, -verify, -groovy, -groovyClass, -core and any others that are required. More of these are outlined in
+     * the Whitepaper and various Loaders. Modules may also add their own arguments by retrieving 'runtime_args' from
+     * the GlobalBlackboard
+     */
     public static void main(String[] args) {
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();

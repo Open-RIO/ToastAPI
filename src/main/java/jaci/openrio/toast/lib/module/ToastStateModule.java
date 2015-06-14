@@ -1,6 +1,7 @@
 package jaci.openrio.toast.lib.module;
 
 import jaci.openrio.toast.core.StateTracker;
+import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
 
@@ -13,6 +14,7 @@ import jaci.openrio.toast.lib.state.StateListener;
  *
  * @author Jaci
  */
+@NoLoad
 public abstract class ToastStateModule extends ToastModule implements StateListener.Ticker, StateListener.Transition {
 
     /**
@@ -24,6 +26,12 @@ public abstract class ToastStateModule extends ToastModule implements StateListe
         StateTracker.addTransition(this);
     }
 
+    /**
+     * Called when a transition between 2 states occurs. This involves the robot migrating from a state (such as disabled)
+     * to another state (such as autonomous).
+     * @param state     The new state the robot is in
+     * @param oldState  The state the robot was in before the transition (may be null)
+     */
     public void transitionState(RobotState state, RobotState oldState) {}
 
 }

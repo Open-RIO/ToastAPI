@@ -21,6 +21,11 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
 
     static BoundDelegate server;
 
+    /**
+     * Initialize the Delegate. This registers the delegate on the SocketManager, as well as configures it if a
+     * password or hash-type is provided in the Toast Configuration files. This is already called by Toast, so it is
+     * not necessary to call this method yourself.
+     */
     public static void init() {
         server = SocketManager.register("TOAST_command");
         String pass = ToastConfiguration.Property.COMMANDS_DELEGATE_PASSWORD.asString();
@@ -35,6 +40,11 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
         server.callback(instance);
     }
 
+    /**
+     * Called when a Client is Connected to the Socket. This is used to listen for incoming data.
+     * @param clientSocket The socket of the Client
+     * @param delegate The Delegate this callback is triggered on.
+     */
     @Override
     public void onClientConnect(Socket clientSocket, BoundDelegate delegate) {
         new Thread() {

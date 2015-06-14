@@ -16,16 +16,32 @@ import static jaci.openrio.toast.core.Environment.*;
  */
 public class CrashInfoEnvironment implements CrashInfoProvider {
 
+    /**
+     * The name of the provider
+     */
     @Override
     public String getName() {
         return "Environment";
     }
 
+    /**
+     * The same as {@link #getCrashInfo}, but is done before the crash is logged.
+     * Keep in mind this data is not appended with {@link #getName}
+     *
+     * @param t The exception encountered
+     */
     @Override
     public String getCrashInfoPre(Throwable t) {
         return null;
     }
 
+    /**
+     * The information to append to the crash log
+     *
+     * In this case, the information includes data gathered from the {@link jaci.openrio.toast.core.Environment} class
+     *
+     * @param t The exception encountered
+     */
     @Override
     public List<String> getCrashInfo(Throwable t) {
         ArrayList<String> list = new ArrayList<>();
