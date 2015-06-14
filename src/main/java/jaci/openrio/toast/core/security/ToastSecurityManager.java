@@ -23,6 +23,9 @@ public class ToastSecurityManager extends SecurityManager {
 
     public static ToastSecurityManager INSTANCE;
 
+    /**
+     * Initialize the security manager. This is done by Toast during runtime and should NEVER be called by a module.
+     */
     public static void init() {
         if (SecurityPolicy.get() != SecurityPolicy.NONE) {
             INSTANCE = new ToastSecurityManager();
@@ -30,6 +33,9 @@ public class ToastSecurityManager extends SecurityManager {
         }
     }
 
+    /**
+     * Check a permission. This performs the check statement for the permission type and handles it accordingly
+     */
     @Override
     public void checkPermission(Permission perm) {
         if (perm instanceof FilePermission) {
@@ -41,6 +47,18 @@ public class ToastSecurityManager extends SecurityManager {
         }
     }
 
+    /**
+     * Returns the location of a given class or package in a callstack, or -1 if it is not present.
+     */
+    public int existsInCallStack(String packageorclass) {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i].getClassName().contains(packageorclass))
+                return i;
+        }
+        return -1;
+    }
+
     /** FILE PERMISSIONS **/
     /* Disclaimer: By default, we block access to any files outside of the Toast Home directory (/home/lvuser/toast). This is
      * so modules don't maliciously delete, write or execute anything that may be sensitive to users. Keep in mind, this is only
@@ -48,6 +66,9 @@ public class ToastSecurityManager extends SecurityManager {
 
     private Pattern fileDeniedAction = Pattern.compile(".*(delete|execute|write).*");
     private Pattern exceptionFiles = Pattern.compile(".*(AppData\\\\Local\\\\Temp\\\\).*");
+    /**
+     * Handle the given FilePermission, throwing an Exception if it is denied access or logging a warning if required.
+     */
     public void h_File(FilePermission perm) {
         String path = perm.getName();
         if (fileDeniedAction.matcher(perm.getActions()).matches()) {
@@ -63,6 +84,10 @@ public class ToastSecurityManager extends SecurityManager {
             }
         }
     }
+    /**
+     * Returns true if the file is 'excused' from the FilePermission. This is for things like TempFiles or other exceptions
+     * outside of the toast/ directory.
+     */
     private boolean isFileException(String filepath) {
         String tmpdir = System.getProperty("java.io.tmpdir");
         if (tmpdir != null && filepath.startsWith(tmpdir)) return true;
@@ -76,8 +101,14 @@ public class ToastSecurityManager extends SecurityManager {
     private String[] exceptionPorts = new String[] {
             "1735",   //NetworkTables
     };
+    /**
+     * Handles the given SocketPermission. This serves to warn the user if a socket is using a port that FMS cannot forward, but will never
+     * block a socket.
+     */
     public void h_Socket(SocketPermission perm) {
         if (perm.getActions().contains("listen")) {
+            if (existsInCallStack("sun.management.jmxremote") != -1) return;            //RMI Profiler Routing
+
             SocketPermission impliee = new SocketPermission("*:5800-5810", "listen");
             if (!impliee.implies(perm) && !isPortException(perm)) {
                 switch (SecurityPolicy.get()) {
@@ -91,10 +122,17 @@ public class ToastSecurityManager extends SecurityManager {
             }
         }
     }
+
+    /**
+     * Checks if the port is an exception to the 5800-5810 rule (such as NetworkTables)
+     */
     private boolean portExceptionCheck(SocketPermission permission, String p) {
         SocketPermission impliee = new SocketPermission("*:" + p, "listen");
         return impliee.implies(permission);
     }
+    /**
+     * Does the {@link #portExceptionCheck(SocketPermission, String)} on all exceptionPorts listed in the array.
+     */
     private boolean isPortException(SocketPermission perm) {
         for (String p : exceptionPorts) if (portExceptionCheck(perm, p)) return true;
         return false;

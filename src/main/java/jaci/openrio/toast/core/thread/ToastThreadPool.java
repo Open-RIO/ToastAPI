@@ -106,6 +106,10 @@ public class ToastThreadPool {
             this.name = name;
         }
 
+        /**
+         * Creates a new Thread Object for the ThreadFactory. This is given the proper name for the Thread Pool and is not
+         * set as a daemon to assure that it can be easily debugged in profilers and other utilities.
+         */
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r, name + "-" + integer.getAndIncrement());

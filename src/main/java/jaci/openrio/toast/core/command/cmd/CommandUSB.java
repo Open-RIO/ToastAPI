@@ -30,11 +30,23 @@ import java.nio.file.StandardCopyOption;
  * @author Jaci
  */
 public class CommandUSB extends AbstractCommand implements IHelpable {
+    /**
+     * Get the command name
+     * e.g. 'cmd' for a command such as 'cmd <your args>
+     */
     @Override
     public String getCommandName() {
         return "usb";
     }
 
+    /**
+     * Invoke the command if the name matches the one to be triggered
+     * @param argLength The amount of arguments in the 'args' param
+     * @param args The arguments the command was invoked with. This can be empty if
+     *             none were provided. Keep in mind this does NOT include the Command Name.
+     *             Args are separated by spaces
+     * @param command The full command message
+     */
     @Override
     public void invokeCommand(int argLength, String[] args, String command) {
         if (argLength == 1 || argLength == 2) {
@@ -88,11 +100,16 @@ public class CommandUSB extends AbstractCommand implements IHelpable {
         }
     }
 
+    /**
+     * Throw a new exception if the Usage of the command is not valid
+     */
     private void usage() {
-        //Toast.log().warn("Usage: usb <generate|dump|load> [drive_name]");
         throw new UsageException("usb <generate|dump|load> [drive_name]");
     }
 
+    /**
+     * Copy an entire directory from one location to another. This is used in File Dumping.
+     */
     private void copyDirectory(File source, File dest) throws IOException {
         for (File f : source.listFiles()) {
             File sourceFile = new File(source, f.getName());
@@ -105,6 +122,9 @@ public class CommandUSB extends AbstractCommand implements IHelpable {
         }
     }
 
+    /**
+     * Copy a Single file from one location to another. This is called from the {@link #copyDirectory(File, File)} method
+     */
     private void copyFile(File source, File dest) throws IOException {
         FileInputStream inputStream = new FileInputStream(source);
         FileOutputStream outputStream = new FileOutputStream(dest);
@@ -117,6 +137,9 @@ public class CommandUSB extends AbstractCommand implements IHelpable {
         inputStream.close();
     }
 
+    /**
+     * Returns a help message to display with the 'help' command
+     */
     @Override
     public String getHelp() {
         return "Used for dealing with USB Mass Storage devices connected to the RoboRIO. Args: [generate, dump, load]\n" +

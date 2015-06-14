@@ -28,6 +28,10 @@ public class USBMassStorage {
 
     static boolean override = false;
 
+    /**
+     * Initializes the Logger, File System and required values. This is called in the ToastBootstrap, do
+     * not touch this method yourself.
+     */
     public static void init() {
         connectedDevices = new Vector<>();
         invalidDrives = new Vector<>();
@@ -39,6 +43,12 @@ public class USBMassStorage {
         }
     }
 
+    /**
+     * Crawls the given directory for the toast_autorun.conf file. If the file is found, the USB storage device
+     * is configured using it. If it is not found, the user is warned and the device marked as 'Invalid'. Running
+     * 'usb generate' will validate any invalid drives by generating this file. A restart will be required after runnning
+     * the generate command.
+     */
     public static void crawlSym(File file) {
         if (!file.exists())
             return;
@@ -65,6 +75,10 @@ public class USBMassStorage {
         }
     }
 
+    /**
+     * Goes through the process of Loading groovy files present on the connected drives. This is handled by Toast, and
+     * should not be called by anything else.
+     */
     public static void load() {
         for (MassStorageDevice device : connectedDevices) {
             File groovy = new File(device.toast_directory, "groovy");
@@ -74,6 +88,11 @@ public class USBMassStorage {
         }
     }
 
+    /**
+     * Returns true if ANY drives are marked to override modules or files on the Toast Local System. Only 1 drive is required
+     * to do the overriding procedure, so make sure to check this method if using any File System components where a USB
+     * Drive is capable of accessing.
+     */
     public static boolean overridingModules() {
         return override;
     }

@@ -168,6 +168,9 @@ public class StateTracker {
         transitioners.removeConcurrent(transition);
     }
 
+    /**
+     * Waits for new control data to be received.
+     */
     private static boolean nextPeriodReady() {
         return impl.station().isNewControlData();
     }

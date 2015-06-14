@@ -15,6 +15,11 @@ public class MathHelper {
         return Math.rint(d * x) / x;
     }
 
+    /**
+     * Split a String by the specified amount of words. This is used in
+     * Configurations to make sure the descriptions don't span across the
+     * entire file.
+     */
     public static String[] splitStringByWords(String string, int wordsPerLine) {
         String[] strings = string.split(" ");
         int last = strings.length % wordsPerLine;

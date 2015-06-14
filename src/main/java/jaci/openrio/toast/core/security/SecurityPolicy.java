@@ -18,11 +18,18 @@ public enum SecurityPolicy {
     static Logger log;
     static SecurityPolicy policy;
 
+    /**
+     * Get the SecurityPolicy logger, or create it if it doesn't already exist.
+     */
     public static Logger log() {
         if (log == null) log = new Logger("Security", Logger.ATTR_DEFAULT);
         return log;
     }
 
+    /**
+     * Match the String provided to the Enumerated values. This is used to parse the data
+     * provided in the ToastConfiguration
+     */
     public static SecurityPolicy match(String s) {
         for (SecurityPolicy policy : values()) {
             if (policy.name().equalsIgnoreCase(s)) return policy;
@@ -30,6 +37,10 @@ public enum SecurityPolicy {
         return STRICT;
     }
 
+    /**
+     * Get the currently active security policy, or read it from the Configuration if it
+     * isn't set.
+     */
     public static SecurityPolicy get() {
         if (policy != null) return policy;
         String s = ToastConfiguration.Property.SECURITY_POLICY.asString();
@@ -37,6 +48,9 @@ public enum SecurityPolicy {
         return policy;
     }
 
+    /**
+     * Trigger the policy if there is a violation in the {@link SecurityManager}
+     */
     public void trigger(Permission perm, String message) {
         if (this.equals(NONE)) return;
         if (this.equals(LOOSE)) {

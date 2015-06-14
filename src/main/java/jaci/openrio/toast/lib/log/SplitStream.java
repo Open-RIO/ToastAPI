@@ -17,30 +17,46 @@ public class SplitStream extends OutputStream {
         this.outs = streams;
     }
 
+    /**
+     * Write a single byte to all the output streams created for this SplitStream
+     */
     @Override
     public void write(int b) throws IOException {
         for (OutputStream stream : outs)
             stream.write(b);
     }
 
+    /**
+     * Write a byte array to all the output streams created for this SplitStream
+     */
     @Override
     public void write(byte b[]) throws IOException {
         for (OutputStream stream : outs)
             stream.write(b);
     }
 
+    /**
+     * Write a byte array with the offset and length given in this method to all
+     * output streams created for this SplitStream
+     */
     @Override
     public void write(byte b[], int off, int len) throws IOException {
         for (OutputStream stream : outs)
             stream.write(b, off, len);
     }
 
+    /**
+     * Flush the output streams registered for this SplitStream
+     */
     @Override
     public void flush() throws IOException {
         for (OutputStream stream : outs)
             stream.flush();
     }
 
+    /**
+     * Close this stream and all it's children output streams.
+     */
     @Override
     public void close() throws IOException {
         for (OutputStream stream : outs)

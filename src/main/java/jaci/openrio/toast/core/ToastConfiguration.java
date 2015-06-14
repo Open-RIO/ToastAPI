@@ -12,12 +12,19 @@ public class ToastConfiguration {
 
     static GroovyPreferences preferences;
 
+    /**
+     * Initialize the Configuration. This creates the Preferences file
+     * and all the properties required.
+     */
     public static void init() {
         preferences = new GroovyPreferences("Toast");
         for (Property prop : Property.values())
             prop.read(preferences);
     }
 
+    /**
+     * Jet fuel can't melt steel beams.
+     */
     public static void jetfuel() {
         String fuel = Property.JET_FUEL.asString();
         if (!fuel.equalsIgnoreCase("steel beams"))
@@ -56,34 +63,59 @@ public class ToastConfiguration {
             this.comments = MathHelper.splitStringByWords(comment, 15);
         }
 
+        /**
+         * Read the property from the GroovyPreferences file, with the default value and comments
+         * if it doesn't exist.
+         */
         public void read(GroovyPreferences preferences) {
             value = preferences.getObject(key, defaultValue, comments);
         }
 
+        /**
+         * Get the property as a Number object
+         */
         public Number asNumber() {
-            return (Number) defaultValue;
+            return (Number) value;
         }
 
+        /**
+         * Get the property, casted to an Integer
+         */
         public int asInt() {
             return asNumber().intValue();
         }
 
+        /**
+         * Get the property casted to a Double
+         */
         public double asDouble() {
             return asNumber().doubleValue();
         }
 
+        /**
+         * Get the property, casted to a Float
+         */
         public float asFloat() {
             return asNumber().floatValue();
         }
 
+        /**
+         * Get the property, casted to a Byte
+         */
         public byte asByte() {
             return asNumber().byteValue();
         }
 
+        /**
+         * Get the property in String form
+         */
         public String asString() {
             return (String) value;
         }
 
+        /**
+         * Get the property as a boolean.
+         */
         public boolean asBoolean() {
             return (boolean) value;
         }

@@ -41,6 +41,10 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
  */
 public class RobotLoader {
 
+    /* Disclaimer: The documentation of this code is better described in the Whitepaper. The documentation present
+        is hard to justify due to the difficult nature of Classpath manipulation and Loading of external files.
+     */
+
     static Logger log;
 
     static String[] discoveryDirs;
@@ -55,7 +59,7 @@ public class RobotLoader {
     public static boolean search = false;
 
     /**
-     * Begin loading classes
+     * Initialize the Loader. This starts the loading of regular, non-core modules.
      */
     public static void init() {
         try {
@@ -77,6 +81,10 @@ public class RobotLoader {
         branches();
     }
 
+    /**
+     * Preinit the Loader. This loads the Core Modules and prepares the other modules
+     * for loading and candidacy.
+     */
     public static void preinit() {
         log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
         if (search) {
@@ -97,6 +105,10 @@ public class RobotLoader {
     public static ArrayList<Object> coreObjects = new ArrayList<>();
     public static LinkedList<Method> queuedPrestart = new LinkedList<>();
 
+    /**
+     * Load the module in a development environment if the --search flag is passed to the command line. This ignores
+     * everything in the {@link EnvJars} class, but will search for candidates in the output directory.
+     */
     static void loadDevEnv() {
         for (URL url : sysLoader.getURLs()) {
             try {
@@ -113,6 +125,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Search a directory for class entries with the given candidate
+     */
     static void sDirectory(File file, ModuleCandidate candidate) throws IOException {
         File[] files = file.listFiles();
         if (files != null) {
@@ -122,6 +137,10 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Search the new subdirectory for the given candidate. This searches for the
+     * .class files and will try to get their class name.
+     */
     static void sSubDirectory(File main, File dig, ModuleCandidate candidate) {
         if (dig.isDirectory()) {
             File[] files = dig.listFiles();
@@ -138,7 +157,7 @@ public class RobotLoader {
     }
 
     /**
-     * Load a *jar file
+     * Load a *jar file and search the manifest for details.
      */
     static void sJarFile(File file, boolean newDep) throws IOException {
         JarFile jar = new JarFile(file);
@@ -212,7 +231,7 @@ public class RobotLoader {
     }
 
     /**
-     * Search for modules in the given directory
+     * Recursively search for modules in the given directory
      */
     public static void search(File dir) {
         File[] files = dir.listFiles(new FilenameFilter() {
@@ -296,6 +315,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Run the init() method on all the Core Modules that have been loaded
+     */
     public static void initCore() {
         for (Object core : coreObjects) {
             try {
@@ -305,6 +327,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Run the postinit() method on all the Core Modules that have been loaded.
+     */
     public static void postCore() {
         for (Object core : coreObjects) {
             try {
@@ -314,6 +339,10 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Parse a class name for Module Candidacy, and if it is valid, create a ModuleContainer
+     * for it and register it
+     */
     static void parseClass(String clazz, ModuleCandidate candidate) {
         try {
             Class c = Class.forName(clazz);
@@ -329,6 +358,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Checks if the class is a default class created by Toast. If it is, ignore it as it serves no purpose.
+     */
     static boolean isNotDefault(Class clazz) {
         return !(clazz.equals(ToastModule.class) || clazz.equals(ToastStateModule.class) || clazz.equals(ToastIterativeModule.class));
     }
@@ -346,12 +378,18 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Resolves all the branches for each container
+     */
     private static void branches() {
         for (ModuleContainer container : getContainers()) {
             container.resolve_branches();
         }
     }
 
+    /**
+     * Handle a runnable. If we're threaded, add it to the ThreadPool, else, execute it now
+     */
     private static void handle(Runnable r) {
         if (threaded)
             pool.addWorker(r);
@@ -359,6 +397,10 @@ public class RobotLoader {
             r.run();
     }
 
+    /**
+     * Returns true if a class exists in the class path with the given name. This avoids the ClassNotFoundException
+     * you may get from Class.forName
+     */
     public static boolean classExists(String clazz) {
         try {
             Class.forName(clazz);
@@ -369,7 +411,7 @@ public class RobotLoader {
     }
 
     /**
-     * Prestart all modules
+     * Prestart all modules that have been loaded.
      */
     public static void prestart() {
 //        for (ModuleContainer container : getContainers())
@@ -387,7 +429,7 @@ public class RobotLoader {
     }
 
     /**
-     * Start all modules
+     * Start all modules that have been loaded.
      */
     public static void start() {
         dispatch("start");
@@ -395,6 +437,9 @@ public class RobotLoader {
 
     static MethodExecutor exec;
 
+    /**
+     * Dispatch a method to the MethodExecutor
+     */
     public static void dispatch(String method) {
         if (exec == null) {
             ToastModule[] mods = new ToastModule[getContainers().size()];

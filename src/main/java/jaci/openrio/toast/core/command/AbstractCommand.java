@@ -12,7 +12,6 @@ public abstract class AbstractCommand {
 
     /**
      * Get the command name
-     *
      * e.g. 'cmd' for a command such as 'cmd <your args>
      */
     public abstract String getCommandName();

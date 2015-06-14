@@ -15,16 +15,32 @@ import java.util.List;
  * @author Jaci
  */
 public class CommandList extends AbstractCommand implements IHelpable {
+
+    /**
+     * Get the command name
+     * e.g. 'cmd' for a command such as 'cmd <your args>
+     */
     @Override
     public String getCommandName() {
         return "list";
     }
 
+    /**
+     * Returns a help message to display with the 'help' command
+     */
     @Override
     public String getHelp() {
         return "Will list all the commands registered on the Command Bus";
     }
 
+    /**
+     * Invoke the command if the name matches the one to be triggered
+     * @param argLength The amount of arguments in the 'args' param
+     * @param args The arguments the command was invoked with. This can be empty if
+     *             none were provided. Keep in mind this does NOT include the Command Name.
+     *             Args are separated by spaces
+     * @param command The full command message
+     */
     @Override
     public void invokeCommand(int argLength, String[] args, String command) {
         List<String> strList = new ArrayList<>();

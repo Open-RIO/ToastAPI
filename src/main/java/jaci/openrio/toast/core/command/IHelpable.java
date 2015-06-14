@@ -10,7 +10,6 @@ public interface IHelpable {
 
     /**
      * Get the command name
-     *
      * e.g. 'cmd' for a command such as 'cmd <your args>
      */
     public String getCommandName();

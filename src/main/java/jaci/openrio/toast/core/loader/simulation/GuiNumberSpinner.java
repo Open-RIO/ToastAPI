@@ -48,15 +48,27 @@ public class GuiNumberSpinner {
         refresh();
     }
 
+    /**
+     * Set the Callback object. The callback object is called when the Number Spinner is increased or decreased
+     * by the user.
+     */
     public void setCallback(Callback cb) {
         this.cb = cb;
     }
 
+    /**
+     * Set the value of the Number Spinner. This is clamped to 1 and -1 and rounded to
+     * 2 decimal places.
+     */
     public void setValue(double val) {
         this.val = MathHelper.round(Math.max(-1, Math.min(1, val)), 2);
         refresh();
     }
 
+    /**
+     * Set the object as editable. If editable, the number spinner will show the + and - buttons for the user to
+     * activate. If not, these buttons are removed and it serves purely as a display.
+     */
     public void setEditable(boolean state) {
         if (state) {
             parent.add(plus);
@@ -68,6 +80,9 @@ public class GuiNumberSpinner {
         refresh();
     }
 
+    /**
+     * Attach the + and - hooks to the buttons. This is used to influence the value of the spinner.
+     */
     void attachHooks() {
         plus.addActionListener(new ActionListener() {
             @Override
@@ -86,6 +101,10 @@ public class GuiNumberSpinner {
         });
     }
 
+    /**
+     * Refresh the element. This enables/disables any + or - buttons if the clamp is reached, as well
+     * as call the callback if required.
+     */
     public void refresh() {
         label.setText(String.valueOf(MathHelper.round(val, 2)));
         if (val == min)
@@ -106,6 +125,9 @@ public class GuiNumberSpinner {
     }
 
     public static interface Callback {
+        /**
+         * Called when a Number Spinner changes value. Use this to trigger any hooks related to the number spinner.
+         */
         public void callback(double value);
     }
 

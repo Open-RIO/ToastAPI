@@ -23,6 +23,10 @@ public class Version implements Comparable<Version> {
     static boolean known = false;
     static Pattern versionPattern = Pattern.compile("(\\d*).(\\d*).(\\d*)(-(\\d*)([a-z]))?");
 
+    /**
+     * Initialize the Version. This reads from the toast.version file in the jar file, parsing the Regex and validating the Toast
+     * File's Version for modules to read.
+     */
     public static void init() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("assets/toast/toast.version")));
@@ -87,6 +91,9 @@ public class Version implements Comparable<Version> {
         parse();
     }
 
+    /**
+     * Parse the Version String with the Regex pattern
+     */
     public void parse() {
         Matcher matcher = versionPattern.matcher(versString);
         int c = matcher.groupCount();
@@ -119,6 +126,9 @@ public class Version implements Comparable<Version> {
         return versString;
     }
 
+    /**
+     * Convert the Version to String Format, for use in printing to the console or other implementations
+     */
     public String toString() {
         if (!parsed)
             return "Version[unknown]";

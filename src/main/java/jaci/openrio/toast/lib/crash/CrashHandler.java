@@ -100,6 +100,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    /**
+     * Handles an UncaughtException by logging the crash and shutting down the Robot safely. THis is
+     * automatically called by the JVM when an exception is uncaught on any thread.
+     */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         handle(e);
