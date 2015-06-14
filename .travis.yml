@@ -5,6 +5,7 @@ install:
   - "./gradlew build"
   - "./gradlew generateExternalPatches"
   - "./gradlew build"
+  - "./gradlew genMetrics"
 
 script:
   - "./gradlew verify"
