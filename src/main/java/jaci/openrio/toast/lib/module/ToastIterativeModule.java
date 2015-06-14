@@ -2,6 +2,7 @@ package jaci.openrio.toast.lib.module;
 
 import edu.wpi.first.wpilibj.Timer;
 import jaci.openrio.toast.core.StateTracker;
+import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
 
@@ -11,6 +12,7 @@ import jaci.openrio.toast.lib.state.StateListener;
  *
  * @author Jaci
  */
+@NoLoad
 public abstract class ToastIterativeModule extends ToastStateModule {
 
     /**

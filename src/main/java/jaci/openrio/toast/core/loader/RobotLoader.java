@@ -5,13 +5,12 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
+import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
-import jaci.openrio.toast.lib.module.ToastIterativeModule;
 import jaci.openrio.toast.lib.module.ToastModule;
-import jaci.openrio.toast.lib.module.ToastStateModule;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -346,7 +345,7 @@ public class RobotLoader {
     static void parseClass(String clazz, ModuleCandidate candidate) {
         try {
             Class c = Class.forName(clazz);
-            if (ToastModule.class.isAssignableFrom(c) && isNotDefault(c)) {
+            if (ToastModule.class.isAssignableFrom(c) && classLoadable(c)) {
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
                 if (threaded) {
@@ -361,8 +360,8 @@ public class RobotLoader {
     /**
      * Checks if the class is a default class created by Toast. If it is, ignore it as it serves no purpose.
      */
-    static boolean isNotDefault(Class clazz) {
-        return !(clazz.equals(ToastModule.class) || clazz.equals(ToastStateModule.class) || clazz.equals(ToastIterativeModule.class));
+    static boolean classLoadable(Class clazz) {
+        return !clazz.isAnnotationPresent(NoLoad.class);
     }
 
     /**
