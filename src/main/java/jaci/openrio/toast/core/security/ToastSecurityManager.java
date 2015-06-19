@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.security;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.FilePermission;
+import java.lang.reflect.ReflectPermission;
 import java.net.SocketPermission;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -22,6 +23,8 @@ import java.util.regex.Pattern;
 public class ToastSecurityManager extends SecurityManager {
 
     public static ToastSecurityManager INSTANCE;
+    private static ThreadGroup group;
+    private static ThreadGroup main;
 
     /**
      * Initialize the security manager. This is done by Toast during runtime and should NEVER be called by a module.
@@ -30,6 +33,8 @@ public class ToastSecurityManager extends SecurityManager {
         if (SecurityPolicy.get() != SecurityPolicy.NONE) {
             INSTANCE = new ToastSecurityManager();
             System.setSecurityManager(INSTANCE);
+            main = Thread.currentThread().getThreadGroup();
+            group = new ThreadGroup(Thread.currentThread().getThreadGroup(), "Toasted");
         }
     }
 
@@ -106,6 +111,9 @@ public class ToastSecurityManager extends SecurityManager {
      * block a socket.
      */
     public void h_Socket(SocketPermission perm) {
+        if (Thread.currentThread().getThreadGroup().equals(main) && !isPortException(perm)) {
+            throw new ThreadingException("Networking On Main Thread!");
+        }
         if (perm.getActions().contains("listen")) {
             if (existsInCallStack("sun.management.jmxremote") != -1) return;            //RMI Profiler Routing
 
@@ -136,6 +144,25 @@ public class ToastSecurityManager extends SecurityManager {
     private boolean isPortException(SocketPermission perm) {
         for (String p : exceptionPorts) if (portExceptionCheck(perm, p)) return true;
         return false;
+    }
+
+    /**
+     * Make sure new Threads are created on the ToastThreadPool group, to ensure
+     * that Networking and other actions don't occur within the main Thread Group.
+     */
+    public ThreadGroup getThreadGroup() {
+        return group;
+    }
+
+    /**
+     * Thrown when code violates a rule regarding Multithreading. For example, Networking SHOULD NOT be done on the
+     * main Thread, but instead delegated elsewhere. If networking does occur on the main Thread, this exception
+     * is thrown and the robot program stopped.
+     */
+    public static class ThreadingException extends RuntimeException {
+        public ThreadingException(String s) {
+            super(s);
+        }
     }
 
 }
