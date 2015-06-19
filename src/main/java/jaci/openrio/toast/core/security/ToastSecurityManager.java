@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.security;
 
+import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.FilePermission;
@@ -49,19 +50,41 @@ public class ToastSecurityManager extends SecurityManager {
         } else if (perm instanceof SocketPermission) {
             SocketPermission sp = (SocketPermission) perm;
             h_Socket(sp);
+        } else if (perm instanceof RuntimePermission) {
+            RuntimePermission rp = (RuntimePermission) perm;
+            h_Runtime(rp);
         }
     }
 
     /**
      * Returns the location of a given class or package in a callstack, or -1 if it is not present.
      */
-    public int existsInCallStack(String packageorclass) {
+    public int existsInCallStack(String packageorclass, String method) {
+        Pattern porc = Pattern.compile(packageorclass);
+        Pattern meth = Pattern.compile(method);
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         for (int i = 0; i < elements.length; i++) {
-            if (elements[i].getClassName().contains(packageorclass))
+            if (porc.matcher(elements[i].getClassName()).matches() && meth.matcher(elements[i].getMethodName()).matches())
                 return i;
         }
         return -1;
+    }
+
+    /** RUNTIME PERMISSIONS **/
+
+    /**
+     * Checks for Runtime violations. This includes calling System.exit() from somewhere OTHER than Toast.shutdownSafely().
+     * This exists due to the nature of the Toast shutdownSafely() hook, as it is designed to stop all systems before
+     * shutdown, to ensure issues do not arise.
+     */
+    public void h_Runtime(RuntimePermission perm) {
+        if (perm.getName().contains("exitVM")) {
+            if (existsInCallStack("jaci.openrio.toast.core.Toast", "shutdown.*") == -1) {
+                SecurityPolicy.log().warn("Unregistered System.exit() call - This should be called with Toast.shutdownSafely()!");
+                for (int i = 5; i <= 7; i++)
+                    SecurityPolicy.log().warn("\tat " + String.valueOf(Thread.currentThread().getStackTrace()[i]));
+            }
+        }
     }
 
     /** FILE PERMISSIONS **/
@@ -115,7 +138,7 @@ public class ToastSecurityManager extends SecurityManager {
             throw new ThreadingException("Networking On Main Thread!");
         }
         if (perm.getActions().contains("listen")) {
-            if (existsInCallStack("sun.management.jmxremote") != -1) return;            //RMI Profiler Routing
+            if (existsInCallStack("sun.management.jmxremote.*", ".*") != -1) return;            //RMI Profiler Routing
 
             SocketPermission impliee = new SocketPermission("*:5800-5810", "listen");
             if (!impliee.implies(perm) && !isPortException(perm)) {
