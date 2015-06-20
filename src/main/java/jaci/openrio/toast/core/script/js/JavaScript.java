@@ -1,5 +1,8 @@
 package jaci.openrio.toast.core.script.js;
 
+import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.script.ScriptLoader;
+
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -7,6 +10,7 @@ import javax.script.ScriptException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The Toast JavaScript engine. This class is responsible for managing JavaScript evaluation and execution. A single
@@ -21,6 +25,7 @@ public class JavaScript {
     static ScriptEngine engine;
     static String engine_type;
     static Bindings toast_bindings;
+    static List<String> loadedScripts;
 
     /**
      * Initialize the ScriptEngine and its manager. This is called by Toast, so don't worry about
@@ -34,6 +39,22 @@ public class JavaScript {
             engine_type = "Rhino";
         } else engine_type = "Nashorn";
         toast_bindings = engine.createBindings();
+    }
+
+    /**
+     * Initialize the Loader. This loads JS files from the FileSystem and imports them into the ScriptEngine. This allows
+     * users to code in JavaScript if they wanted to for some hellish reason.
+     */
+    public static void loaderInit() {
+        try {
+            if (supported()) {
+                ScriptLoader.getScriptDirByType("js").mkdirs();
+                loadedScripts = ScriptLoader.loadAll("js", engine, ".js");
+            }
+        } catch (Exception e) {
+            Toast.log().error("Could not Load JavaScript script files: " + e);
+            Toast.log().exception(e);
+        }
     }
 
     /**
@@ -103,6 +124,36 @@ public class JavaScript {
     }
 
     /**
+     * Create a new ScriptEngine. This allows for modules to move away from the Bindings set by Toast and create their own
+     * Scripting environment if they wish to. This allows for enhanced control over the JavaScript used in their code.
+     */
+    public static ScriptEngine createEngine() {
+        ScriptEngine engine = manager.getEngineByName("nashorn");
+        if (engine == null) {
+            engine = manager.getEngineByName("rhino");
+        }
+        return engine;
+    }
+
+    /**
+     * Get a Toast System Library. These libraries are included with Toast by default and are found in
+     * /assets/toast/script/js (dev env: src/main/resources/assets/toast/script/js/).
+     */
+    public static Reader getSystemLib(String name) {
+        checkSupported();
+        return new InputStreamReader(JavaScript.class.getResourceAsStream("/assets/toast/script/js/" + name));
+    }
+
+    /**
+     * Load a Toast System Library. These libraries are included with Toast by default and are found in
+     * /assets/toast/script/js (dev env: src/main/resources/assets/toast/script/js/).
+     */
+    public static Object loadSystemLib(String name) throws ScriptException {
+        checkSupported();
+        return engine.eval(getSystemLib(name));
+    }
+
+    /**
      * JSONify an object with pretty print and indentation of 2
      */
     public static String jsonify(Object o) {
@@ -114,18 +165,6 @@ public class JavaScript {
      */
     public static String jsonify(Object o, boolean prettyprint) {
         return jsonify(o, prettyprint, 2);
-    }
-
-    /**
-     * Create a new ScriptEngine. This allows for modules to move away from the Bindings set by Toast and create their own
-     * Scripting environment if they wish to. This allows for enhanced control over the JavaScript used in their code.
-     */
-    public static ScriptEngine createEngine() {
-        ScriptEngine engine = manager.getEngineByName("nashorn");
-        if (engine == null) {
-            engine = manager.getEngineByName("rhino");
-        }
-        return engine;
     }
 
     /**
@@ -161,7 +200,7 @@ public class JavaScript {
         checkSupported();
         Bindings bind = engine.createBindings();
         bind.put("map_obj", map);
-        engine.eval(new InputStreamReader(JavaScript.class.getResourceAsStream("/assets/toast/script/js/Map.js")), bind);
+        engine.eval(getSystemLib("Map.js"), bind);
         engine.eval("var jsobj = hash_to_object(map_obj)", bind);
         return bind;
     }

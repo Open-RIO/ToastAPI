@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
@@ -75,6 +76,7 @@ public class Toast extends RobotBase {
             log().info("Buttering Bread...");
             GroovyLoader.init();
             RobotLoader.init();
+            JavaScript.loaderInit();
 
             CommandBus.init();
 
