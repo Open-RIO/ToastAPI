@@ -1,10 +1,8 @@
 package jaci.openrio.toast.core.security;
 
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.FilePermission;
-import java.lang.reflect.ReflectPermission;
 import java.net.SocketPermission;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;

@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
+import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
@@ -126,6 +127,7 @@ public class ToastBootstrap {
         LoadPhase.CORE_PREINIT.transition();
         GroovyLoader.preinit();
         RobotLoader.preinit();
+        JavaScript.init();
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_INIT.transition();
@@ -151,7 +153,6 @@ public class ToastBootstrap {
         }
 
         USBMassStorage.init();
-
 
         // -------- NEW PHASE -------- //
         LoadPhase.INIT.transition();

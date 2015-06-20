@@ -16,7 +16,6 @@ import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
-import java.io.File;
 import java.util.Random;
 
 /**
