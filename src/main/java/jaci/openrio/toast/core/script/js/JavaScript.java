@@ -24,7 +24,6 @@ public class JavaScript {
     static ScriptEngineManager manager;
     static ScriptEngine engine;
     static String engine_type;
-    static Bindings toast_bindings;
     static List<String> loadedScripts;
 
     /**
@@ -38,7 +37,9 @@ public class JavaScript {
             engine = manager.getEngineByName("rhino");
             engine_type = "Rhino";
         } else engine_type = "Nashorn";
-        toast_bindings = engine.createBindings();
+
+        loadSystem();
+        JSEngine.init();
     }
 
     /**
@@ -53,6 +54,21 @@ public class JavaScript {
             }
         } catch (Exception e) {
             Toast.log().error("Could not Load JavaScript script files: " + e);
+            Toast.log().exception(e);
+        }
+    }
+
+    /**
+     * Load Toast's System .JS files before we load anything else.
+     */
+    private static void loadSystem() {
+        try {
+            put("__toast", Toast.getToast());
+
+            loadSystemLib("Map.js");
+            loadSystemLib("Toast.js");
+        } catch (ScriptException e) {
+            Toast.log().error("Could not load System Library: " + e);
             Toast.log().exception(e);
         }
     }
@@ -200,7 +216,6 @@ public class JavaScript {
         checkSupported();
         Bindings bind = engine.createBindings();
         bind.put("map_obj", map);
-        engine.eval(getSystemLib("Map.js"), bind);
         engine.eval("var jsobj = hash_to_object(map_obj)", bind);
         return bind;
     }
