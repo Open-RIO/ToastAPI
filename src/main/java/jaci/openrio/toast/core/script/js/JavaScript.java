@@ -3,10 +3,7 @@ package jaci.openrio.toast.core.script.js;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.script.ScriptLoader;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import javax.script.*;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
@@ -184,9 +181,17 @@ public class JavaScript {
     }
 
     /**
+     * Copy Toast's bindings (loaded classes) to your own Bindings object to access all of Toast's SystemLibs.
+     */
+    public static void copyBindings(Bindings target) {
+        Bindings source = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+        target.putAll(source);
+    }
+
+    /**
      * JSONify an object. This will take an object with any fields or methods with the @JSON
      * annotation, and get/invoke them, taking the value and formatting them as JSON. If the field or method returns
-     * an Object that is NOT primitive (excl. String), the JsonEngine will search through that object for @JSON
+     * an Object that is NOT primitive (excl. String), the JsonEngine will search through that object for the @JSON
      * annotation, and so on until the end of the tree is reached.
      *
      * @param o           The Object to JSONify
@@ -215,6 +220,7 @@ public class JavaScript {
     public static Bindings toNative(HashMap<String, Object> map) throws ScriptException {
         checkSupported();
         Bindings bind = engine.createBindings();
+        copyBindings(bind);
         bind.put("map_obj", map);
         engine.eval("var jsobj = hash_to_object(map_obj)", bind);
         return bind;
