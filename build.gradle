@@ -206,8 +206,9 @@ uploadArchives {
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
     project.task('release', dependsOn: 'build') << {
-      ant.zip(destfile: "releases/Toast-${project.version}.zip",
-        basedir: "release")
+      ant.zip(destfile: "releases/Toast-${project.version}.zip") {
+          ant.zipfileset(filemode: 777, dir: "release")
+        }
   	  try {
   		    ant.delete(dir: "build/runnable")
   	  } catch (Exception e) {}
@@ -223,7 +224,9 @@ class BuildGradle implements Plugin<Project> {
       ant.copy(todir: "build/deployment") {
           ant.fileset(dir: "deploymentScripts")
       }
-      ant.zip(destfile: "releases/Toast-Deployment-Utility.zip", basedir: "build/deployment")
+      ant.zip(destfile: "releases/Toast-Deployment-Utility.zip") {
+        ant.zipfileset(filemode: 777, dir: "build/deployment")
+      }
     }
 
     project.getConfigurations().maybeCreate('verify')
