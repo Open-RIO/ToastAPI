@@ -37,7 +37,6 @@ public class CommandBus {
      * Register the default commands that come with Toast by default.
      */
     private static void registerNatives() {
-        registerCommand(new CommandGroovyScript());
         registerCommand(new CommandUSB());
         registerCommand(new CommandThreadPool());
         registerCommand(new CommandInvokeCrash());

@@ -1,6 +1,6 @@
 package jaci.openrio.toast.core.io.usb;
 
-import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
+import jaci.openrio.toast.lib.module.ModuleConfig;
 
 import java.io.File;
 
@@ -19,9 +19,9 @@ public class MassStorageDevice {
     public File drivePath;
 
     /**
-     * The GroovyPreferences file for the Drive. This is the toast_autorun.conf file required in the drive
+     * The ModuleConfig file for the Drive. This is the toast_autorun.conf file required in the drive
      */
-    public GroovyPreferences preferences;
+    public ModuleConfig config;
 
     /**
      * The drive name. This is human-friendly and also the ID for the drive
@@ -40,15 +40,15 @@ public class MassStorageDevice {
     public boolean override_modules;
     public boolean concurrent_modules;
 
-    public MassStorageDevice(File path, GroovyPreferences autorun, String name) {
+    public MassStorageDevice(File path, ModuleConfig autorun, String name) {
         this.drivePath = path;
-        this.preferences = autorun;
+        this.config = autorun;
         this.drive_name = name;
-        this.toast_directory = new File(path, autorun.getString("toast.directory"));
-        this.dump_directory = new File(path, autorun.getString("toast.dumps"));
+        this.toast_directory = new File(path, autorun.getString("toast.directory", "toast"));
+        this.dump_directory = new File(path, autorun.getString("toast.dumps", "toast_usb_dumps"));
         this.toast_directory.mkdirs();
-        this.override_modules = autorun.getBoolean("toast.override_modules");
-        this.concurrent_modules = autorun.getBoolean("toast.concurrent_modules");
+        this.override_modules = autorun.getBoolean("toast.override_modules", false);
+        this.concurrent_modules = autorun.getBoolean("toast.concurrent_modules", true);
     }
 
 }

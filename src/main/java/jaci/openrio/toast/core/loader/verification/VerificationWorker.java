@@ -1,16 +1,11 @@
 package jaci.openrio.toast.core.loader.verification;
 
-import groovy.lang.GroovyObject;
 import jaci.openrio.toast.core.Toast;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 import jaci.openrio.toast.lib.log.Logger;
-import jaci.openrio.toast.lib.module.GroovyScript;
 import jaci.openrio.toast.lib.state.RobotState;
-
-import java.util.Map;
 
 /**
  * The Verification Worker. This class is called when the Toast Jar file is launched with the arguments -vf or -verify.
@@ -75,16 +70,6 @@ public class VerificationWorker extends Thread {
         logger.info("\tLoaded Modules:");
         for (ModuleContainer module : ModuleManager.getContainers())
             logger.info("\t\t" + module.getDetails());
-
-        logger.info("\tLoaded Groovy Scripts:");
-        for (GroovyScript script : GroovyLoader.scripts)
-            logger.info("\t\t" + script.getClass());
-
-        logger.info("\tLoaded Groovy Files:");
-        for (Map.Entry<String, GroovyObject> entry : GroovyLoader.groovyObjects.entrySet())
-            logger.info("\t\t" + entry.getKey() + " : " + entry.getValue());
-
-        
     }
 
 }

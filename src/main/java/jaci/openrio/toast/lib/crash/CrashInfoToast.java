@@ -1,16 +1,12 @@
 package jaci.openrio.toast.lib.crash;
 
-import groovy.lang.GroovyObject;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.loader.module.ModuleManager;
 import jaci.openrio.toast.lib.Version;
-import jaci.openrio.toast.lib.module.GroovyScript;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A CrashInfoProvider that gives data about Toast and modules loaded.
@@ -75,14 +71,6 @@ public class CrashInfoToast implements CrashInfoProvider {
         list.add("Loaded Modules:");
         for (ModuleContainer module : ModuleManager.getContainers())
             list.add("\t" + module.getDetails());
-
-        list.add("Loaded Groovy Scripts:");
-        for (GroovyScript script : GroovyLoader.scripts)
-            list.add("\t" + script.getClass());
-
-        list.add("Loaded Groovy Files:");
-        for (Map.Entry<String, GroovyObject> entry : GroovyLoader.groovyObjects.entrySet())
-            list.add("\t" + entry.getKey() + " : " + entry.getValue());
 
         return list;
     }

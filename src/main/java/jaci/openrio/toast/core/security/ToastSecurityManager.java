@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.security;
 
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 
 import java.io.FilePermission;
 import java.net.SocketPermission;
@@ -110,6 +111,7 @@ public class ToastSecurityManager extends SecurityManager {
             }
         }
     }
+
     /**
      * Returns true if the file is 'excused' from the FilePermission. This is for things like TempFiles or other exceptions
      * outside of the toast/ directory.
@@ -117,6 +119,7 @@ public class ToastSecurityManager extends SecurityManager {
     private boolean isFileException(String filepath) {
         String tmpdir = System.getProperty("java.io.tmpdir");
         if (tmpdir != null && filepath.startsWith(tmpdir)) return true;
+        if (USBMassStorage.isUSB(filepath)) return true;
         return exceptionFiles.matcher(filepath).matches();
     }
 

@@ -2,7 +2,6 @@ package jaci.openrio.toast.core;
 
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.loader.verification.VerificationWorker;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.state.ConcurrentVector;
@@ -119,8 +118,6 @@ public class StateTracker {
 
         for (StateListener.Transition tra : transitioners)
             tra.transitionState(currentState, lastState);
-
-        GroovyLoader.transition(currentState);
     }
 
     /**
@@ -131,8 +128,6 @@ public class StateTracker {
 
         for (StateListener.Ticker ticker : tickers)
             ticker.tickState(state);
-
-        GroovyLoader.tick(state);
     }
 
     /**

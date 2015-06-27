@@ -7,7 +7,10 @@ _toast_vars["ticker"] = [];
 _toast_vars["transition"] = [];
 _toast_vars["heartbeat"] = [];
 
-var $ = function(arg) { };
+var $ = function(arg) {
+    return Java.Type(arg);
+};
+
 var t_$ = function(arg) { };
 
 t_$.tick = function(md) {

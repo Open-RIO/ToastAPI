@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
@@ -15,6 +13,7 @@ import jaci.openrio.toast.lib.Version;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
+import jaci.openrio.toast.lib.module.ModuleConfig;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
@@ -83,16 +82,6 @@ public class ToastBootstrap {
                         }
                     }
                 } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("-groovy") || arg.equalsIgnoreCase("-g")) {
-                try {
-                    if (!nextArg.equals("."))
-                        GroovyLoader.customFiles.add(new File(nextArg));
-                } catch (Exception e) {}
-            } else if (arg.equalsIgnoreCase("-groovyClass") || arg.equalsIgnoreCase("-gc")) {
-                try {
-                    if (!nextArg.equals("."))
-                        GroovyLoader.customClasses.add(nextArg);
-                } catch (Exception e) {}
             } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {
                 isSimulation = true;
                 isVerification = true;
@@ -112,7 +101,10 @@ public class ToastBootstrap {
         }
         toastHome.mkdirs();
 
-        GroovyPreferences.init();
+        //GroovyPreferences.init();
+        JavaScript.init();
+        ModuleConfig.init();
+
         SysLogProxy.init();
         CrashHandler.init();
 
@@ -125,16 +117,11 @@ public class ToastBootstrap {
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_PREINIT.transition();
-        GroovyLoader.preinit();
         RobotLoader.preinit();
-        JavaScript.init();
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_INIT.transition();
         RobotLoader.initCore();
-
-        if (GroovyLoader.coreScriptsLoaded)
-            toastLogger.info("Groovy Core Scripts Loaded.");
 
         if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
