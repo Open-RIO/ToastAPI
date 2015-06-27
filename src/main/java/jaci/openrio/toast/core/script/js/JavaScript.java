@@ -6,7 +6,6 @@ import jaci.openrio.toast.core.script.ScriptLoader;
 import javax.script.*;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -167,63 +166,11 @@ public class JavaScript {
     }
 
     /**
-     * JSONify an object with pretty print and indentation of 2
-     */
-    public static String jsonify(Object o) {
-        return jsonify(o, true);
-    }
-
-    /**
-     * JSONify an object with an option of pretty print, and indentation of 2
-     */
-    public static String jsonify(Object o, boolean prettyprint) {
-        return jsonify(o, prettyprint, 2);
-    }
-
-    /**
      * Copy Toast's bindings (loaded classes) to your own Bindings object to access all of Toast's SystemLibs.
      */
     public static void copyBindings(Bindings target) {
         Bindings source = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         target.putAll(source);
-    }
-
-    /**
-     * JSONify an object. This will take an object with any fields or methods with the @JSON
-     * annotation, and get/invoke them, taking the value and formatting them as JSON. If the field or method returns
-     * an Object that is NOT primitive (excl. String), the JsonEngine will search through that object for the @JSON
-     * annotation, and so on until the end of the tree is reached.
-     *
-     * @param o           The Object to JSONify
-     * @param prettyprint Pretty Print (new lines and indentation)
-     * @param indent      The indentation level for Pretty Print (space count)
-     */
-    public static String jsonify(Object o, boolean prettyprint, int indent) {
-        checkSupported();
-        try {
-            HashMap<String, Object> vals = JsonEngine.convert(o);
-            Bindings bind = toNative(vals);
-            bind.put("indent", indent);
-            if (prettyprint)
-                return (String) engine.eval("JSON.stringify(jsobj, null, indent)", bind);
-            else
-                return (String) engine.eval("JSON.stringify(jsobj)", bind);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Converts a HashMap to a JS Object in a binding. The binding value is 'jsobj'
-     */
-    public static Bindings toNative(HashMap<String, Object> map) throws ScriptException {
-        checkSupported();
-        Bindings bind = engine.createBindings();
-        copyBindings(bind);
-        bind.put("map_obj", map);
-        engine.eval("var jsobj = hash_to_object(map_obj)", bind);
-        return bind;
     }
 
 }
