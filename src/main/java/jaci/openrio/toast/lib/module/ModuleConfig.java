@@ -2,7 +2,6 @@ package jaci.openrio.toast.lib.module;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.script.js.JavaScript;
 
@@ -39,10 +38,7 @@ public class ModuleConfig {
                 parent_file.createNewFile();
 
             load();
-        } catch (Exception e) {
-            Toast.log().error("Could not load Configuration File: " + name);
-            Toast.log().exception(e);
-        }
+        } catch (Exception e) { }
     }
 
     public ModuleConfig(File file) {
@@ -52,10 +48,7 @@ public class ModuleConfig {
                 file.createNewFile();
 
             load();
-        } catch (Exception e) {
-            Toast.log().error("Could not load Preferences File: " + file);
-            Toast.log().exception(e);
-        }
+        } catch (Exception e) { }
     }
 
     public void load() throws IOException, ScriptException {

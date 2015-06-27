@@ -33,7 +33,12 @@ public class JavaScript {
             engine = manager.getEngineByName("rhino");
             engine_type = "Rhino";
         } else engine_type = "Nashorn";
+    }
 
+    /**
+     * Called when Toast is ready and bindings are ready to be bound.
+     */
+    public static void binderInit() {
         loadSystem();
         JSEngine.init();
     }

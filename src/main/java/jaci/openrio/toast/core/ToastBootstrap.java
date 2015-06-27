@@ -101,7 +101,6 @@ public class ToastBootstrap {
         }
         toastHome.mkdirs();
 
-        //GroovyPreferences.init();
         JavaScript.init();
         ModuleConfig.init();
 
@@ -145,6 +144,7 @@ public class ToastBootstrap {
         LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
         RobotLoader.postCore();
+        JavaScript.binderInit();
         RobotBase.main(args);
     }
 
