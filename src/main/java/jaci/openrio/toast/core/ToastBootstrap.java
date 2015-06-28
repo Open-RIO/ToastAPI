@@ -9,6 +9,7 @@ import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.lib.Assets;
 import jaci.openrio.toast.lib.Version;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -107,6 +108,7 @@ public class ToastBootstrap {
         SysLogProxy.init();
         CrashHandler.init();
 
+        System.out.println(Assets.getAscii("splash"));
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
         GlobalBlackboard.INSTANCE.put("runtime_args", args);

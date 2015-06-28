@@ -2,6 +2,7 @@ package jaci.openrio.toast.lib.crash;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.lib.Assets;
 import jaci.openrio.toast.lib.log.SplitStream;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
@@ -67,6 +68,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.println("**** CRASH LOG ****");
             out.println("Your robot has crashed. Following is a crash log and more details.");
             out.println("This log has been saved to: " + file.getCanonicalPath());
+
+            out.println(Assets.getAscii("crash"));
+
             for (CrashInfoProvider provider : providers) {
                 String info = provider.getCrashInfoPre(t);
                 if (info != null)
