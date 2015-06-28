@@ -285,6 +285,7 @@ public class RobotLoader {
                         }
                     });
                 }
+            candidate.freeMemory();
         }
 
         for (String clazz : manualLoadedClasses) {
