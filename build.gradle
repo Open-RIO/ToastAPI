@@ -220,13 +220,6 @@ class BuildGradle implements Plugin<Project> {
   	  }
   	  ant.zip(destfile: "releases/Toast-${project.version}-RUNNABLE.zip",
   		basedir: "build/runnable")
-
-      ant.copy(todir: "build/deployment") {
-          ant.fileset(dir: "deploymentScripts")
-      }
-      ant.zip(destfile: "releases/Toast-Deployment-Utility.zip") {
-        ant.zipfileset(filemode: 777, dir: "build/deployment")
-      }
     }
 
     project.getConfigurations().maybeCreate('verify')
