@@ -54,6 +54,7 @@ public class ModuleConfig {
     public void load() throws IOException, ScriptException {
         bindings = JavaScript.getEngine().createBindings();
         bindings.putAll(js_bind);
+        JavaScript.copyBindings(bindings);
         defaults = new HashMap<>();
         try {
             JavaScript.getEngine().eval("_config = {}", bindings);
@@ -86,12 +87,22 @@ public class ModuleConfig {
         }
     }
 
+    public Object postProcess(Object o) {
+        if (o instanceof String) {
+            String str = (String) o;
+            try {
+                str = JavaScript.getEngine().eval("postProcess(\"" + str + "\");", bindings).toString();
+            } catch (ScriptException e) {}
+            return str;
+        } else return o;
+    }
+
     public Object getObject(String name) {
-        //return ((ScriptObjectMirror)bindings.get("_config")).get(name);
         try {
-            return JavaScript.getEngine().eval("_config." + name, bindings);
-        } catch (ScriptException e) {
-        }
+            Object o = JavaScript.getEngine().eval("_config." + name, bindings);
+            o = postProcess(o);
+            return o;
+        } catch (ScriptException e) { }
         return null;
     }
 

@@ -64,3 +64,10 @@ var parse = function(str_defaults, str_config) {
 var toJSON = function(obj) {
     return JSON.stringify(obj, null, 4);
 };
+
+var postProcess = function(str) {
+    var reg = /\$\{([^\{^\}]*)\}/g;
+    return str.replace(reg, function(full_match, words) {
+        return eval(words);
+    });
+};
