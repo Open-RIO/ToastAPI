@@ -65,9 +65,38 @@ var toJSON = function(obj) {
     return JSON.stringify(obj, null, 4);
 };
 
+//var postProcess = function(str) {
+//    var reg = /\$\{([^\{^\}]*)\}/g;
+//    return str.replace(reg, function(full_match, words) {
+//        return eval(words);
+//    });
+//};
+
 var postProcess = function(str) {
-    var reg = /\$\{([^\{^\}]*)\}/g;
-    return str.replace(reg, function(full_match, words) {
-        return eval(words);
-    });
+    var build = [];
+    for (var i = 0; i < str.length; i++) {
+        var char = str[i];
+        var prevchar = i === 0 ? "" : str[i - 1];
+        if (char == "$" && str.length-1 != i) {
+            if (prevchar == "\\") {build.pop(); build.push(char); continue;}
+            var nchar = str[++i];
+            if (nchar == "{") {
+                var q = false, bl = 1;
+                var jsbuild = "";
+                while (bl > 0 && i < str.length) {
+                    var newchar = str[++i];
+                    switch (newchar) {
+                        case "{": if (!q) bl++; jsbuild += newchar; break;
+                        case "}": if (!q) bl--; if (bl!==0) jsbuild += newchar; break;
+                        case "\"": q = !q; jsbuild += newchar; break;
+                        default: jsbuild += newchar; break;
+                    }
+                }
+                build.push(eval(jsbuild));
+            }
+        } else {
+            build.push(char);
+        }
+    }
+    return build.join("");
 };
