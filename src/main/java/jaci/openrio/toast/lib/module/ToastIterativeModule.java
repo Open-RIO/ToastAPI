@@ -1,10 +1,8 @@
 package jaci.openrio.toast.lib.module;
 
-import edu.wpi.first.wpilibj.Timer;
 import jaci.openrio.toast.core.StateTracker;
 import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.lib.state.RobotState;
-import jaci.openrio.toast.lib.state.StateListener;
 
 /**
  * Provides an interface similar to {@link edu.wpi.first.wpilibj.IterativeRobot} for Toast Modules to

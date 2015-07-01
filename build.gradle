@@ -66,7 +66,7 @@ dependencies {
   compile fileTree(dir: 'libs/', include: '*.jar')
 
   compile 'jaci.openrio.delegate:NetworkDelegate:1.2.1'
-  compile 'org.codehaus.groovy:groovy:2.4.1'
+  compile 'com.google.code.gson:gson:2.3.1'
   deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
 }
 
@@ -206,8 +206,9 @@ uploadArchives {
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
     project.task('release', dependsOn: 'build') << {
-      ant.zip(destfile: "releases/Toast-${project.version}.zip",
-        basedir: "release")
+      ant.zip(destfile: "releases/Toast-${project.version}.zip") {
+          ant.zipfileset(filemode: 777, dir: "release")
+        }
   	  try {
   		    ant.delete(dir: "build/runnable")
   	  } catch (Exception e) {}
@@ -219,11 +220,6 @@ class BuildGradle implements Plugin<Project> {
   	  }
   	  ant.zip(destfile: "releases/Toast-${project.version}-RUNNABLE.zip",
   		basedir: "build/runnable")
-
-      ant.copy(todir: "build/deployment") {
-          ant.fileset(dir: "deploymentScripts")
-      }
-      ant.zip(destfile: "releases/Toast-Deployment-Utility.zip", basedir: "build/deployment")
     }
 
     project.getConfigurations().maybeCreate('verify')

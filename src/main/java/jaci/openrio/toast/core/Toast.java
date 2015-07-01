@@ -3,10 +3,9 @@ package jaci.openrio.toast.core;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.command.CommandBus;
-import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.RobotLoader;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
 import jaci.openrio.toast.core.network.SocketManager;
+import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
@@ -16,7 +15,6 @@ import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
-import java.io.File;
 import java.util.Random;
 
 /**
@@ -74,14 +72,12 @@ public class Toast extends RobotBase {
             // -------- NEW PHASE -------- //
             LoadPhase.PRE_START.transition();
             log().info("Buttering Bread...");
-            GroovyLoader.init();
             RobotLoader.init();
+            JavaScript.loaderInit();
 
             CommandBus.init();
 
-            USBMassStorage.load();
             RobotLoader.prestart();
-            GroovyLoader.prestart();
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -100,7 +96,6 @@ public class Toast extends RobotBase {
 
             log().info("Verdict: " + getRandomTaste());
             RobotLoader.start();
-            GroovyLoader.start();
 
             SocketManager.launch();
 
@@ -109,7 +104,6 @@ public class Toast extends RobotBase {
             }
 
             LoadPhase.COMPLETE.transition();
-            ToastConfiguration.jetfuel();
             ToastBootstrap.endTimeMS = System.currentTimeMillis();
             log().info("Total Initiation Time: " + (double)(ToastBootstrap.endTimeMS - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             StateTracker.init(this);

@@ -98,10 +98,17 @@ public class ModuleCandidate {
     }
 
     /**
-     * Get the list of class entries this module contains.
+     * Get the list of class entries this module contains. This may return a Size of zero after Module initialization.
      */
     public String[] getClassEntries() {
         return classMembers.toArray(new String[0]);
+    }
+
+    /**
+     * Remove the ClassMembers array to free up some RAM for particularly large modules.
+     */
+    public void freeMemory() {
+        classMembers.clear();
     }
 
 }

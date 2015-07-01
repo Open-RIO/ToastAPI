@@ -1,9 +1,8 @@
 package jaci.openrio.toast.core.io.usb;
 
 import jaci.openrio.toast.core.ToastBootstrap;
-import jaci.openrio.toast.core.loader.groovy.GroovyLoader;
-import jaci.openrio.toast.core.loader.groovy.GroovyPreferences;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.module.ModuleConfig;
 
 import java.io.File;
 import java.util.List;
@@ -64,8 +63,8 @@ public class USBMassStorage {
                 return;
             }
 
-            GroovyPreferences pref = new GroovyPreferences(configuration);
-            String drive_name = pref.getString("toast.device_name").replace(" ", "_");
+            ModuleConfig pref = new ModuleConfig(configuration);
+            String drive_name = pref.getString("toast.device_name", "Team_####_USB_Device").replace(" ", "_");
             MassStorageDevice device = new MassStorageDevice(canon, pref, drive_name);
             connectedDevices.add(device);
             if (device.override_modules && !device.concurrent_modules) override = true;
@@ -76,16 +75,13 @@ public class USBMassStorage {
     }
 
     /**
-     * Goes through the process of Loading groovy files present on the connected drives. This is handled by Toast, and
-     * should not be called by anything else.
+     * Returns true if a file path is inside of a USB Mass Storage device.
      */
-    public static void load() {
-        for (MassStorageDevice device : connectedDevices) {
-            File groovy = new File(device.toast_directory, "groovy");
-            groovy.mkdirs();
-
-            GroovyLoader.search(groovy);
+    public static boolean isUSB(String filepath) {
+        for (String s : knownSymLinks) {
+            if (filepath.startsWith(new File(s).getAbsolutePath())) return true;
         }
+        return false;
     }
 
     /**

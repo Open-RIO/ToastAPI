@@ -6,6 +6,8 @@ install:
   - "./gradlew generateExternalPatches"
   - "./gradlew build"
   - "./gradlew genMetrics"
+  - "ruby tools/setup.rb"
+  - "ruby tools/inspector.rb"
 
 script:
   - "./gradlew verify"
@@ -20,4 +22,5 @@ cards:
   enabled:
     - "master"
     - "development"
+    - "2.0-dev"
   title: "Toast"
