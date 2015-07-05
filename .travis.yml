@@ -18,7 +18,6 @@ cards:
   enabled:
   - master
   - development
-  - 2.0-dev
   title: Toast
 env:
   global:

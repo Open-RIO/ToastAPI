@@ -2,6 +2,7 @@
 require 'gist'
 require 'json'
 begin
+  job_num = ENV["TRAVIS_JOB_NUMBER"]
   if ENV["TRAVIS_PULL_REQUEST"] == "false"
     exported_libs = Dir["build/libs/Toast-*.jar"]
     @data = { :files => {} }
@@ -15,11 +16,11 @@ begin
       end
     end
     @data[:sizes] = @data[:files].map { |type, name| {type => File.size(name)} }.reduce(:merge)
-    puts "Metrics uploaded to Gist: #{Gist.gist(File.read("stats/metrics.json"), {:access_token => ENV['GIST_URL'], :filename => "metrics.json"})["html_url"]}"
-    puts "Inspector Complete: #{Gist.gist("#{JSON.generate(@data)}", {:access_token => ENV['GIST_URL'], :filename => "inspector.json"})["html_url"]}"
+    puts "Metrics uploaded to Gist: #{Gist.gist(File.read("tools/stats/metrics.json"), {:access_token => ENV['GIST_URL'], :filename => "metrics_#{job_num}.json", :public => true})["html_url"]}"
+    puts "Inspector Complete: #{Gist.gist("#{JSON.generate(@data)}", {:access_token => ENV['GIST_URL'], :filename => "inspector_#{job_num}.json", :public => true})["html_url"]}"
   else
     puts "Pull Request -- Metrics Disabled"
   end
-rescue
+rescue => e
   puts "Could not Upload Metrics :c"
 end
