@@ -1,27 +1,25 @@
 language: java
-
 install:
-  - "./gradlew wpi"
-  - "./gradlew build"
-  - "./gradlew generateExternalPatches"
-  - "./gradlew build"
-  - "./gradlew genMetrics"
-  - "ruby tools/setup.rb"
-  - "ruby tools/inspector.rb"
-  - "ruby tools/imports.rb"
-
+- "./gradlew wpi"
+- "./gradlew build"
+- "./gradlew generateExternalPatches"
+- "./gradlew build"
+- "./gradlew genMetrics"
+- ruby tools/setup.rb
+- ruby tools/inspector.rb
+- ruby tools/imports.rb
 script:
-  - "./gradlew verify"
-
+- "./gradlew verify"
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 notifications:
   email: false
-
 cards:
   enabled:
-    - "master"
-    - "development"
-    - "2.0-dev"
-  title: "Toast"
+  - master
+  - development
+  - 2.0-dev
+  title: Toast
+env:
+  gist:
+    secure: dTJkhFdD4rge/cl98A9SlvtpsxtYrNVwyVaNit1reLSsE59UXomSe8q9yidipMcZSIq26hweL0ngNEZPjDukGwqxBlt55hRqjszpNUsjYwkHZ80zsqqFaOlx0r2CXTJnOAIdjbk+RdijDJ2q1g0d2UEjskbC55RNhumRvMGwfnk=
