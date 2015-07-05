@@ -8,6 +8,7 @@ install:
   - "./gradlew genMetrics"
   - "ruby tools/setup.rb"
   - "ruby tools/inspector.rb"
+  - "ruby tools/imports.rb"
 
 script:
   - "./gradlew verify"

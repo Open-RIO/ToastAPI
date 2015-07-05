@@ -1,3 +1,4 @@
+# Reports information about FileSize and File Locations
 require 'gist'
 require 'json'
 exported_libs = Dir["build/libs/Toast-*.jar"]
