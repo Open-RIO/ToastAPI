@@ -19,6 +19,3 @@ cards:
   - master
   - development
   title: Toast
-env:
-  global:
-    secure: dTJkhFdD4rge/cl98A9SlvtpsxtYrNVwyVaNit1reLSsE59UXomSe8q9yidipMcZSIq26hweL0ngNEZPjDukGwqxBlt55hRqjszpNUsjYwkHZ80zsqqFaOlx0r2CXTJnOAIdjbk+RdijDJ2q1g0d2UEjskbC55RNhumRvMGwfnk=

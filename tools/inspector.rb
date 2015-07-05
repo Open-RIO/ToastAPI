@@ -1,9 +1,8 @@
 # Reports information about FileSize and File Locations
-require 'gist'
 require 'json'
+require 'zlib'
+require 'base64'
 begin
-  job_num = ENV["TRAVIS_JOB_NUMBER"]
-  if ENV["TRAVIS_PULL_REQUEST"] == "false"
     exported_libs = Dir["build/libs/Toast-*.jar"]
     @data = { :files => {} }
     exported_libs.each do |file_name|
@@ -16,11 +15,13 @@ begin
       end
     end
     @data[:sizes] = @data[:files].map { |type, name| {type => File.size(name)} }.reduce(:merge)
-    puts "Metrics uploaded to Gist: #{Gist.gist(File.read("tools/stats/metrics.json"), {:access_token => ENV['GIST_URL'], :filename => "metrics_#{job_num}.json", :public => true})["html_url"]}"
-    puts "Inspector Complete: #{Gist.gist("#{JSON.generate(@data)}", {:access_token => ENV['GIST_URL'], :filename => "inspector_#{job_num}.json", :public => true})["html_url"]}"
-  else
-    puts "Pull Request -- Metrics Disabled"
-  end
+    puts "-- METRICS --"
+    puts Base64.encode64 Zlib::Deflate.deflate(File.read("tools/stats/metrics.json").split("\n").map {|x| x.gsub(/\s*/, "")}.join())
+    puts "-- END METRICS --"
+    puts "-- INSPECTOR --"
+    puts Base64.encode64 Zlib::Deflate.deflate(JSON.generate(@data))
+    puts "-- END INSPECTOR --"
 rescue => e
   puts "Could not Upload Metrics :c"
+  raise e
 end
