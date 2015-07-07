@@ -1,5 +1,7 @@
 package jaci.openrio.toast.lib.log;
 
+import jaci.openrio.toast.lib.util.Pretty;
+
 import java.io.PrintStream;
 
 /**
@@ -12,11 +14,13 @@ public class LogLevel {
 
     String name;
     PrintStream stream;
+    Pretty.Colors color;
 
     public LogLevel(String name) {
         SysLogProxy.init();
         this.name = name;
         stream = System.out;
+        color = Pretty.Colors.NORMAL;
     }
 
     /**
@@ -26,6 +30,18 @@ public class LogLevel {
     public LogLevel setName(String n) {
         this.name = n;
         return this;
+    }
+
+    /**
+     * Set the color of the Logger. This is red for warnings
+     */
+    public LogLevel setColor(Pretty.Colors color) {
+        this.color = color;
+        return this;
+    }
+
+    public Pretty.Colors getColor() {
+        return color;
     }
 
     /**

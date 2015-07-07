@@ -1,5 +1,8 @@
 package jaci.openrio.toast.lib.log;
 
+import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.lib.util.Pretty;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -22,13 +25,14 @@ public class Logger {
 
     public static final int ATTR_TIME = 1;
     public static final int ATTR_THREAD = 2;
+    public static final int ATTR_COLOR = 4;
 
-    public static final int ATTR_DEFAULT = ATTR_TIME | ATTR_THREAD;
+    public static final int ATTR_DEFAULT = ATTR_TIME | ATTR_THREAD | ATTR_COLOR;
 
     public static final LogLevel INFO = new LogLevel("INFO");
-    public static final LogLevel WARN = new LogLevel("WARN").setPrintStream(System.err);
-    public static final LogLevel ERROR = new LogLevel("ERROR").setPrintStream(System.err);
-    public static final LogLevel SEVERE = new LogLevel("SEVERE").setPrintStream(System.err);
+    public static final LogLevel WARN = new LogLevel("WARN").setPrintStream(System.err).setColor(Pretty.Colors.RED);
+    public static final LogLevel ERROR = new LogLevel("ERROR").setPrintStream(System.err).setColor(Pretty.Colors.RED);
+    public static final LogLevel SEVERE = new LogLevel("SEVERE").setPrintStream(System.err).setColor(Pretty.Colors.RED);
 
     public DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy-hh:mm:ss");
 
@@ -69,10 +73,10 @@ public class Logger {
      * Log a new message on the selected printstream with the given method and level. This is where all other
      * 'log' type methods in this class delegate to.
      */
-    private void log(String message, String level, PrintStream ps) {
+    private void log(String message, String level, String levelColor, PrintStream ps) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(getPrefix(level));
+        builder.append(getPrefix(level, levelColor));
 
         builder.append(message);
 
@@ -88,20 +92,34 @@ public class Logger {
      * Get the prefix for all messages on this logger. This adds the DateTime, as well as the
      * Thread ID and Logger Name if they are enabled in the Logger Attributes
      */
-    public String getPrefix(String level) {
+    public String getPrefix(String level, String levelColor) {
         StringBuilder builder = new StringBuilder();
 
         if ((attr & ATTR_TIME) == ATTR_TIME)
-            builder.append("[" + getTime() + "] ");
+            builder.append(tag(getTime(), "green", "gray"));
 
-        builder.append("[" + name + "] ");
+        builder.append(tag(name, "green", "magenta"));
 
         if ((attr & ATTR_THREAD) == ATTR_THREAD)
-            builder.append("[" + Thread.currentThread().getName() + "] ");
+            builder.append(tag(Thread.currentThread().getName(), "green", "cyan"));
 
-        builder.append("[" + level + "] ");
+        builder.append(tag(level, "green", levelColor));
 
         return builder.toString();
+    }
+
+    /**
+     * Return a tag, maybe formatted with color
+     */
+    public String tag(String inner, String c1, String c2) {
+        boolean color = ((attr & ATTR_COLOR) == ATTR_COLOR) && ToastBootstrap.color;
+        String s = "[";
+        if (color) s += "<" + c1 + ">";
+        s += inner;
+        if (color) s += "<" + c2 + ">";
+        s += "] ";
+        if (color) s += "<" + c1 + ">";
+        return color ? Pretty.format(s) : s;
     }
 
     /**
@@ -119,7 +137,7 @@ public class Logger {
      * Log a message at the specified level
      */
     public void log(String message, LogLevel level) {
-        log(message, level.getName().toUpperCase(), level.getPrintSteam());
+        log(message, level.getName().toUpperCase(), level.getColor().name().toLowerCase(), level.getPrintSteam());
     }
 
     /**

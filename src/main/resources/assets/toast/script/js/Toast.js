@@ -1,5 +1,5 @@
 Logger = Java.type("jaci.openrio.toast.lib.log.Logger");
-var __js_logger = new Logger("JavaScript", 1 | 2); delete Logger;
+var __js_logger = new Logger("JavaScript", 1 | 2 | 4); delete Logger;
 JSEngine = Java.type("jaci.openrio.toast.core.script.js.JSEngine");
 
 var _toast_vars = {};

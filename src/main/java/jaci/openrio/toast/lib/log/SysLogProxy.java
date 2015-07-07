@@ -3,9 +3,7 @@ package jaci.openrio.toast.lib.log;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * A utility class to attach system.out and system.err into {@link jaci.openrio.toast.lib.log.SplitStream} to
@@ -54,8 +52,8 @@ public class SysLogProxy {
                 sysOut = System.out;
                 sysErr = System.err;
 
-                outStream = new PrintStream(new SplitStream(fileOut, sysOut));
-                errStream = new PrintStream(new SplitStream(fileOut, sysErr, fileErr));
+                outStream = new ColorPrint(new SplitStream(sysOut, fileOut));
+                errStream = new ColorPrint(new SplitStream(sysErr, fileOut, fileErr));
 
                 System.setOut(outStream);
                 System.setErr(errStream);

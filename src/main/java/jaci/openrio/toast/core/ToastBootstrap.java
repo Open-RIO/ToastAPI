@@ -34,6 +34,8 @@ public class ToastBootstrap {
      */
     public static Logger toastLogger;
 
+    public static boolean color;
+
     /**
      * Is this a simulation? This is set to true if the Launch Args include
      * -sim or -simulation
@@ -67,6 +69,7 @@ public class ToastBootstrap {
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
         LoadPhase.BOOTSTRAP.transition();
+        color = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             String nextArg = null;
@@ -94,6 +97,8 @@ public class ToastBootstrap {
                         RobotLoader.manualLoadedClasses.add(nextArg);
                     }
                 } catch (Exception e) { }
+            } else if (arg.equalsIgnoreCase("--no-color")) {
+                color = false;
             }
         }
 

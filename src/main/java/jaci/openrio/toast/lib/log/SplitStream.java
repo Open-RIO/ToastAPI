@@ -1,5 +1,7 @@
 package jaci.openrio.toast.lib.log;
 
+import jaci.openrio.toast.lib.util.Pretty;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -41,8 +43,9 @@ public class SplitStream extends OutputStream {
      */
     @Override
     public void write(byte b[], int off, int len) throws IOException {
-        for (OutputStream stream : outs)
+        for (OutputStream stream : outs) {
             stream.write(b, off, len);
+        }
     }
 
     /**
@@ -61,5 +64,17 @@ public class SplitStream extends OutputStream {
     public void close() throws IOException {
         for (OutputStream stream : outs)
             stream.close();
+    }
+
+    /**
+     * Print a color stream. This outputs color to the first output, but an escaped version to everything else
+     * so your files don't get weird escape chars in them.
+     */
+    public void color(String s) throws IOException {
+        outs[0].write(s.getBytes());
+        String noc = Pretty.strip(s);
+        for (int i = 1; i < outs.length; i++) {
+            outs[i].write(noc.getBytes());
+        }
     }
 }

@@ -12,7 +12,7 @@ public class Assets {
             while ((ln = reader.readLine()) != null) {
                 total += ln + "\n";
             }
-            return total;
+            return Pretty.format(total);
         } catch (Exception e) {
             return "";
         }
