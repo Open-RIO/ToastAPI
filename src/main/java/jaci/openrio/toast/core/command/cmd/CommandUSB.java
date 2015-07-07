@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.core.command.UsageException;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
+import jaci.openrio.toast.lib.module.ModuleConfig;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This command is used for USB Mass Storage devices. This will be responsible for generating missing autorun files,
@@ -56,15 +59,11 @@ public class CommandUSB extends AbstractCommand implements IHelpable {
                 int count = 0;
                 for (File file : USBMassStorage.invalidDrives) {
                     File conf = new File(file, "toast_autorun.conf");
-                    try {
-                        conf.createNewFile();
-                        Files.copy(CommandUSB.class.getResourceAsStream("/assets/toast/autorun_default.conf"), conf.getCanonicalFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        count++;
-                    } catch (IOException e) {
-                        Toast.log().error("Could not generate toast_autorun.conf file in: " + file);
-                        Toast.log().exception(e);
-                    }
+                    ModuleConfig config = new ModuleConfig(conf);
+                    count++;
                 }
+                USBMassStorage.init();
+
                 if (count != 0)
                     Toast.log().info("Successfully Generated toast_autorun.conf Files in " + count + " invalid drive(s).");
             } else if (args[0].equals("dump")) {

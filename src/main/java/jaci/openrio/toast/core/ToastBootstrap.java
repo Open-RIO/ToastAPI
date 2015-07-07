@@ -19,6 +19,7 @@ import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * The Bootstrap class for launching Toast before WPILib. This makes simulation, class patching, crash handling
@@ -130,6 +131,7 @@ public class ToastBootstrap {
         // -------- NEW PHASE -------- //
         LoadPhase.PRE_INIT.transition();
         toastLogger.info("Slicing Loaf...");
+        USBMassStorage.init();
         ToastConfiguration.init();
         ToastThreadPool.init();
 
@@ -139,8 +141,6 @@ public class ToastBootstrap {
         if (isSimulation && !isVerification) {
             SimulationGUI.main(args);
         }
-
-        USBMassStorage.init();
 
         // -------- NEW PHASE -------- //
         LoadPhase.INIT.transition();

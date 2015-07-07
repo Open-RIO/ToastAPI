@@ -39,6 +39,9 @@ public class MassStorageDevice {
     public File dump_directory;
     public boolean override_modules;
     public boolean concurrent_modules;
+    public int config_priority;
+    public int filesystem_priority;
+    public boolean accept_logs;
 
     public MassStorageDevice(File path, ModuleConfig autorun, String name) {
         this.drivePath = path;
@@ -49,6 +52,16 @@ public class MassStorageDevice {
         this.toast_directory.mkdirs();
         this.override_modules = autorun.getBoolean("toast.override_modules", false);
         this.concurrent_modules = autorun.getBoolean("toast.concurrent_modules", true);
+        this.config_priority = autorun.getInt("toast.priority.config", 0);
+        this.filesystem_priority = autorun.getInt("toast.priority.filesystem", 0);
+        this.accept_logs = autorun.getBoolean("toast.accept_logs", true);
+    }
+
+    /**
+     * Convert the Mass Storage Device to a String, containing name and any other relevant details.
+     */
+    public String toString() {
+        return "MassStorageDevice[name: " + drive_name + ", path: " + drivePath + "]";
     }
 
 }

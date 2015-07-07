@@ -42,7 +42,7 @@ public class ScriptLoader {
 
         for (MassStorageDevice device : USBMassStorage.connectedDevices) {
             if (device.concurrent_modules || device.override_modules) {
-                search(new File(device.drivePath, "script/" + homedir), engine, list, extensions);
+                search(new File(device.toast_directory, "script/" + homedir), engine, list, extensions);
             }
         }
         return list;
@@ -52,6 +52,8 @@ public class ScriptLoader {
      * Recursively search a directory (and its subdirectory) for candidate files and load them into the ScriptEngine.
      */
     private static void search(File dir, ScriptEngine engine, List<String> list, String... extensions) throws FileNotFoundException {
+        dir.mkdirs();
+
         File[] files = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {

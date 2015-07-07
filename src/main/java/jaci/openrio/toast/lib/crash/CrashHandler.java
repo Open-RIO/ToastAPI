@@ -2,12 +2,15 @@ package jaci.openrio.toast.lib.crash;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.io.usb.MassStorageDevice;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.lib.Assets;
 import jaci.openrio.toast.lib.log.SplitStream;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.text.DateFormat;
@@ -68,6 +71,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.println("**** CRASH LOG ****");
             out.println("Your robot has crashed. Following is a crash log and more details.");
             out.println("This log has been saved to: " + file.getCanonicalPath());
+            out.println("This log will also be duplicated to USB devices, with the filename: " + fn + ".txt");
 
             out.println(Assets.getAscii("crash"));
 
@@ -96,11 +100,33 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
             File recentLog = SysLogProxy.recentOut;
             File cpFile = new File(crashDir, fn + "-FULL.txt");
-
             Files.copy(recentLog.toPath(), cpFile.toPath());
+
+            duplicate(cpFile);
+            duplicate(file);
 
             Toast.getToast().shutdownCrash();
         } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Duplicates the given Crash File across all USB Mass Storage devices
+     */
+    public static void duplicate(File f) {
+        String fn = f.getName();
+        boolean copied = false;
+        for (MassStorageDevice device : USBMassStorage.connectedDevices) {
+            File crash = new File(device.toast_directory, "crash");
+            crash.mkdirs();
+            copied = true;
+            try {
+                Files.copy(f.toPath(), new File(crash, fn).toPath());
+            } catch (IOException e) { }
+        }
+
+        if (copied) {
+            f.delete();
         }
     }
 

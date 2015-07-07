@@ -1,10 +1,16 @@
 package jaci.openrio.toast.core.io.usb;
 
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.module.ModuleConfig;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -27,6 +33,11 @@ public class USBMassStorage {
 
     static boolean override = false;
 
+    public static MassStorageDevice config_highest;
+    static int config_last = 0;
+    public static MassStorageDevice filesystem_highest;
+    static int filesystem_last = 0;
+
     /**
      * Initializes the Logger, File System and required values. This is called in the ToastBootstrap, do
      * not touch this method yourself.
@@ -39,6 +50,36 @@ public class USBMassStorage {
         logger = new Logger("Toast|Mass-Storage", Logger.ATTR_DEFAULT);
         for (String s : knownSymLinks) {
             crawlSym(new File(s));
+        }
+
+        if (config_highest != null) {
+            logger.info("Using USB Device: " + config_highest.drive_name + " for Configuration Files (highest priority)");
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String date = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss").format(new Date());
+                String filename = "toast_log_" + date + ".txt";
+                duplicate(SysLogProxy.recentOut, filename);
+                duplicate(SysLogProxy.recentOut, "latest.txt");
+                duplicate(SysLogProxy.recentErr, "latestError.txt");
+            }
+        }));
+    }
+
+    /**
+     * Duplicates the given Log File across all USB Mass Storage devices
+     */
+    public static void duplicate(File f, String fn) {
+        for (MassStorageDevice device : USBMassStorage.connectedDevices) {
+            if (!device.accept_logs) continue;
+            File crash = new File(device.toast_directory, "log");
+            crash.mkdirs();
+
+            try {
+                Files.copy(f.toPath(), new File(crash, fn).toPath());
+            } catch (IOException e) { }
         }
     }
 
@@ -68,7 +109,17 @@ public class USBMassStorage {
             MassStorageDevice device = new MassStorageDevice(canon, pref, drive_name);
             connectedDevices.add(device);
             if (device.override_modules && !device.concurrent_modules) override = true;
+
             logger.info("USB Mass Storage Device Detected -- Valid! " + canon + " (" + device.drive_name + ")");
+
+            if (device.config_priority >= config_last) {
+                config_highest = device;
+                config_last = device.config_priority;
+            }
+            if (device.filesystem_priority >= filesystem_last) {
+                filesystem_highest = device;
+                filesystem_last = device.filesystem_priority;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

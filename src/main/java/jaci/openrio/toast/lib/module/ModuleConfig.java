@@ -3,6 +3,7 @@ package jaci.openrio.toast.lib.module;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.script.js.JavaScript;
 
 import javax.script.Bindings;
@@ -31,6 +32,11 @@ public class ModuleConfig {
 
     public ModuleConfig(String name) {
         try {
+            if (USBMassStorage.config_highest != null) {
+                base_file = new File(USBMassStorage.config_highest.toast_directory, "config");
+                base_file.mkdirs();
+            }
+
             if (!name.contains("."))
                 name = name + ".conf";
             parent_file = new File(base_file, name);
