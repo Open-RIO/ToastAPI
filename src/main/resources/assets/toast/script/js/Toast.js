@@ -8,7 +8,16 @@ _toast_vars["transition"] = [];
 _toast_vars["heartbeat"] = [];
 
 var $ = function(arg) {
-    return Java.Type(arg);
+    return Packages[arg];               //Java.type will only get classes, not packages, but Packages[] does both... for some reason (?)
+};
+
+var loadsys = function(file) {
+    $("jaci.openrio.toast.core.script.js.JavaScript").loadSystemLib(file);
+};
+
+var jimport = function() {
+    var jclasstype = $(arguments[0]);
+    eval((arguments.length == 1 ? jclasstype.class.simpleName : arguments[1]) + " = jclasstype");
 };
 
 var t_$ = function(arg) { };
@@ -91,3 +100,5 @@ $.heartbeat = function(callback) {
     JSEngine.hb();
     _toast_vars.heartbeat.push(callback);
 };
+
+loadsys("Motor.js");
