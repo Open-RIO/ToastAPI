@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib;
 
+import jaci.openrio.toast.lib.util.Pretty;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
