@@ -11,7 +11,7 @@ import jaci.openrio.toast.lib.state.RobotState;
  * @author Jaci
  */
 @NoLoad
-public abstract class ToastIterativeModule extends ToastStateModule {
+public abstract class IterativeModule extends ToastStateModule {
 
     /**
      * Called when a state is 'ticked' (periodically called). This is called once every 20ms, or once every contol
