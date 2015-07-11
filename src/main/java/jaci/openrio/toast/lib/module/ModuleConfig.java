@@ -11,11 +11,23 @@ import javax.script.ScriptException;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * The ModuleConfig is the new replacement for the old GroovyPreferences.
+ * The ModuleConfig class allows for modules to take user-defined preferences regarding how the module functions.
+ * The Configuration Files are stored under toast/config/ with the .conf file extension. These files are Formatted in JSON
+ * and are automatically generated if the requested key does not exist.
+ *
+ * @author Jaci
+ */
 public class ModuleConfig {
 
     static File base_file;
     static Bindings js_bind;
 
+    /**
+     * Start the configuration engine. This sets up the Root dir as well as JavaScript bindings for Config.js.
+     * This is executed by the Bootstrapper, no need to call it yourself.
+     */
     public static void init() {
         base_file = new File(ToastBootstrap.toastHome, "config");
         base_file.mkdirs();
@@ -57,7 +69,11 @@ public class ModuleConfig {
         } catch (Exception e) { }
     }
 
-    public void load() throws IOException, ScriptException {
+    /**
+     * Load a ModuleConfig. This method will flush the Bindings of the configuration file
+     * and reload defaults. This should only be called by the constructor
+     */
+    private void load() throws IOException, ScriptException {
         bindings = JavaScript.getEngine().createBindings();
         bindings.putAll(js_bind);
         JavaScript.copyBindings(bindings);
@@ -68,6 +84,11 @@ public class ModuleConfig {
         } catch (Exception e) { }
     }
 
+    /**
+     * Reloads the configuration file. This will read the config file, add keys if they exist in the Defaults
+     * Queue, as well as reformat the config file to PrettyPrint if needed. Call this if Config Files have been
+     * changed (by the user) and you want to reload them.
+     */
     public void reload() {
         String json_config = "";
         try {
@@ -93,6 +114,11 @@ public class ModuleConfig {
         }
     }
 
+    /**
+     * PostProcess an object. If the object is of type String, it will be passed to JavaScript to parse
+     * out the ${} tags if they exist. This method is called after {@link #reload()}, so post processing
+     * will not be shown in the Config File, meaning ${} tags won't be overridden by their result.
+     */
     public Object postProcess(Object o) {
         if (o instanceof String) {
             String str = (String) o;
@@ -103,6 +129,10 @@ public class ModuleConfig {
         } else return o;
     }
 
+    /**
+     * Get an object from the configuration file. This will also post-process the data. Will return null if it
+     * does not yet exist.
+     */
     public Object getObject(String name) {
         try {
             Object o = JavaScript.getEngine().eval("_config." + name, bindings);
@@ -112,58 +142,101 @@ public class ModuleConfig {
         return null;
     }
 
+    /**
+     * Convert the entire configuration into a JSON string. This does NOT post-process any information in the
+     * configuration file, but will instead return the raw data as a JSONified string. This will also be pretty-printed
+     */
     public String toJSON() throws ScriptException {
         return (String) JavaScript.getEngine().eval("toJSON(_config)", bindings);
     }
 
+    /**
+     * Checks whether a key exists in the configuration file. Alias to a null check on {@link #getObject(String)}
+     */
     public boolean has(String name) {
         return getObject(name) != null;
     }
 
+    /**
+     * Put a default key in the configuration. This is automatically called in most 'get' methods if the
+     * key doesn't already exist in the configuration file.
+     */
     public void putDefault(String key, Object value) {
         defaults.put(key, value);
         reload();
     }
 
+    /**
+     * Get a key from the config. If the key doesn't already exist, it will be created with the default value in the
+     * configuration file.
+     */
     public Object getOrDefault(String name, Object def) {
         if (!has(name)) {
             putDefault(name, def);
         }
-        return getObject(name);
+        Object get = getObject(name);
+        return get == null ? def : get;         //Just in case the File Write is locked for some reason
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Number
+     */
     public Number getNumber(String name, Number def) {
         return (Number) getOrDefault(name, def);
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to an Integer
+     */
     public int getInt(String name, int def) {
         return getNumber(name, def).intValue();
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Double
+     */
     public double getDouble(String name, double def) {
         return getNumber(name, def).doubleValue();
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Float
+     */
     public float getFloat(String name, float def) {
         return getNumber(name, def).floatValue();
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Long
+     */
     public long getLong(String name, long def) {
         return getNumber(name, def).longValue();
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Byte
+     */
     public byte getByte(String name, byte def) {
         return getNumber(name, def).byteValue();
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a String
+     */
     public String getString(String name, String def) {
         return (String) getOrDefault(name, def);
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}, coercing to a Boolean
+     */
     public boolean getBoolean(String name, boolean def) {
         return (boolean) getOrDefault(name, def);
     }
 
+    /**
+     * Alias for {@link #getOrDefault(String, Object)}
+     */
     public Object get(String name, Object def) {
         return getOrDefault(name, def);
     }

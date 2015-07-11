@@ -40,6 +40,9 @@ public class LogLevel {
         return this;
     }
 
+    /**
+     * Get the color for the LogLevel. This is usually red for warnings or very very bad stuff.
+     */
     public Pretty.Colors getColor() {
         return color;
     }

@@ -29,6 +29,10 @@ public class Environment {
         return ToastBootstrap.isSimulation;
     }
 
+    /**
+     * Get the Toast home directory (in local storage) from the ToastBootstrap class. This does NOT account for USB
+     * Mass Storage.
+     */
     public static File getHome() {
         return ToastBootstrap.toastHome;
     }
@@ -98,6 +102,10 @@ public class Environment {
         return System.getProperty("java.vendor");
     }
 
+    /**
+     * Get the Operating System as an Enumeration. This is for when you want if statements without checking for String
+     * constants or regex. In most cases, 'unknown' can be assumed to be Linux or Unix systems.
+     */
     public static OS getOS() {
         String nm = getOS_Name();
         for (OS os : OS.values()) {
@@ -138,14 +146,25 @@ public class Environment {
             m = match;
         }
 
+        /**
+         * Return true if the OS is a Unix system. In most cases, the union of this and the UNKNOWN key will
+         * count towards Unix or Linux systems.
+         */
         public boolean isUnix() {
             return u;
         }
 
+        /**
+         * Get the matching string for this enum. If the OS name contains this string, it will be detected as that OS.
+         */
         public String getMatcher() {
             return m;
         }
 
+        /**
+         * Checks if the given OS string is equal to this enum. This is used in {@link #getOS()} to check the operating system
+         * type.
+         */
         public boolean equals(String s) {
             return s.toLowerCase().contains(m.toLowerCase());
         }
