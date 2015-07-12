@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.script.js.JavaScript;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
@@ -232,6 +233,14 @@ public class ModuleConfig {
      */
     public boolean getBoolean(String name, boolean def) {
         return (boolean) getOrDefault(name, def);
+    }
+
+    /**
+     * Get an array from the Configuration File
+     */
+    public <T> T[] getArray(String name, T[] def) {
+        ScriptObjectMirror obj = ((ScriptObjectMirror) getOrDefault(name, def));
+        return (T[]) obj.values().toArray(def);
     }
 
     /**
