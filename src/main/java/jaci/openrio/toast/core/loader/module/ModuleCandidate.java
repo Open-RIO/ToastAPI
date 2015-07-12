@@ -1,5 +1,8 @@
 package jaci.openrio.toast.core.loader.module;
 
+import jaci.openrio.toast.core.script.js.JavaScript;
+
+import javax.script.ScriptException;
 import java.io.File;
 import java.util.Vector;
 
@@ -98,17 +101,26 @@ public class ModuleCandidate {
     }
 
     /**
-     * Get the list of class entries this module contains. This may return a Size of zero after Module initialization.
+     * Get the list of class entries this module contains. This fetches the greatest common package(s)
      */
     public String[] getClassEntries() {
         return classMembers.toArray(new String[0]);
     }
 
     /**
-     * Remove the ClassMembers array to free up some RAM for particularly large modules.
+     * Cleanup the ClassMembers array to free up some RAM for particularly large modules.
      */
     public void freeMemory() {
-        classMembers.clear();
+        if (classMembers.size() > 0) {
+            JavaScript.put("__tmp_candidate", classMembers);
+            try {
+                JavaScript.eval("__tmp_candidate_arr = arr_to_vector(find_common_pkg(__tmp_candidate))");
+                classMembers = (Vector<String>) JavaScript.get("__tmp_candidate_arr");
+                JavaScript.eval("delete __tmp_candidate_arr; delete __tmp_candidate");
+            } catch (ScriptException e) {
+                classMembers.clear();
+            }
+        }
     }
 
 }
