@@ -23,7 +23,9 @@ class_list_content += ` jar -tf #{toast_jar} `.split("\n").grep /.*.class/
 classlist = class_list_content.map {|str| str.gsub(/\//, ".").gsub(/\.(class|java)$/, "")}
 
 # AWT and Swing packages aren't required, as GUI operation is only done in Sim
-EXCLUSIONS = ["java.awt.*", "javax.swing.*", "javax.image.*"]
+# Also ignore Nashorn extensions because of ButterKnife
+EXCLUSIONS = ["java.awt.*", "javax.swing.*", "javax.image.*",
+  "jdk.nashorn.*", "jdk.internal.*"]
 
 puts "Classes To Check: #{toast_jar_classes.length}"
 puts "Valid Robot Classes: #{classlist.length}"
