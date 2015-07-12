@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.script.js;
 
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.script.ScriptLoader;
 
 import javax.script.*;
@@ -51,7 +52,22 @@ public class JavaScript {
         try {
             if (supported()) {
                 ScriptLoader.getScriptDirByType("js").mkdirs();
-                loadedScripts = ScriptLoader.loadAll("js", engine, ".js");
+                loadedScripts = ScriptLoader.loadAll("js", engine, ToastConfiguration.config.getArray("javascript.autoload", new String[] {"main.js"}));
+            }
+        } catch (Exception e) {
+            Toast.log().error("Could not Load JavaScript script files: " + e);
+            Toast.log().exception(e);
+        }
+    }
+
+    /**
+     * Load a file with the given name. This loads from the script/js directory
+     */
+    public static void loadFile(String file) {
+        try {
+            if (supported()) {
+                ScriptLoader.getScriptDirByType("js").mkdirs();
+                loadedScripts = ScriptLoader.loadAll("js", engine, (file.contains(".") ? file : file + ".js"));
             }
         } catch (Exception e) {
             Toast.log().error("Could not Load JavaScript script files: " + e);

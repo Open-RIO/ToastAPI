@@ -9,7 +9,7 @@ import jaci.openrio.toast.lib.module.ModuleConfig;
  */
 public class ToastConfiguration {
 
-    static ModuleConfig config;
+    public static ModuleConfig config;
 
     /**
      * Initialize the Configuration. This creates the Preferences file

@@ -15,6 +15,10 @@ var loadsys = function(file) {
     $("jaci.openrio.toast.core.script.js.JavaScript").loadSystemLib(file);
 };
 
+var require = function(file) {
+    $("jaci.openrio.toast.core.script.js.JavaScript").loadFile(file);
+};
+
 var jimport = function() {
     var jclasstype = $(arguments[0]);
     eval((arguments.length == 1 ? jclasstype.class.simpleName : arguments[1]) + " = jclasstype");
@@ -24,27 +28,33 @@ var t_$ = function(arg) { };
 
 t_$.tick = function(md) {
     for (var obj in _toast_vars.ticker) {
-        var val = _toast_vars.ticker[obj];
-        if (val.mode == md)
-            val.func();
+        if (_toast_vars.ticker.hasOwnProperty(obj)) {
+            var val = _toast_vars.ticker[obj];
+            if (val.mode == md)
+                val.func();
+        }
     }
 };
 
 t_$.trans = function(md) {
     for (var obj in _toast_vars.transition) {
-        var val = _toast_vars.transition[obj];
-        if (val.mode == md)
-            val.func();
+        if (_toast_vars.ticker.hasOwnProperty(obj)) {
+            var val = _toast_vars.transition[obj];
+            if (val.mode == md)
+                val.func();
+        }
     }
 };
 
 t_$.heartbeat = function(skip) {
     for (var obj in _toast_vars.heartbeat) {
-        var cb = _toast_vars.heartbeat[obj];
-        if (cb.length == 0)
-            cb();
-        else if (cb.length == 1)
-            cb(skip);
+        if (_toast_vars.heartbeat.hasOwnProperty(obj)) {
+            var cb = _toast_vars.heartbeat[obj];
+            if (cb.length == 0)
+                cb();
+            else if (cb.length == 1)
+                cb(skip);
+        }
     }
 };
 
@@ -56,13 +66,15 @@ $.crash = function() {
     __toast.shutdownCrash();
 };
 
-$.log = function(message) {
-    __js_logger.info(message);
+$.log = function() {
+    __js_logger[arguments.length == 1 ? "info" : arguments[1]](arguments[0]);
 };
 
-$.log = function(message, level) {
-    __js_logger[level](message);
+$.pretty = function(string) {
+    return $('jaci.openrio.toast.lib.util.Pretty').format(string);
 };
+
+var console = { log: $.log, format: $.pretty };
 
 $.auto = function(callback) {
     _toast_vars.ticker.push({mode: 'autonomous', func: callback});

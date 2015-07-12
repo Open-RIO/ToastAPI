@@ -31,18 +31,18 @@ public class ScriptLoader {
     }
 
     /**
-     * Load all the scripts in the given directory into the provided ScriptEngine. Only files with the defined extensions
+     * Load all the scripts in the given directory into the provided ScriptEngine. Only files with the defined filenames
      * will be accepted into the loader. This function will recursively search in each Sub-Directory of the parent directory
      */
-    public static List<String> loadAll(String homedir, ScriptEngine engine, String... extensions) throws FileNotFoundException {
+    public static List<String> loadAll(String homedir, ScriptEngine engine, String... filenames) throws FileNotFoundException {
         List<String> list = new ArrayList<String>();
         if (!USBMassStorage.overridingModules()) {
-            search(getScriptDirByType(homedir), engine, list, extensions);
+            search(getScriptDirByType(homedir), engine, list, filenames);
         }
 
         for (MassStorageDevice device : USBMassStorage.connectedDevices) {
             if (device.concurrent_modules || device.override_modules) {
-                search(new File(device.toast_directory, "script/" + homedir), engine, list, extensions);
+                search(new File(device.toast_directory, "script/" + homedir), engine, list, filenames);
             }
         }
         return list;
@@ -51,15 +51,15 @@ public class ScriptLoader {
     /**
      * Recursively search a directory (and its subdirectory) for candidate files and load them into the ScriptEngine.
      */
-    private static void search(File dir, ScriptEngine engine, List<String> list, String... extensions) throws FileNotFoundException {
+    private static void search(File dir, ScriptEngine engine, List<String> list, String... filenames) throws FileNotFoundException {
         dir.mkdirs();
 
         File[] files = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 if (new File(dir, name).isDirectory()) return true;
-                for (String ext : extensions)
-                    if (name.endsWith(ext)) return true;
+                for (String ext : filenames)
+                    if (name.equalsIgnoreCase(ext)) return true;
                 return false;
             }
         });
@@ -69,13 +69,12 @@ public class ScriptLoader {
                 if (!file.isDirectory()) {
                     try {
                         engine.eval(new FileReader(file));
-                        Toast.log().info("Script Loaded: " + file.getName());
                     } catch (ScriptException e) {
                         Toast.log().error("Could not load Script: " + file);
                         Toast.log().exception(e);
                     }
                 } else
-                    search(file, engine, list, extensions);
+                    search(file, engine, list, filenames);
             }
     }
 }
