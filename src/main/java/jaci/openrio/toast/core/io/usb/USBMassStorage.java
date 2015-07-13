@@ -9,6 +9,7 @@ import jaci.openrio.toast.lib.module.ModuleConfig;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,23 @@ public class USBMassStorage {
                 Files.copy(f.toPath(), new File(crash, fn).toPath());
             } catch (IOException e) { }
         }
+    }
+
+    public static String relativize(File file) {
+        Path them = file.getAbsoluteFile().toPath();
+        if (them.startsWith(ToastBootstrap.toastHome.getAbsoluteFile().toPath())) {
+            return relativize_0(them, ToastBootstrap.toastHome.getAbsoluteFile().toPath());
+        } else {
+            for (MassStorageDevice dev : connectedDevices) {
+                if (them.startsWith(dev.toast_directory.getAbsoluteFile().toPath()))
+                    return relativize_0(them, dev.toast_directory.getAbsoluteFile().toPath());
+            }
+        }
+        return "";
+    }
+
+    private static String relativize_0(Path dest, Path home) {
+        return home.relativize(dest).toString();
     }
 
     /**

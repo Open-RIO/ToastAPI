@@ -16,7 +16,17 @@ var loadsys = function(file) {
 };
 
 var require = function(file) {
-    $("jaci.openrio.toast.core.script.js.JavaScript").loadFile(file);
+    return $("jaci.openrio.toast.core.script.js.JavaScript").loadFile(file);
+};
+
+//This one requires from the current directory, across all USB Mass Storage
+var require_relative = function(file, target) {
+    return $("jaci.openrio.toast.core.script.js.JavaScript").loadFileRelative(file.replace("file:/", ""), target);
+};
+
+//This one requires from the current directory, only on THIS filesystem
+var require_here = function(file) {
+
 };
 
 var jimport = function() {
@@ -115,3 +125,4 @@ $.heartbeat = function(callback) {
 
 loadsys("Motor.js");
 loadsys("Util.js");
+loadsys("Filesystem.js");

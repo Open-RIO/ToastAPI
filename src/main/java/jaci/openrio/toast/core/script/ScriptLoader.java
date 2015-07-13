@@ -2,15 +2,13 @@ package jaci.openrio.toast.core.script;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.core.io.Storage;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +66,7 @@ public class ScriptLoader {
             for (File file : files) {
                 if (!file.isDirectory()) {
                     try {
-                        engine.eval(new FileReader(file));
+                        load(file, engine);
                     } catch (ScriptException e) {
                         Toast.log().error("Could not load Script: " + file);
                         Toast.log().exception(e);
@@ -76,5 +74,59 @@ public class ScriptLoader {
                 } else
                     search(file, engine, list, filenames);
             }
+    }
+
+    /**
+     * Load a single File and return the value it returns. This is used by the require keyword among others. This occurs across all USB devices
+     */
+    public static Object loadSingle(String homedir, ScriptEngine engine, String file) throws FileNotFoundException, ScriptException {
+        final Object[] returnVal = {null};
+        Storage.USB_Module(new File("script/" + homedir, file).toString(), new Storage.StorageCallback() {
+            @Override
+            public void call(File file, boolean isUSB, MassStorageDevice device) {
+                if (file.exists()) {
+                    try {
+                        returnVal[0] = load(file, engine);
+                    } catch (Exception e) { }
+                }
+            }
+        });
+        return returnVal[0];
+    }
+
+    public static Object loadRelative(String basedir, ScriptEngine engine, String loadtarget) {
+        String rel = USBMassStorage.relativize(new File(basedir));
+        final Object[] load = {null};
+        Storage.USB_Module(rel, new Storage.StorageCallback() {
+            @Override
+            public void call(File file, boolean isUSB, MassStorageDevice device) {
+                File loadPath = new File((file.isDirectory() ? file : file.getParentFile()), loadtarget);
+                if (loadPath.exists()) {
+                    try {
+                        load[0] = load(loadPath, engine);
+                    } catch (FileNotFoundException | ScriptException e) { }
+                }
+            }
+        });
+        return load[0];
+    }
+
+    public static Object loadHere(String basedir, ScriptEngine engine, String loadtarget) throws FileNotFoundException, ScriptException {
+        File file = new File(basedir);
+        file = (file.isDirectory() ? file : file.getParentFile());
+        return load(new File(file, loadtarget), engine);
+    }
+
+    /**
+     * Load a file into the script engine. This uses the load() keyword in nashorn to ensure the __FILE__ and __DIR__ attributes are
+     * added correctly
+     */
+    public static Object load(File file, ScriptEngine engine) throws FileNotFoundException, ScriptException {
+        try {
+            engine.put("__LOAD_TARGET", file.getAbsolutePath());
+            return engine.eval("load(__LOAD_TARGET)");
+        } finally {
+            engine.eval("delete __LOAD_TARGET;");
+        }
     }
 }
