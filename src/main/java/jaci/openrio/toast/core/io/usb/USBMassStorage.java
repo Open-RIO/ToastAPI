@@ -1,7 +1,6 @@
 package jaci.openrio.toast.core.io.usb;
 
 import jaci.openrio.toast.core.ToastBootstrap;
-import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.module.ModuleConfig;

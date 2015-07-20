@@ -34,6 +34,10 @@ public class ToastConfiguration {
         OPTIMIZATION_GC_TIME("optimization.gc.time", 30),
 
         SECURITY_POLICY("security.policy", "STRICT"),
+
+        ROBOT_NAME("robot.name", "{ NAME NOT SET }"),
+        ROBOT_TEAM("robot.team", -1),
+        ROBOT_DESC("robot.desc", "{ DESCRIPTION NOT SET }")
         ;
 
         String key;

@@ -1,10 +1,13 @@
 package jaci.openrio.toast.core.script.js;
 
 import jaci.openrio.toast.core.StateTracker;
+import jaci.openrio.toast.core.command.AbstractCommand;
+import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
 import jaci.openrio.toast.lib.state.RobotState;
 import jaci.openrio.toast.lib.state.StateListener;
+import jdk.nashorn.api.scripting.JSObject;
 
 import javax.script.ScriptException;
 
@@ -72,5 +75,19 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
         try {
             JavaScript.eval("t_$.heartbeat(" + skipped + ")");
         } catch (ScriptException e) { }
+    }
+
+    public static void addCommand(String name, JSObject object) {
+        CommandBus.registerCommand(new AbstractCommand() {
+            @Override
+            public String getCommandName() {
+                return name;
+            }
+
+            @Override
+            public void invokeCommand(int argLength, String[] args, String command) {
+                object.call(object, args);
+            }
+        });
     }
 }

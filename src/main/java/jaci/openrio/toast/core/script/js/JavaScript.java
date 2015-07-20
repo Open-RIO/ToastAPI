@@ -67,7 +67,11 @@ public class JavaScript {
         try {
             if (supported()) {
                 ScriptLoader.getScriptDirByType("js").mkdirs();
-                return ScriptLoader.loadSingle("js", engine, (file.contains(".") ? file : file + ".js"));
+                if (file.contains(".js")) {
+                    return ScriptLoader.loadSingle("js", engine, file);
+                } else {
+                    return ScriptLoader.loadModule("js", engine, file);
+                }
             }
         } catch (Exception e) {
             Toast.log().error("Could not Load JavaScript script files: " + e);

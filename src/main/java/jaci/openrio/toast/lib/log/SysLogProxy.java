@@ -3,7 +3,9 @@ package jaci.openrio.toast.lib.log;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  * A utility class to attach system.out and system.err into {@link jaci.openrio.toast.lib.log.SplitStream} to

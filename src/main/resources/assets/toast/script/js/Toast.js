@@ -25,8 +25,8 @@ var require_relative = function(file, target) {
 };
 
 //This one requires from the current directory, only on THIS filesystem
-var require_here = function(file) {
-
+var require_here = function(file, target) {
+    return $("jaci.openrio.toast.core.script.js.JavaScript").loadFileHere(file.replace("file:/", ""), target);
 };
 
 var jimport = function() {
@@ -121,6 +121,10 @@ $.ontest = function(callback) {
 $.heartbeat = function(callback) {
     JSEngine.hb();
     _toast_vars.heartbeat.push(callback);
+};
+
+$.command = function(name, callback) {
+    JSEngine.addCommand(name, callback);
 };
 
 loadsys("Motor.js");
