@@ -1,5 +1,7 @@
 package jaci.openrio.toast.lib.math;
 
+import java.math.BigDecimal;
+
 /**
  * A utility class to help with Math
  *
@@ -11,7 +13,7 @@ public class MathHelper {
      * Round a number (d) to the specified amount of decimal places (res)
      */
     public static double round(double d, int res) {
-        int x = (int) Math.pow(10, res);
-        return Math.rint(d * x) / x;
+        BigDecimal bd = new BigDecimal(d).setScale(res, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
     }
 }
