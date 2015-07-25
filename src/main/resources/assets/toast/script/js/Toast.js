@@ -29,6 +29,14 @@ var require_here = function(file, target) {
     return $("jaci.openrio.toast.core.script.js.JavaScript").loadFileHere(file.replace("file:/", ""), target);
 };
 
+var load_module = function(file) {
+    return $('jaci.openrio.toast.core.script.ScriptLoader').mapModule(file);
+};
+
+var sleep = function(duration) {
+    java.lang.Thread.sleep(duration);
+};
+
 var jimport = function() {
     var jclasstype = $(arguments[0]);
     eval((arguments.length == 1 ? jclasstype.class.simpleName : arguments[1]) + " = jclasstype");
@@ -125,6 +133,24 @@ $.heartbeat = function(callback) {
 
 $.command = function(name, callback) {
     JSEngine.addCommand(name, callback);
+};
+
+$.thread = function(callback) {         //Not Thread Pool
+    return JSEngine.thread(callback);
+};
+
+$.thread_a = function(callback) {
+    return JSEngine.threadArgs(callback);
+};
+
+$.server_socket = function(port) {
+    var socket = $('java.net.ServerSocket');
+    return new socket(port);
+};
+
+$.config = function(module) {
+    var conf = $('jaci.openrio.toast.lib.module.ModuleConfig');
+    return new conf(module);
 };
 
 loadsys("Motor.js");

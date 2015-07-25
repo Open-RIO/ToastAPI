@@ -117,6 +117,7 @@ public class JavaScript {
      */
     private static void loadSystem() {
         try {
+            eval("__GLOBAL = this");
             put("__toast", Toast.getToast());
 
             loadSystemLib("Map.js");

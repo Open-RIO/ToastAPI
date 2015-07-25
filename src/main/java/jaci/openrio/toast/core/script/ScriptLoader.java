@@ -7,6 +7,8 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.Storage;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
+import jaci.openrio.toast.core.script.js.JSEngine;
+import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerEntity;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
@@ -116,7 +118,7 @@ public class ScriptLoader {
                     unzip(file, extract);
                     unz.stop();
                     ProfilerEntity mape = new ProfilerEntity("parse").start();
-                    String n = mapModule(extract, map);
+                    String n = mapModule(extract, map, engine);
                     mape.stop();
 
                     ProfilerSection section = Profiler.INSTANCE.section("JavaScript").section("Module").section(n);
@@ -127,11 +129,24 @@ public class ScriptLoader {
         engine.put("__MODULES", map);
     }
 
-    private static String mapModule(File directory, HashMap<String, File> map) throws FileNotFoundException {
+    public static String mapModule(String directory) throws FileNotFoundException {
+        return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"), JavaScript.getEngine());
+    }
+
+    private static String mapModule(File directory, HashMap<String, File> map, ScriptEngine engine) throws FileNotFoundException {
         File metadata = new File(directory, "module.json");
         JsonObject obj = new JsonParser().parse(new FileReader(metadata)).getAsJsonObject();
         map.put(obj.get("name").getAsString(), new File(directory, obj.get("script").getAsString()).getAbsoluteFile());
-        return obj.get("name").getAsString();
+        String name = obj.get("name").getAsString();
+        if (obj.has("initscript")) {
+            try {
+                load(new File(directory, obj.get("initscript").getAsString()), engine);
+            } catch (Exception e) {
+                Toast.log().info("Error in loading InitScript: " + e);
+                Toast.log().exception(e);
+            }
+        }
+        return name;
     }
 
     private static void unzip(File source, File target) throws IOException {

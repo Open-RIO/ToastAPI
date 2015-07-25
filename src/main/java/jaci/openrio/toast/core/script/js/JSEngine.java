@@ -90,4 +90,37 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
             }
         });
     }
+
+    public static Thread thread(JSObject object) {
+        return new Thread(new Runnable() {
+            @Override
+            public void run() {
+                object.call(object);
+            }
+        });
+    }
+
+    public static Thread threadArgs(JSObject obj) {
+        return new ThreadWithArgs(obj);
+    }
+
+    public static class ThreadWithArgs extends Thread {
+
+        JSObject object;
+        Object[] args;
+
+        public ThreadWithArgs(JSObject target) {
+            object = target;
+        }
+
+        public void start(Object... arguments) {
+            this.args = arguments;
+            this.start();
+        }
+
+        @Override
+        public void run() {
+            object.call(object, args);
+        }
+    }
 }
