@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.loader.simulation;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.loader.simulation.jni.InterruptContainer;
+import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.state.RobotState;
 
 import javax.imageio.ImageIO;
@@ -26,7 +27,9 @@ public class SimulationGUI extends JPanel {
      */
     public static void main(String[] args) {
         //Test main method, never invoked outside of development environments
+        Profiler.INSTANCE.section("Init").section("Simulation").start("GUI");
         create();
+        Profiler.INSTANCE.section("Init").section("Simulation").stop("GUI");
     }
 
     /**

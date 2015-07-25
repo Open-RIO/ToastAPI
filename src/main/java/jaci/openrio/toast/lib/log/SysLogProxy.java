@@ -24,6 +24,7 @@ public class SysLogProxy {
     public static PrintStream errStream;
     public static File logDir;
     public static File recentOut;
+    public static File oldOut;
     public static File recentErr;
 
     static boolean init = false;
@@ -42,8 +43,13 @@ public class SysLogProxy {
                 recentOut = new File(logDir, "recent.txt");
                 recentErr = new File(logDir, "recentErr.txt");
 
-                if (recentOut.exists())
+                if (recentOut.exists()) {
+                    oldOut = new File(logDir, "last_session.txt");
+                    if (oldOut.exists()) oldOut.delete();
+                    recentOut.renameTo(oldOut);
+                    recentOut = new File(logDir, "recent.txt");
                     recentOut.delete();
+                }
 
                 if (recentErr.exists())
                     recentErr.delete();

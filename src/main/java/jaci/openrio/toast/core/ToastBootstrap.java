@@ -15,6 +15,7 @@ import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.module.ModuleConfig;
+import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
@@ -67,7 +68,6 @@ public class ToastBootstrap {
     public static void main(String[] args) {
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
-        LoadPhase.BOOTSTRAP.transition();
         color = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -108,6 +108,8 @@ public class ToastBootstrap {
         toastHome.mkdirs();
 
         JavaScript.init();
+        LoadPhase.BOOTSTRAP.transition();
+
         ModuleConfig.init();
 
         SysLogProxy.init();
@@ -151,6 +153,7 @@ public class ToastBootstrap {
         toastLogger.info("Nuking Toast...");
         RobotLoader.postCore();
         JavaScript.binderInit();
+        Profiler.INSTANCE.section("Init").start("WPILib");
         RobotBase.main(args);
     }
 

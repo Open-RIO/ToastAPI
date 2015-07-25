@@ -43,6 +43,7 @@ public class CommandBus {
         registerCommand(new CommandList());
         registerCommand(new CommandHelp());
         registerCommand(new CommandExit());
+        registerCommand(new CommandProfiler());
     }
 
     /**

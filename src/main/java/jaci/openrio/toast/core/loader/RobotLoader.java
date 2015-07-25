@@ -11,6 +11,7 @@ import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
+import jaci.openrio.toast.lib.profiler.Profiler;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -109,6 +110,7 @@ public class RobotLoader {
      * everything in the {@link EnvJars} class, but will search for candidates in the output directory.
      */
     static void loadDevEnv() {
+        Profiler.INSTANCE.section("Module").start("Dev");
         for (URL url : sysLoader.getURLs()) {
             try {
                 File f = new File(url.toURI());
@@ -122,6 +124,7 @@ public class RobotLoader {
             } catch (Exception e) {
             }
         }
+        Profiler.INSTANCE.section("Module").stop("Dev");
     }
 
     /**
@@ -200,11 +203,13 @@ public class RobotLoader {
      */
     private static void loadCoreCandidates() {
         coreLoading = true;
+        Profiler.INSTANCE.section("Module").section("CoreJava").start("Candidate");
         for (String currentDirectory : discoveryDirs) {
             File dir = new File(currentDirectory);
             dir.mkdirs();
             search(dir);
         }
+        Profiler.INSTANCE.section("Module").section("CoreJava").stop("Candidate");
     }
 
     /**
@@ -212,6 +217,7 @@ public class RobotLoader {
      */
     private static void loadCandidates() {
         coreLoading = false;
+        Profiler.INSTANCE.section("Module").section("Java").start("Candidate");
         boolean usb_override = USBMassStorage.overridingModules();
         if (!usb_override)
             for (String currentDirectory : discoveryDirs) {
@@ -227,6 +233,7 @@ public class RobotLoader {
                 search(modulesDir);
             }
         }
+        Profiler.INSTANCE.section("Module").section("Java").stop("Candidate");
     }
 
     /**
@@ -268,6 +275,7 @@ public class RobotLoader {
      * Parse the candidates to find their ToastModule classes
      */
     private static void parseEntries() {
+        Profiler.INSTANCE.section("Module").section("Java").start("Parse");
         for (ModuleCandidate candidate : getCandidates()) {
             if (candidate.isBypass()) {
                 handle(new Runnable() {
@@ -298,12 +306,14 @@ public class RobotLoader {
                 }
             });
         }
+        Profiler.INSTANCE.section("Module").section("Java").stop("Parse");
     }
 
     /**
      * Load CorePlugin classes and instantiate them.
      */
     private static void parseCoreEntries() {
+        Profiler.INSTANCE.section("Module").section("CoreJava").start("Parse");
         for (String clazz : coreClasses) {
             try {
                 Class c = Class.forName(clazz);
@@ -313,6 +323,7 @@ public class RobotLoader {
             } catch (Throwable e) {
             }
         }
+        Profiler.INSTANCE.section("Module").section("CoreJava").stop("Parse");
     }
 
     /**
@@ -369,6 +380,7 @@ public class RobotLoader {
      * Construct all the modules
      */
     private static void construct() {
+        Profiler.INSTANCE.section("Module").section("Java").start("Construction");
         for (ModuleContainer container : getContainers()) {
             try {
                 container.construct();
@@ -376,6 +388,7 @@ public class RobotLoader {
             } catch (Exception e) {
             }
         }
+        Profiler.INSTANCE.section("Module").section("Java").stop("Construction");
     }
 
     /**
@@ -383,7 +396,9 @@ public class RobotLoader {
      */
     private static void branches() {
         for (ModuleContainer container : getContainers()) {
+            Profiler.INSTANCE.section("Module").section("Java").section("Dependency").start(container.getName());
             container.resolve_branches();
+            Profiler.INSTANCE.section("Module").section("Java").section("Dependency").stop(container.getName());
         }
     }
 
@@ -448,6 +463,7 @@ public class RobotLoader {
             }
             exec = new MethodExecutor(mods);
         }
+        exec.profile(Profiler.INSTANCE.section("Module").section("Java").section(method));
         exec.call(method);
     }
 

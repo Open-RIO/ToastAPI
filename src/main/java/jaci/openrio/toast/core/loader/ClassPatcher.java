@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.ToastBootstrap;
+import jaci.openrio.toast.lib.profiler.Profiler;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -62,6 +63,7 @@ public class ClassPatcher extends URLClassLoader {
      */
     public void identifyPatches(boolean sim) {
         try {
+            Profiler.INSTANCE.section("Init").section("Patch").start("Identify");
             ArrayList<String> patches = new ArrayList<>();
             InputStream is = getResourceAsStream("assets/toast/patches/patches.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -72,19 +74,24 @@ public class ClassPatcher extends URLClassLoader {
             }
 
             reader.close();
+            Profiler.INSTANCE.section("Init").section("Patch").stop("Identify");
 
             for (String s : patches) {
                 try {
-                    if (s.endsWith(".sim") && sim)
-                        loadClass(s.replace(".sim","").replace("/", "."));
-                    else if (s.endsWith(".pat"))
-                        loadClass(s.replace(".pat","").replace("/", "."));
+                    if (s.endsWith(".sim") && sim) {
+                        Profiler.INSTANCE.section("Init").section("Patch").section("Simulation").start(s);
+                        loadClass(s.replace(".sim", "").replace("/", "."));
+                        Profiler.INSTANCE.section("Init").section("Patch").section("Simulation").stop(s);
+                    } else if (s.endsWith(".pat")) {
+                        Profiler.INSTANCE.section("Init").section("Patch").section("Global").start(s);
+                        loadClass(s.replace(".pat", "").replace("/", "."));
+                        Profiler.INSTANCE.section("Init").section("Patch").section("Global").stop(s);
+                    }
                 } catch (Exception e) {
                     ToastBootstrap.toastLogger.error("Could not load Simulation Patch: " + s);
                     ToastBootstrap.toastLogger.exception(e);
                 }
             }
-
         } catch (Exception e) {
             ToastBootstrap.toastLogger.error("Could not load patches. Ignoring...");
         }

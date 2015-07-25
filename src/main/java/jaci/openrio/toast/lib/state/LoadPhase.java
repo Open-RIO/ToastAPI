@@ -1,5 +1,7 @@
 package jaci.openrio.toast.lib.state;
 
+import jaci.openrio.toast.lib.profiler.Profiler;
+
 import java.util.Vector;
 import java.util.function.Function;
 
@@ -79,7 +81,13 @@ public enum LoadPhase {
      */
     public void transition() {
         Thread.currentThread().setName(threadName);
+        if (currentPhase != null) {
+            Profiler.INSTANCE.section("LoadPhase").stop(currentPhase.threadName);
+        }
         currentPhase = this;
+        if (currentPhase != COMPLETE) {
+            Profiler.INSTANCE.section("LoadPhase").start(currentPhase.threadName);
+        }
         for (Function<LoadPhase, Void> callback : callbacks)
             callback.apply(this);
 

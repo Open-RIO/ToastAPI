@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.script.js;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.script.ScriptLoader;
+import jaci.openrio.toast.lib.profiler.Profiler;
 
 import javax.script.*;
 import java.io.InputStreamReader;
@@ -28,20 +29,24 @@ public class JavaScript {
      * calling it yourself.
      */
     public static void init() {
+        Profiler.INSTANCE.section("JavaScript").start("Init");
         manager = new ScriptEngineManager();
         engine = manager.getEngineByName("nashorn");
         if (engine == null) {
             engine = manager.getEngineByName("rhino");
             engine_type = "Rhino";
         } else engine_type = "Nashorn";
+        Profiler.INSTANCE.section("JavaScript").stop("Init");
     }
 
     /**
      * Called when Toast is ready and bindings are ready to be bound.
      */
     public static void binderInit() {
+        Profiler.INSTANCE.section("JavaScript").start("BindSystem");
         loadSystem();
         JSEngine.init();
+        Profiler.INSTANCE.section("JavaScript").stop("BindSystem");
     }
 
     /**

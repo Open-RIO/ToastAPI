@@ -7,6 +7,9 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.Storage;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
+import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerEntity;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -40,14 +43,16 @@ public class ScriptLoader {
      */
     public static List<String> loadAll(String homedir, ScriptEngine engine, String... filenames) throws FileNotFoundException {
         List<String> list = new ArrayList<String>();
-        if (!USBMassStorage.overridingModules())
+        if (!USBMassStorage.overridingModules()) {
             searchModules(new File(getScriptDirByType(homedir), "modules"), engine);
+        }
 
         for (MassStorageDevice device : USBMassStorage.connectedDevices) {
             if (device.concurrent_modules || device.override_modules)
                 searchModules(new File(new File(device.toast_directory, "script/" + homedir), "modules"), engine);
         }
 
+        Profiler.INSTANCE.section("JavaScript").start("Load");
         if (!USBMassStorage.overridingModules())
             search(getScriptDirByType(homedir), engine, list, filenames);
 
@@ -55,6 +60,7 @@ public class ScriptLoader {
             if (device.concurrent_modules || device.override_modules)
                 search(new File(device.toast_directory, "script/" + homedir), engine, list, filenames);
         }
+        Profiler.INSTANCE.section("JavaScript").stop("Load");
         return list;
     }
 
@@ -106,17 +112,26 @@ public class ScriptLoader {
             for (File file : modules) {
                 try {
                     File extract = new File(extraction, file.getName().replace(".jsm", ""));
+                    ProfilerEntity unz = new ProfilerEntity("unzip").start();
                     unzip(file, extract);
-                    mapModule(extract, map);
+                    unz.stop();
+                    ProfilerEntity mape = new ProfilerEntity("parse").start();
+                    String n = mapModule(extract, map);
+                    mape.stop();
+
+                    ProfilerSection section = Profiler.INSTANCE.section("JavaScript").section("Module").section(n);
+                    section.pushEntity(unz);
+                    section.pushEntity(mape);
                 } catch (IOException e) { }
             }
         engine.put("__MODULES", map);
     }
 
-    private static void mapModule(File directory, HashMap<String, File> map) throws FileNotFoundException {
+    private static String mapModule(File directory, HashMap<String, File> map) throws FileNotFoundException {
         File metadata = new File(directory, "module.json");
         JsonObject obj = new JsonParser().parse(new FileReader(metadata)).getAsJsonObject();
         map.put(obj.get("name").getAsString(), new File(directory, obj.get("script").getAsString()).getAbsoluteFile());
+        return obj.get("name").getAsString();
     }
 
     private static void unzip(File source, File target) throws IOException {
@@ -164,7 +179,8 @@ public class ScriptLoader {
 
     public static Object loadModule(String homedir, ScriptEngine engine, String name) throws FileNotFoundException, ScriptException {
         HashMap<String, File> mp = (HashMap<String, File>) engine.get("__MODULES");
-        return load(mp.get(name), engine);
+        Object ret = load(mp.get(name), engine);
+        return ret;
     }
 
     public static Object loadRelative(String basedir, ScriptEngine engine, String loadtarget) {

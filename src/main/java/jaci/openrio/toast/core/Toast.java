@@ -12,6 +12,7 @@ import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
@@ -70,6 +71,7 @@ public class Toast extends RobotBase {
     protected void prestart() {
         try {
             // -------- NEW PHASE -------- //
+            Profiler.INSTANCE.section("Init").stop("WPILib");
             LoadPhase.PRE_START.transition();
             log().info("Buttering Bread...");
             RobotLoader.init();
@@ -106,6 +108,7 @@ public class Toast extends RobotBase {
             LoadPhase.COMPLETE.transition();
             ToastBootstrap.endTimeMS = System.currentTimeMillis();
             log().info("Total Initiation Time: " + (double)(ToastBootstrap.endTimeMS - ToastBootstrap.startTimeMS) / 1000D + " seconds");
+            Profiler.INSTANCE.export();
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);

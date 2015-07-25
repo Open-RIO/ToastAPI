@@ -1,6 +1,8 @@
 package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.loader.annotation.Priority;
+import jaci.openrio.toast.lib.module.ToastModule;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -37,6 +39,15 @@ public class MethodExecutor {
      */
     public void call(String method) {
         call(method, new Class[0]);
+    }
+
+    ProfilerSection section;
+
+    /**
+     * Set the next Profiler Section. This is for Robot Loading dispatch
+     */
+    public void profile(ProfilerSection section) {
+        this.section = section;
     }
 
     /**
@@ -86,7 +97,14 @@ public class MethodExecutor {
         MethodIdentifier id = parse(method, argTypes);
         for (MethodContainer container : callStacks.get(id)) {
             try {
+                ToastModule mod = null;
+                if (section != null && container.obj instanceof ToastModule) {
+                    mod = (ToastModule) container.obj;
+                    section.start(mod.getModuleName());
+                }
                 container.method.invoke(container.obj);
+                if (mod != null)
+                    section.stop(mod.getModuleName());
             } catch (Exception e) {
             }
         }

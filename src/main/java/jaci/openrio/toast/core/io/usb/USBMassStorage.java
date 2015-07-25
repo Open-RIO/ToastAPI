@@ -4,6 +4,8 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.module.ModuleConfig;
+import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -121,6 +123,7 @@ public class USBMassStorage {
                 return;
             }
 
+            ProfilerEntity profilerEntity = new ProfilerEntity().start();
             ModuleConfig pref = new ModuleConfig(configuration);
             String drive_name = pref.getString("toast.device_name", "Team_####_USB_Device").replace(" ", "_");
             MassStorageDevice device = new MassStorageDevice(canon, pref, drive_name);
@@ -137,6 +140,9 @@ public class USBMassStorage {
                 filesystem_highest = device;
                 filesystem_last = device.filesystem_priority;
             }
+            profilerEntity.stop();
+            profilerEntity.setName(drive_name);
+            Profiler.INSTANCE.section("Init").section("USB").pushEntity(profilerEntity);
         } catch (Exception e) {
             e.printStackTrace();
         }
