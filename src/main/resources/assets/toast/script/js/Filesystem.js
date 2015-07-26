@@ -59,5 +59,5 @@ function File(path) {
 }
 
 $.file = function(root, target) {
-    return new File(new java.io.File(root.replace(/file:(\\|\/)?/, ""), "../" + target));
+    return new File(new java.io.File(new java.io.File(root.replace(/file:(\\|\/)?/, "")).getParentFile(), target));
 };

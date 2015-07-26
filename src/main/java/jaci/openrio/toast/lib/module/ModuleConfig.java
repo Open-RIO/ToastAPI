@@ -11,6 +11,7 @@ import javax.script.Bindings;
 import javax.script.ScriptException;
 import java.io.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * The ModuleConfig is the new replacement for the old GroovyPreferences.
@@ -24,6 +25,7 @@ public class ModuleConfig {
 
     static File base_file;
     static Bindings js_bind;
+    public static LinkedList<ModuleConfig> allConfigs;
 
     /**
      * Start the configuration engine. This sets up the Root dir as well as JavaScript bindings for Config.js.
@@ -32,6 +34,7 @@ public class ModuleConfig {
     public static void init() {
         base_file = new File(ToastBootstrap.toastHome, "config");
         base_file.mkdirs();
+        allConfigs = new LinkedList<>();
         js_bind = JavaScript.getEngine().createBindings();
         try {
             JavaScript.getEngine().eval(JavaScript.getSystemLib("Config.js"), js_bind);
@@ -56,6 +59,7 @@ public class ModuleConfig {
             if (!parent_file.exists())
                 parent_file.createNewFile();
 
+            allConfigs.add(this);
             load();
         } catch (Exception e) { }
     }
@@ -66,6 +70,7 @@ public class ModuleConfig {
             if (!file.exists())
                 file.createNewFile();
 
+            allConfigs.add(this);
             load();
         } catch (Exception e) { }
     }

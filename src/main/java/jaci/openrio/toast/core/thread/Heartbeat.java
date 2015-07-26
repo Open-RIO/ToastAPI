@@ -71,7 +71,7 @@ public class Heartbeat implements Runnable {
      */
     public static Logger log() {
         if (nervous_system == null)
-            nervous_system = new Logger("Heartbeat", Logger.ATTR_TIME);
+            nervous_system = new Logger("Heartbeat", Logger.ATTR_TIME | Logger.ATTR_COLOR);
         return nervous_system;
     }
 

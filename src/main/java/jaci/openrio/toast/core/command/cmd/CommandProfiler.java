@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.command.cmd;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jaci.openrio.toast.core.command.AbstractCommand;
+import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.math.MathHelper;
 import jaci.openrio.toast.lib.profiler.Profiler;
@@ -14,11 +15,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CommandProfiler extends AbstractCommand {
+public class CommandProfiler extends AbstractCommand implements IHelpable {
 
     @Override
     public String getCommandName() {
         return "profiler";
+    }
+
+    @Override
+    public String getHelp() {
+        return "Returns output data from the Profiler. --json will format in JSON, and --export will export it to a file under toast/system/profiler with the current timestamp";
     }
 
     @Override
