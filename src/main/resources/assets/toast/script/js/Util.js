@@ -29,3 +29,8 @@ var arr_to_vector = function(arr) {
     });
     return vector;
 };
+
+$.command("eval", function() {
+    var fcmd = [].slice.call(arguments).join(" ");
+    eval(fcmd);
+});
