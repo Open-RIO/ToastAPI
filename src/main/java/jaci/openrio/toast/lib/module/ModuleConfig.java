@@ -38,6 +38,7 @@ public class ModuleConfig {
         js_bind = JavaScript.getEngine().createBindings();
         try {
             JavaScript.getEngine().eval(JavaScript.getSystemLib("Config.js"), js_bind);
+            JavaScript.getEngine().eval(JavaScript.getSystemLib("Util.js"), js_bind);
         } catch (ScriptException e) {
         }
     }
@@ -130,7 +131,9 @@ public class ModuleConfig {
             String str = (String) o;
             try {
                 str = JavaScript.getEngine().eval("postProcess(\"" + str + "\");", bindings).toString();
-            } catch (ScriptException e) {}
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
             return str;
         } else return o;
     }

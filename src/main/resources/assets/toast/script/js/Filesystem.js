@@ -21,6 +21,16 @@ $.withReader = function(is, cb) {
     br.close();
 };
 
+$.readFully = function(is) {
+    var str = "";
+    $.withReader(is, function(br) {
+        var line = "";
+        while ((line = br.readLine()) != null)
+            str += line + "\n";
+    });
+    return str;
+};
+
 var __withWriter = function(fl, cb) {
     var jio = $("java.io");
     var bw = new jio["BufferedWriter"](new jio["FileWriter"](fl));

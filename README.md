@@ -15,7 +15,6 @@ Travis CI Build Status:
   - [Expansion and Storage](#expansion-and-storage)
   - [Commands](#commands)
   - [Security](#security)
-    - [File System](#file-system)
     - [Ports and Networking](#ports-and-networking)
   - [Others](#others)
 - [Deployment](#deployment)
@@ -140,10 +139,7 @@ Toast aims to be as flexible as possible, and as such, we provide a CommandBus i
 
 ## Security
 In the odd event that a module goes haywire, Toast has security implementations to make sure the modules doesn't Nuke your RoboRIO.  
-In the Toast Configuration, a user can select STRICT, LOOSE or NONE as a security policy. STRICT will deny unauthorized actions, while LOOSE will only warn the user.  
-### File System
-Modules can read from any part of the RoboRIO filesystem, but can only write/execute on any files located in the ``` /home/lvuser/toast ``` directory. This removes the risk of the famous ``` rm -rf / ``` or ``` delete system32 ``` jokes.  
-If a module needs access outside of this scope, they can appeal to us here at OpenRIO for an exception, or ask the user to switch to "Loose" as a security policy.  
+In the Toast Configuration, a user can select STRICT, LOOSE or NONE as a security policy. STRICT will deny unauthorized actions, while LOOSE will only warn the user.
 
 ### Ports and Networking
 Modules are given freedom in which ports they choose. STRICT and LOOSE will act the same in this setting, where STRICT will not block, only warn. Any ports outside of the 5800 - 5810 range will send a warning to the user, as ports outside of this range will NOT be forwarded by FMS. This is a precaution so people don't go mad when FMS doesn't forward their ports and their robot doesn't work on the first match.  
