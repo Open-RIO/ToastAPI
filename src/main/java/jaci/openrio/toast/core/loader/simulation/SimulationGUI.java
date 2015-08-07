@@ -27,9 +27,9 @@ public class SimulationGUI extends JPanel {
      */
     public static void main(String[] args) {
         //Test main method, never invoked outside of development environments
-        Profiler.INSTANCE.section("Init").section("Simulation").start("GUI");
+        Profiler.INSTANCE.section("Pre-Initialization").section("Simulation").start("GUI");
         create();
-        Profiler.INSTANCE.section("Init").section("Simulation").stop("GUI");
+        Profiler.INSTANCE.section("Pre-Initialization").section("Simulation").stop("GUI");
     }
 
     /**

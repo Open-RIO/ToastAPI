@@ -17,6 +17,7 @@ import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 import jaci.openrio.toast.lib.module.ModuleConfig;
 import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
@@ -73,6 +74,8 @@ public class ToastBootstrap {
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
         color = true;
+        ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
+        profiler.start("ParseArgs");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             String nextArg = null;
@@ -111,6 +114,7 @@ public class ToastBootstrap {
                 compareStub = true;
             }
         }
+        profiler.stop("ParseArgs");
 
         if (compareStub) {
             System.out.println("Immediately exiting -- we've been told to exit before initialization for memory and utilization measurement purposes. Type something to end the program.");
@@ -128,29 +132,39 @@ public class ToastBootstrap {
         }
         toastHome.mkdirs();
 
-        JavaScript.init();
         LoadPhase.BOOTSTRAP.transition();
+        JavaScript.init();
 
         ModuleConfig.init();
 
+        profiler.start("Logger");
         SysLogProxy.init();
+        profiler.stop("Logger");
+        profiler.start("Crash");
         CrashHandler.init();
+        profiler.stop("Crash");
 
+        profiler.start("Misc");
         System.out.println(Assets.getAscii("splash"));
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
         GlobalBlackboard.INSTANCE.put("runtime_args", args);
+        profiler.stop("Misc");
 
+        profiler.start("Version");
         Version.init();
+        profiler.stop("Version");
+        profiler.start("Security");
         ToastSecurityManager.init();
+        profiler.stop("Security");
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_PREINIT.transition();
-        RobotLoader.preinit();
+        RobotLoader.preinit(Profiler.INSTANCE.section("RobotLoader"));
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_INIT.transition();
-        RobotLoader.initCore();
+        RobotLoader.initCore(Profiler.INSTANCE.section("RobotLoader"));
 
         if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
@@ -159,8 +173,12 @@ public class ToastBootstrap {
         LoadPhase.PRE_INIT.transition();
         toastLogger.info("Slicing Loaf...");
         USBMassStorage.init();
+        profiler.start("Configuration");
         ToastConfiguration.init();
+        profiler.stop("Configuration");
+        profiler.start("ThreadPool");
         ToastThreadPool.init();
+        profiler.stop("ThreadPool");
 
         ClassPatcher classLoader = new ClassPatcher();
         classLoader.identifyPatches(isSimulation);
@@ -172,9 +190,9 @@ public class ToastBootstrap {
         // -------- NEW PHASE -------- //
         LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
-        RobotLoader.postCore();
+        RobotLoader.postCore(Profiler.INSTANCE.section("RobotLoader"));
         JavaScript.binderInit();
-        Profiler.INSTANCE.section("Init").start("WPILib");
+        profiler.start("WPILib");
         RobotBase.main(args);
     }
 

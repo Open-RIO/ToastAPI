@@ -21,6 +21,10 @@ public class CommandJScript extends AbstractCommand {
         while (run) {
             try {
                 String message = CommandBus.requestNextMessage();
+                if (message == null) {
+                    run = false;
+                    continue;
+                }
                 if (message.equals("exit") || message.equals("stop")) {
                     run = false;
                     continue;
@@ -32,8 +36,8 @@ public class CommandJScript extends AbstractCommand {
                     Toast.log().raw("#=> null");
             } catch (InterruptedException e) {
                 run = false;
-            } catch (ScriptException e) {
-                Toast.log().raw(e.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         Toast.log().info("Interactive JavaScript console stopped.");

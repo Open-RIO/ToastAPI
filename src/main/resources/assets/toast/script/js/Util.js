@@ -45,6 +45,8 @@ var $EXEC = function() {
     return out;
 };
 
+
+
 $.command("eval", function() {
     var fcmd = [].slice.call(arguments).join(" ");
     eval(fcmd);

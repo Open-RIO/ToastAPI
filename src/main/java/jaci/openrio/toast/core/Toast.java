@@ -13,6 +13,7 @@ import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
@@ -70,16 +71,19 @@ public class Toast extends RobotBase {
     @Override
     protected void prestart() {
         try {
+            ProfilerSection section = Profiler.INSTANCE.section("Setup");
+            section.stop("WPILib");
             // -------- NEW PHASE -------- //
-            Profiler.INSTANCE.section("Init").stop("WPILib");
             LoadPhase.PRE_START.transition();
             log().info("Buttering Bread...");
-            RobotLoader.init();
+            RobotLoader.init(Profiler.INSTANCE.section("RobotLoader"));
             JavaScript.loaderInit();
 
+            section.start("CommandBus");
             CommandBus.init();
+            section.stop("CommandBus");
 
-            RobotLoader.prestart();
+            RobotLoader.prestart(Profiler.INSTANCE.section("RobotLoader"));
             FRCHooks.robotReady();
         } catch (Exception e) {
             CrashHandler.handle(e);
@@ -94,12 +98,15 @@ public class Toast extends RobotBase {
         try {
             // -------- NEW PHASE -------- //
             LoadPhase.START.transition();
+            ProfilerSection section = Profiler.INSTANCE.section("Setup");
             log().info("Fabricating Sandwich...");
 
             log().info("Verdict: " + getRandomTaste());
-            RobotLoader.start();
+            RobotLoader.start(Profiler.INSTANCE.section("RobotLoader"));
 
+            section.start("Delegate");
             SocketManager.launch();
+            section.stop("Delegate");
 
             if (ToastConfiguration.Property.OPTIMIZATION_GC.asBoolean()) {
                 registerGC(ToastConfiguration.Property.OPTIMIZATION_GC_TIME.asDouble());
@@ -155,15 +162,8 @@ public class Toast extends RobotBase {
         System.exit(-1);
     }
 
-    private void shutdownAll() {
+    public void shutdownAll() {
         MotorRegistry.stopAll();
-        if (Environment.isEmbedded()) {
-            try {
-                // Short - Long - Short - Short
-                ProcessBuilder builder = new ProcessBuilder("status_led", "blink_pattern", "$((2#1011110101))");
-                builder.start();
-            } catch (Exception e) {}
-        }
     }
 
 }

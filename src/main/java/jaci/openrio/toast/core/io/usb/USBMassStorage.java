@@ -142,7 +142,7 @@ public class USBMassStorage {
             }
             profilerEntity.stop();
             profilerEntity.setName(drive_name);
-            Profiler.INSTANCE.section("Init").section("USB").pushEntity(profilerEntity);
+            Profiler.INSTANCE.section("USB").pushEntity(profilerEntity);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -4,6 +4,7 @@ import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.script.ScriptLoader;
 import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import javax.script.*;
 import java.io.InputStreamReader;
@@ -29,24 +30,30 @@ public class JavaScript {
      * calling it yourself.
      */
     public static void init() {
-        Profiler.INSTANCE.section("JavaScript").start("Init");
+        ProfilerSection s = Profiler.INSTANCE.section("JavaScript").section("Init");
+        s.start("Manager");
         manager = new ScriptEngineManager();
+        s.stop("Manager");
+        s.start("Engine");
         engine = manager.getEngineByName("nashorn");
         if (engine == null) {
             engine = manager.getEngineByName("rhino");
             engine_type = "Rhino";
         } else engine_type = "Nashorn";
-        Profiler.INSTANCE.section("JavaScript").stop("Init");
+        s.stop("Engine");
     }
 
     /**
      * Called when Toast is ready and bindings are ready to be bound.
      */
     public static void binderInit() {
-        Profiler.INSTANCE.section("JavaScript").start("BindSystem");
+        ProfilerSection sec = Profiler.INSTANCE.section("JavaScript");
+        sec.start("LoadSystem");
         loadSystem();
+        sec.stop("LoadSystem");
+        sec.start("Engine");
         JSEngine.init();
-        Profiler.INSTANCE.section("JavaScript").stop("BindSystem");
+        sec.stop("Engine");
     }
 
     /**
@@ -56,6 +63,8 @@ public class JavaScript {
     public static void loaderInit() {
         try {
             if (supported()) {
+                put("__toast", Toast.getToast());
+
                 ScriptLoader.getScriptDirByType("js").mkdirs();
                 loadedScripts = ScriptLoader.loadAll("js", engine, ToastConfiguration.config.getArray("javascript.autoload", new String[] {"main.js"}));
             }
@@ -118,7 +127,6 @@ public class JavaScript {
     private static void loadSystem() {
         try {
             eval("__GLOBAL = this");
-            put("__toast", Toast.getToast());
 
             loadSystemLib("Map.js");
             loadSystemLib("Toast.js");

@@ -100,11 +100,11 @@ public class MethodExecutor {
                 ToastModule mod = null;
                 if (section != null && container.obj instanceof ToastModule) {
                     mod = (ToastModule) container.obj;
-                    section.start(mod.getModuleName());
+                    section.section(mod.getModuleName()).start(method);
                 }
                 container.method.invoke(container.obj);
                 if (mod != null)
-                    section.stop(mod.getModuleName());
+                    section.section(mod.getModuleName()).stop(method);
             } catch (Exception e) {
             }
         }

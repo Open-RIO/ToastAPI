@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.loader;
 
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -63,7 +64,8 @@ public class ClassPatcher extends URLClassLoader {
      */
     public void identifyPatches(boolean sim) {
         try {
-            Profiler.INSTANCE.section("Init").section("Patch").start("Identify");
+            ProfilerSection section = Profiler.INSTANCE.section("Patcher");
+            section.start("Identify");
             ArrayList<String> patches = new ArrayList<>();
             InputStream is = getResourceAsStream("assets/toast/patches/patches.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -74,18 +76,18 @@ public class ClassPatcher extends URLClassLoader {
             }
 
             reader.close();
-            Profiler.INSTANCE.section("Init").section("Patch").stop("Identify");
+            section.stop("Identify");
 
             for (String s : patches) {
                 try {
                     if (s.endsWith(".sim") && sim) {
-                        Profiler.INSTANCE.section("Init").section("Patch").section("Simulation").start(s);
+                        section.section("Simulation").start(s);
                         loadClass(s.replace(".sim", "").replace("/", "."));
-                        Profiler.INSTANCE.section("Init").section("Patch").section("Simulation").stop(s);
+                        section.section("Simulation").stop(s);
                     } else if (s.endsWith(".pat")) {
-                        Profiler.INSTANCE.section("Init").section("Patch").section("Global").start(s);
+                        section.section("Global").start(s);
                         loadClass(s.replace(".pat", "").replace("/", "."));
-                        Profiler.INSTANCE.section("Init").section("Patch").section("Global").stop(s);
+                        section.section("Global").stop(s);
                     }
                 } catch (Exception e) {
                     ToastBootstrap.toastLogger.error("Could not load Simulation Patch: " + s);

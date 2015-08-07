@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.script.js.JavaScript;
+import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.Bindings;
@@ -32,6 +34,8 @@ public class ModuleConfig {
      * This is executed by the Bootstrapper, no need to call it yourself.
      */
     public static void init() {
+        ProfilerSection section = Profiler.INSTANCE.section("JavaScript");
+        section.start("ModuleConfig");
         base_file = new File(ToastBootstrap.toastHome, "config");
         base_file.mkdirs();
         allConfigs = new LinkedList<>();
@@ -41,6 +45,7 @@ public class ModuleConfig {
             JavaScript.getEngine().eval(JavaScript.getSystemLib("Util.js"), js_bind);
         } catch (ScriptException e) {
         }
+        section.stop("ModuleConfig");
     }
 
     File parent_file;

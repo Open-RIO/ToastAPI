@@ -3,6 +3,7 @@ package jaci.openrio.toast.core.loader;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.ToastConfiguration;
+import jaci.openrio.toast.core.io.Storage;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.annotation.NoLoad;
@@ -12,6 +13,8 @@ import jaci.openrio.toast.core.thread.ToastThreadPool;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.module.ToastModule;
 import jaci.openrio.toast.lib.profiler.Profiler;
+import jaci.openrio.toast.lib.profiler.ProfilerEntity;
+import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -41,115 +44,62 @@ import static jaci.openrio.toast.core.loader.module.ModuleManager.getContainers;
  */
 public class RobotLoader {
 
-    /* Disclaimer: The documentation of this code is better described in the Whitepaper. The documentation present
-        is hard to justify due to the difficult nature of Classpath manipulation and Loading of external files.
-     */
-
-    static Logger log;
-
-    static String[] discoveryDirs;
-
-    public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
-    static URLClassLoader sysLoader = sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-    static boolean threaded;
-    static ToastThreadPool pool;
-
-    static boolean coreLoading = false;
+    /* EXTERNALS */
     public static boolean search = false;
-
-    /**
-     * Initialize the Loader. This starts the loading of regular, non-core modules.
-     */
-    public static void init() {
-        try {
-            threaded = ToastConfiguration.Property.THREADED_LOADING.asBoolean();
-            if (threaded) pool = new ToastThreadPool("Module-Worker");
-        } catch (Exception e) {
-        }
-
-        loadCandidates();
-        parseEntries();
-
-        if (!threaded)
-            construct();
-        else {
-            pool.finish();
-            pool.waitForCompletion();
-        }
-
-        branches();
-    }
-
-    /**
-     * Preinit the Loader. This loads the Core Modules and prepares the other modules
-     * for loading and candidacy.
-     */
-    public static void preinit() {
-        log = new Logger("Toast|ModuleLoader", Logger.ATTR_DEFAULT);
-        if (search) {
-            loadDevEnv();
-        }
-        discoveryDirs = new String[]{new File(ToastBootstrap.toastHome, "modules/").getAbsolutePath(), new File(ToastBootstrap.toastHome, "system/modules/").getAbsolutePath()};
-        loadCoreCandidates();
-        parseCoreEntries();
-    }
-
-    /**
-     * A List containing a list of class names that are already in the classpath and should be loaded. This is
-     * what makes Debug-Simulation possible in Development Environments
-     */
     public static ArrayList<String> manualLoadedClasses = new ArrayList<>();
-
     public static ArrayList<String> coreClasses = new ArrayList<>();
     public static ArrayList<Object> coreObjects = new ArrayList<>();
     public static LinkedList<Method> queuedPrestart = new LinkedList<>();
 
+
+    /* INTERNALS */
+    private static Logger log;
+    private static URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    private static boolean isCorePhase = false;
+    private static MethodExecutor exec;
+    public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
+
     /**
-     * Load the module in a development environment if the --search flag is passed to the command line. This ignores
-     * everything in the {@link EnvJars} class, but will search for candidates in the output directory.
+     * Also known as the Core pre-init. All initialization is done here.
      */
-    static void loadDevEnv() {
-        Profiler.INSTANCE.section("Module").start("Dev");
-        for (URL url : sysLoader.getURLs()) {
-            try {
-                File f = new File(url.toURI());
-                if (f.isDirectory()) {
-                    ModuleCandidate candidate = new ModuleCandidate();
-                    sDirectory(f, candidate);
-                    getCandidates().add(candidate);
-                } else if (EnvJars.isLoadable(f)) {
-                    sJarFile(f, false);
-                }
-            } catch (Exception e) {
-            }
-        }
-        Profiler.INSTANCE.section("Module").stop("Dev");
+    public static void preinit(ProfilerSection profiler) {
+        log = new Logger("Toast|Loader", Logger.ATTR_DEFAULT);
+        if (search)
+            loadDevEnvironment(profiler);
+
+        isCorePhase = true;
+        loadCandidates(profiler.section("CoreJava"));
+        parseCoreEntries(profiler.section("CoreJava"));
     }
 
     /**
-     * Search a directory for class entries with the given candidate
+     * Sets up non-core modules for loading
      */
-    static void sDirectory(File file, ModuleCandidate candidate) throws IOException {
+    public static void init(ProfilerSection section) {
+        isCorePhase = false;
+        ProfilerSection section1 = section.section("Java");
+        loadCandidates(section1);
+        parseEntries(section1);
+
+        constructModules(section1);
+        resolveBranches(section1);
+    }
+
+    /* Loaders */
+
+    static void loadDirectory(File file, ModuleCandidate candidate) throws IOException {
         File[] files = file.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                sSubDirectory(file, f, candidate);
-            }
-        }
+        if (files != null)
+            for (File f : files)
+                loadSubDirectory(file, f, candidate);
     }
 
-    /**
-     * Search the new subdirectory for the given candidate. This searches for the
-     * .class files and will try to get their class name.
-     */
-    static void sSubDirectory(File main, File dig, ModuleCandidate candidate) {
+    static void loadSubDirectory(File main, File dig, ModuleCandidate candidate) {
         if (dig.isDirectory()) {
             File[] files = dig.listFiles();
             if (files != null)
-                for (File f : files) {
-                    sSubDirectory(main, f, candidate);
-                }
+                for (File f : files)
+                    loadSubDirectory(main, f, candidate);
         } else if (classFile.matcher(dig.getName()).matches()) {
             Path pathCurrent = Paths.get(dig.getAbsolutePath());
             Path pathMain = Paths.get(main.getAbsolutePath());
@@ -158,10 +108,7 @@ public class RobotLoader {
         }
     }
 
-    /**
-     * Load a *jar file and search the manifest for details.
-     */
-    static void sJarFile(File file, boolean newDep) throws IOException {
+    static void loadJar(File file, boolean expandClasspath) throws IOException {
         JarFile jar = new JarFile(file);
         ModuleCandidate container = new ModuleCandidate();
 
@@ -170,7 +117,7 @@ public class RobotLoader {
         if (mf != null) {
             Attributes attr = mf.getMainAttributes();
             if (attr != null) {
-                if (attr.getValue("Toast-Core-Plugin-Class") != null && coreLoading) {
+                if (attr.getValue("Toast-Core-Plugin-Class") != null && isCorePhase) {
                     String clazz = (String) attr.getValue("Toast-Core-Plugin-Class");
                     container.setCorePlugin(true, clazz);
                     coreClasses.add(clazz);
@@ -184,7 +131,7 @@ public class RobotLoader {
             }
         }
 
-        if (core && coreLoading || !core && !coreLoading) {
+        if (core && isCorePhase || !core && !isCorePhase) {
             container.setFile(file);
             for (ZipEntry ze : Collections.list(jar.entries())) {
                 if (classFile.matcher(ze.getName()).matches()) {
@@ -193,52 +140,31 @@ public class RobotLoader {
             }
 
             getCandidates().add(container);
-            if (newDep)
+            if (expandClasspath)
                 addURL(file.toURI().toURL());
         }
     }
 
-    /**
-     * Load CorePlugins from the Discovery Directories.
-     */
-    private static void loadCoreCandidates() {
-        coreLoading = true;
-        Profiler.INSTANCE.section("Module").section("CoreJava").start("Candidate");
-        for (String currentDirectory : discoveryDirs) {
-            File dir = new File(currentDirectory);
-            dir.mkdirs();
-            search(dir);
-        }
-        Profiler.INSTANCE.section("Module").section("CoreJava").stop("Candidate");
-    }
+    /* Searchers */
 
-    /**
-     * Look for candidates in the Discovery Directories
-     */
-    private static void loadCandidates() {
-        coreLoading = false;
-        Profiler.INSTANCE.section("Module").section("Java").start("Candidate");
-        boolean usb_override = USBMassStorage.overridingModules();
-        if (!usb_override)
-            for (String currentDirectory : discoveryDirs) {
-                File dir = new File(currentDirectory);
-                dir.mkdirs();
-                search(dir);
-            }
-
-        for (MassStorageDevice device : USBMassStorage.connectedDevices) {
-            if (usb_override || device.concurrent_modules) {
-                File modulesDir = new File(device.toast_directory, "modules");
-                modulesDir.mkdirs();
-                search(modulesDir);
+    static void loadDevEnvironment(ProfilerSection section) {
+        section.start("DevEnv");
+        for (URL url : sysLoader.getURLs()) {
+            try {
+                File f = new File(url.toURI());
+                if (f.isDirectory()) {
+                    ModuleCandidate candidate = new ModuleCandidate();
+                    loadDirectory(f, candidate);
+                    getCandidates().add(candidate);
+                } else if (EnvJars.isLoadable(f)) {
+                    loadJar(f, false);
+                }
+            } catch (Exception e) {
             }
         }
-        Profiler.INSTANCE.section("Module").section("Java").stop("Candidate");
+        section.stop("DevEnv");
     }
 
-    /**
-     * Recursively search for modules in the given directory
-     */
     public static void search(File dir) {
         File[] files = dir.listFiles(new FilenameFilter() {
             @Override
@@ -250,9 +176,8 @@ public class RobotLoader {
         if (files != null)
             for (File file : files) {
                 try {
-                    sJarFile(file, true);
-                } catch (Exception e) {
-                }
+                    loadJar(file, true);
+                } catch (Exception e) { }
             }
 
         File[] otherFiles = dir.listFiles(new FilenameFilter() {
@@ -266,54 +191,26 @@ public class RobotLoader {
             for (File file : otherFiles) {
                 try {
                     addURL(file.toURI().toURL());
-                } catch (Exception e) {
-                }
+                } catch (Exception e) { }
             }
     }
 
-    /**
-     * Parse the candidates to find their ToastModule classes
-     */
-    private static void parseEntries() {
-        Profiler.INSTANCE.section("Module").section("Java").start("Parse");
-        for (ModuleCandidate candidate : getCandidates()) {
-            if (candidate.isBypass()) {
-                handle(new Runnable() {
-                    @Override
-                    public void run() {
-                        parseClass(candidate.getBypassClass(), candidate);
-                    }
-                });
-            } else
-                for (String clazz : candidate.getClassEntries()) {
-                    handle(new Runnable() {
-                        @Override
-                        public void run() {
-                            parseClass(clazz, candidate);
-                        }
-                    });
-                }
-            candidate.freeMemory();
-        }
+    /* Candidation */
 
-        for (String clazz : manualLoadedClasses) {
-            ModuleCandidate candidate = new ModuleCandidate();
-            candidate.addClassEntry(clazz);
-            handle(new Runnable() {
-                @Override
-                public void run() {
-                    parseClass(clazz, candidate);
-                }
-            });
+    private static void loadCandidates(ProfilerSection section) {
+        section.start("Candidate");
+        File[] search_dirs = new File[] { new File(ToastBootstrap.toastHome, "modules/") };
+        if (!isCorePhase)
+            search_dirs = Storage.USB_Module("modules");
+        for (File dir : search_dirs) {
+            dir.mkdirs();
+            search(dir);
         }
-        Profiler.INSTANCE.section("Module").section("Java").stop("Parse");
+        section.stop("Candidate");
     }
 
-    /**
-     * Load CorePlugin classes and instantiate them.
-     */
-    private static void parseCoreEntries() {
-        Profiler.INSTANCE.section("Module").section("CoreJava").start("Parse");
+    private static void parseCoreEntries(ProfilerSection section) {
+        section.start("Parse");
         for (String clazz : coreClasses) {
             try {
                 Class c = Class.forName(clazz);
@@ -323,115 +220,98 @@ public class RobotLoader {
             } catch (Throwable e) {
             }
         }
-        Profiler.INSTANCE.section("Module").section("CoreJava").stop("Parse");
+        section.stop("Parse");
     }
 
-    /**
-     * Run the init() method on all the Core Modules that have been loaded
-     */
-    public static void initCore() {
-        for (Object core : coreObjects) {
-            try {
-                core.getClass().getDeclaredMethod("init").invoke(core);
-            } catch (Throwable e) {
-            }
-        }
+    static boolean classLoadable(Class clazz) {
+        return !clazz.isAnnotationPresent(NoLoad.class);
     }
 
-    /**
-     * Run the postinit() method on all the Core Modules that have been loaded.
-     */
-    public static void postCore() {
-        for (Object core : coreObjects) {
-            try {
-                core.getClass().getDeclaredMethod("postinit").invoke(core);
-            } catch (Throwable e) {
-            }
-        }
-    }
-
-    /**
-     * Parse a class name for Module Candidacy, and if it is valid, create a ModuleContainer
-     * for it and register it
-     */
     static void parseClass(String clazz, ModuleCandidate candidate) {
         try {
             Class c = Class.forName(clazz);
             if (ToastModule.class.isAssignableFrom(c) && classLoadable(c)) {
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
-                if (threaded) {
-                    container.construct();
-                    log.info("Module Loaded: " + container.getDetails());
-                }
             }
         } catch (Throwable e) {
         }
     }
 
-    /**
-     * Checks if the class is a default class created by Toast. If it is, ignore it as it serves no purpose.
-     */
-    static boolean classLoadable(Class clazz) {
-        return !clazz.isAnnotationPresent(NoLoad.class);
+    private static void parseEntries(ProfilerSection section) {
+        section.start("Parse");
+        for (ModuleCandidate candidate : getCandidates()) {
+            if (candidate.isBypass()) {
+                parseClass(candidate.getBypassClass(), candidate);
+            } else
+                for (String clazz : candidate.getClassEntries()) {
+                    parseClass(clazz, candidate);
+                }
+            candidate.freeMemory();
+        }
+
+        for (String clazz : manualLoadedClasses) {
+            ModuleCandidate candidate = new ModuleCandidate();
+            candidate.addClassEntry(clazz);
+            parseClass(clazz, candidate);
+        }
+        section.stop("Parse");
     }
 
-    /**
-     * Construct all the modules
-     */
-    private static void construct() {
-        Profiler.INSTANCE.section("Module").section("Java").start("Construction");
+    /* Construction */
+
+    private static void constructModules(ProfilerSection section) {
         for (ModuleContainer container : getContainers()) {
             try {
+                ProfilerEntity entity = new ProfilerEntity().start();
                 container.construct();
+                entity.stop();
+                entity.setName("Construct");
+                section.section("Module").section(container.getName()).pushEntity(entity);
                 log.info("Module Loaded: " + container.getDetails());
             } catch (Exception e) {
             }
         }
-        Profiler.INSTANCE.section("Module").section("Java").stop("Construction");
     }
 
-    /**
-     * Resolves all the branches for each container
-     */
-    private static void branches() {
+    private static void resolveBranches(ProfilerSection section) {
+        ProfilerSection section1 = section.section("Dependency");
         for (ModuleContainer container : getContainers()) {
-            Profiler.INSTANCE.section("Module").section("Java").section("Dependency").start(container.getName());
+            section1.start(container.getName());
             container.resolve_branches();
-            Profiler.INSTANCE.section("Module").section("Java").section("Dependency").stop(container.getName());
+            section1.stop(container.getName());
         }
     }
 
-    /**
-     * Handle a runnable. If we're threaded, add it to the ThreadPool, else, execute it now
-     */
-    private static void handle(Runnable r) {
-        if (threaded)
-            pool.addWorker(r);
-        else
-            r.run();
-    }
+    /* Callers */
 
-    /**
-     * Returns true if a class exists in the class path with the given name. This avoids the ClassNotFoundException
-     * you may get from Class.forName
-     */
-    public static boolean classExists(String clazz) {
-        try {
-            Class.forName(clazz);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
+    public static void initCore(ProfilerSection section) {
+        ProfilerSection section1 = section.section("CoreJava");
+        section1.start("Init");
+        for (Object core : coreObjects) {
+            try {
+                core.getClass().getDeclaredMethod("init").invoke(core);
+            } catch (Throwable e) {
+            }
         }
+        section1.stop("Init");
     }
 
-    /**
-     * Prestart all modules that have been loaded.
-     */
-    public static void prestart() {
-//        for (ModuleContainer container : getContainers())
-//            container.getModule().prestart();
-        dispatch("prestart");
+    public static void postCore(ProfilerSection section) {
+        ProfilerSection section1 = section.section("CoreJava");
+        section1.start("Post");
+        for (Object core : coreObjects) {
+            try {
+                core.getClass().getDeclaredMethod("postinit").invoke(core);
+            } catch (Throwable e) {
+            }
+        }
+        section1.stop("Post");
+    }
+
+
+    public static void prestart(ProfilerSection section) {
+        dispatch("prestart", section);
         for (Method method : queuedPrestart) {
             try {
                 method.invoke(null);
@@ -446,16 +326,13 @@ public class RobotLoader {
     /**
      * Start all modules that have been loaded.
      */
-    public static void start() {
-        dispatch("start");
+    public static void start(ProfilerSection section) {
+        dispatch("start", section);
     }
 
-    static MethodExecutor exec;
+    /* Util */
 
-    /**
-     * Dispatch a method to the MethodExecutor
-     */
-    public static void dispatch(String method) {
+    public static void dispatch(String method, ProfilerSection section) {
         if (exec == null) {
             ToastModule[] mods = new ToastModule[getContainers().size()];
             for (int i = 0; i < mods.length; i++) {
@@ -463,22 +340,26 @@ public class RobotLoader {
             }
             exec = new MethodExecutor(mods);
         }
-        exec.profile(Profiler.INSTANCE.section("Module").section("Java").section(method));
+        exec.profile(section);
         exec.call(method);
     }
 
-    /**
-     * Add a URL to the System Class Loader
-     */
     public static void addURL(URL u) throws IOException {
         Class sysclass = URLClassLoader.class;
         try {
             Method method = sysclass.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
             method.invoke(sysLoader, u);
-        } catch (Throwable t) {
-        }
+        } catch (Throwable t) { }
+    }
 
+    public static boolean classExists(String clazz) {
+        try {
+            Class.forName(clazz);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
 }

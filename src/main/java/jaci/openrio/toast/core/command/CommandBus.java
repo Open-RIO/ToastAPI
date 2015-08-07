@@ -68,50 +68,52 @@ public class CommandBus {
 
         new Thread() {
             public void run() {
-                this.setName("Command-Execution");
-                inCommand = true;
-                boolean commandFound = false;
-                String[] split = message.split(" ");
-                for (AbstractCommand command : commands) {
-                    boolean alias = false;
-                    String[] aliases = command.getAlias();
-                    if (aliases != null) {
-                        for (String a : aliases)
-                            if (a.equals(split[0])) alias = true;
-                    }
-                    if (split[0].equals(command.getCommandName()) || alias) {
-                        try {
-                            String[] newSplit = new String[split.length - 1];
-                            System.arraycopy(split, 1, newSplit, 0, split.length - 1);
-                            command.invokeCommand(newSplit.length, newSplit, message);
-                        } catch (UsageException e) {
-                            Toast.log().warn(e.getMessage());
-                        } catch (Exception e) {
-                            Toast.log().error("Error while executing command: " + e);
-                            Toast.log().exception(e);
+                try {
+                    this.setName("Command-Execution");
+                    inCommand = true;
+                    boolean commandFound = false;
+                    String[] split = message.split(" ");
+                    for (AbstractCommand command : commands) {
+                        boolean alias = false;
+                        String[] aliases = command.getAlias();
+                        if (aliases != null) {
+                            for (String a : aliases)
+                                if (a.equals(split[0])) alias = true;
                         }
-                        commandFound = true;
-                    }
-                }
-
-                for (FuzzyCommand command : parsers) {
-                    if (command.shouldInvoke(message)) {
-                        try {
-                            command.invokeCommand(message);
-                        } catch (UsageException e) {
-                            Toast.log().warn(e.getMessage());
-                        } catch (Exception e) {
-                            Toast.log().error("Error while executing command: " + e);
-                            Toast.log().exception(e);
+                        if (split[0].equals(command.getCommandName()) || alias) {
+                            try {
+                                String[] newSplit = new String[split.length - 1];
+                                System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+                                command.invokeCommand(newSplit.length, newSplit, message);
+                            } catch (UsageException e) {
+                                Toast.log().warn(e.getMessage());
+                            } catch (Exception e) {
+                                Toast.log().error("Error while executing command: " + e);
+                                Toast.log().exception(e);
+                            }
+                            commandFound = true;
                         }
-                        commandFound = true;
                     }
-                }
 
-                if (!commandFound) {
-                    Toast.log().warn("Command not found");
-                }
-                inCommand = false;
+                    for (FuzzyCommand command : parsers) {
+                        if (command.shouldInvoke(message)) {
+                            try {
+                                command.invokeCommand(message);
+                            } catch (UsageException e) {
+                                Toast.log().warn(e.getMessage());
+                            } catch (Exception e) {
+                                Toast.log().error("Error while executing command: " + e);
+                                Toast.log().exception(e);
+                            }
+                            commandFound = true;
+                        }
+                    }
+
+                    if (!commandFound) {
+                        Toast.log().warn("Command not found");
+                    }
+                    inCommand = false;
+                } catch (Exception e) {}
             }
         }.start();
     }
