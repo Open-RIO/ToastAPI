@@ -93,6 +93,9 @@ $.pretty = function(string) {
 };
 
 var console = { log: $.log, format: $.pretty };
+var print = function(message) {
+    $.log(message, "raw");
+};
 
 $.auto = function(callback) {
     _toast_vars.ticker.push({mode: 'autonomous', func: callback});

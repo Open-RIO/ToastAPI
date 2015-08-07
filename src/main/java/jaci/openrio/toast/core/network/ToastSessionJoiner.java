@@ -46,7 +46,7 @@ public class ToastSessionJoiner {
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 String line = scanner.nextLine();
-                if (line.trim().equalsIgnoreCase("exit"))
+                if (line.trim().equalsIgnoreCase("--exit"))
                     System.exit(0);
                 commands_out.writeBytes(line + "\n");
             }

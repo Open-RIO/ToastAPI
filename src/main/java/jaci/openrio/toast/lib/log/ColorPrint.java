@@ -27,4 +27,6 @@ public class ColorPrint extends PrintStream {
         } catch (IOException e) { }
     }
 
+    public static interface ColorStream {}
+
 }

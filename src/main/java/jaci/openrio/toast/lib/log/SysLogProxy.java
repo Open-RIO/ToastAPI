@@ -26,6 +26,8 @@ public class SysLogProxy {
     public static File recentOut;
     public static File oldOut;
     public static File recentErr;
+    public static SplitStream master;
+    public static SplitStream masterError;
 
     static boolean init = false;
 
@@ -60,8 +62,10 @@ public class SysLogProxy {
                 sysOut = System.out;
                 sysErr = System.err;
 
-                outStream = new ColorPrint(new SplitStream(sysOut, fileOut));
-                errStream = new ColorPrint(new SplitStream(sysErr, fileOut, fileErr));
+                master = new SplitStream(sysOut, fileOut);
+                outStream = new ColorPrint(master);
+                masterError = new SplitStream(sysErr, fileOut, fileErr);
+                errStream = new ColorPrint(masterError);
 
                 System.setOut(outStream);
                 System.setErr(errStream);

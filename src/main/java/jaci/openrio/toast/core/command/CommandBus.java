@@ -7,6 +7,7 @@ import jaci.openrio.toast.core.command.cmd.*;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.function.Function;
 
 /**
  * The main pipeline for commands. This bus handles registering and invocation of commands. This allows for
@@ -45,12 +46,14 @@ public class CommandBus {
         registerCommand(new CommandExit());
         registerCommand(new CommandProfiler());
         registerCommand(new CommandReloadConfigs());
+        registerCommand(new CommandJScript());
     }
 
     /**
      * Parse the given message and invoke any commands matching it
      */
     public static void parseMessage(String message) {
+        ln = message;
         try {
             if (messageRequested()) {
                 synchronized (requestLock) {
@@ -63,49 +66,54 @@ public class CommandBus {
             Toast.log().exception(e);
         }
 
-        inCommand = true;
-        boolean commandFound = false;
-        String[] split = message.split(" ");
-        for (AbstractCommand command : commands) {
-            boolean alias = false;
-            String[] aliases = command.getAlias();
-            if (aliases != null) {
-                for (String a : aliases)
-                    if (a.equals(split[0])) alias = true;
-            }
-            if (split[0].equals(command.getCommandName()) || alias) {
-                try {
-                    String[] newSplit = new String[split.length - 1];
-                    System.arraycopy(split, 1, newSplit, 0, split.length - 1);
-                    command.invokeCommand(newSplit.length, newSplit, message);
-                } catch (UsageException e) {
-                    Toast.log().warn(e.getMessage());
-                } catch (Exception e) {
-                    Toast.log().error("Error while executing command: " + e);
-                    Toast.log().exception(e);
+        new Thread() {
+            public void run() {
+                this.setName("Command-Execution");
+                inCommand = true;
+                boolean commandFound = false;
+                String[] split = message.split(" ");
+                for (AbstractCommand command : commands) {
+                    boolean alias = false;
+                    String[] aliases = command.getAlias();
+                    if (aliases != null) {
+                        for (String a : aliases)
+                            if (a.equals(split[0])) alias = true;
+                    }
+                    if (split[0].equals(command.getCommandName()) || alias) {
+                        try {
+                            String[] newSplit = new String[split.length - 1];
+                            System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+                            command.invokeCommand(newSplit.length, newSplit, message);
+                        } catch (UsageException e) {
+                            Toast.log().warn(e.getMessage());
+                        } catch (Exception e) {
+                            Toast.log().error("Error while executing command: " + e);
+                            Toast.log().exception(e);
+                        }
+                        commandFound = true;
+                    }
                 }
-                commandFound = true;
-            }
-        }
 
-        for (FuzzyCommand command : parsers) {
-            if (command.shouldInvoke(message)) {
-                try {
-                    command.invokeCommand(message);
-                } catch (UsageException e) {
-                    Toast.log().warn(e.getMessage());
-                } catch (Exception e) {
-                    Toast.log().error("Error while executing command: " + e);
-                    Toast.log().exception(e);
+                for (FuzzyCommand command : parsers) {
+                    if (command.shouldInvoke(message)) {
+                        try {
+                            command.invokeCommand(message);
+                        } catch (UsageException e) {
+                            Toast.log().warn(e.getMessage());
+                        } catch (Exception e) {
+                            Toast.log().error("Error while executing command: " + e);
+                            Toast.log().exception(e);
+                        }
+                        commandFound = true;
+                    }
                 }
-                commandFound = true;
-            }
-        }
 
-        if (!commandFound) {
-            Toast.log().warn("Command not found");
-        }
-        inCommand = false;
+                if (!commandFound) {
+                    Toast.log().warn("Command not found");
+                }
+                inCommand = false;
+            }
+        }.start();
     }
 
     /**
@@ -136,10 +144,6 @@ public class CommandBus {
      * @throws InterruptedException Something wrong happened. This should never trigger
      */
     public static String requestNextMessage() throws InterruptedException {
-        if (inCommand) {
-            ln = scanner.nextLine();
-            return ln;
-        }
         synchronized (requestLock) {
             nextLineRequested = true;
             requestLock.wait();
@@ -149,7 +153,7 @@ public class CommandBus {
     }
 
     /**
-     * Returns true if the {@link #requestNextMessage()} has been called
+     * Returns true if the {@link #requestNextMessage} has been called
      */
     public static boolean messageRequested() {
         return nextLineRequested;

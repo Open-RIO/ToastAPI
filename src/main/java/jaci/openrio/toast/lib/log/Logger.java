@@ -76,7 +76,8 @@ public class Logger {
     private void log(String message, String level, String levelColor, PrintStream ps) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(getPrefix(level, levelColor));
+        if (!level.equals("raw"))
+            builder.append(getPrefix(level, levelColor));
 
         builder.append(message);
 
@@ -138,6 +139,10 @@ public class Logger {
      */
     public void log(String message, LogLevel level) {
         log(message, level.getName().toUpperCase(), level.getColor().name().toLowerCase(), level.getPrintSteam());
+    }
+
+    public void raw(String message) {
+        log(message, "raw", "none", System.out);
     }
 
     /**

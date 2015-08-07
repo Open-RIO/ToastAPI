@@ -4,13 +4,12 @@ import jaci.openrio.delegate.BoundDelegate;
 import jaci.openrio.delegate.Security;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
+import jaci.openrio.toast.lib.log.ColorPrint;
 import jaci.openrio.toast.lib.log.LogHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileReader;
+import java.io.*;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Vector;
@@ -23,7 +22,7 @@ import java.util.Vector;
  *
  * @author Jaci
  */
-public class LoggerDelegate implements BoundDelegate.ConnectionCallback, LogHandler {
+public class LoggerDelegate extends OutputStream implements BoundDelegate.ConnectionCallback, ColorPrint.ColorStream {
 
     static BoundDelegate server;
     static Vector<Client> clients;
@@ -46,7 +45,8 @@ public class LoggerDelegate implements BoundDelegate.ConnectionCallback, LogHand
         clients = new Vector<>();
         LoggerDelegate instance = new LoggerDelegate();
         server.callback(instance);
-        Logger.addHandler(instance);
+        SysLogProxy.master.add(instance);
+        SysLogProxy.masterError.add(instance);
     }
 
     /**
@@ -98,13 +98,56 @@ public class LoggerDelegate implements BoundDelegate.ConnectionCallback, LogHand
         }.start();
     }
 
-    /**
-     * Called when a message is logged. This is delegated to this network connection and broadcasted to
-     * all listening clients. This is directly called from the {@link Logger} class
-     */
     @Override
-    public void onLog(String level, String message, String formatted, Logger logger) {
-        broadcast(formatted);
+    public void write(int b) throws IOException {
+        Iterator<Client> it = clients.iterator();
+        while (it.hasNext()) {
+            Client client = it.next();
+            try {
+                client.output.write(b);
+            } catch (Exception e) {
+                it.remove();
+            }
+        }
+    }
+
+    @Override
+    public void write(byte b[]) throws IOException {
+        Iterator<Client> it = clients.iterator();
+        while (it.hasNext()) {
+            Client client = it.next();
+            try {
+                client.output.write(b);
+            } catch (Exception e) {
+                it.remove();
+            }
+        }
+    }
+
+    @Override
+    public void write(byte b[], int off, int len) throws IOException {
+        Iterator<Client> it = clients.iterator();
+        while (it.hasNext()) {
+            Client client = it.next();
+            try {
+                client.output.write(b, off, len);
+            } catch (Exception e) {
+                it.remove();
+            }
+        }
+    }
+
+    @Override
+    public void flush() throws IOException {
+        Iterator<Client> it = clients.iterator();
+        while (it.hasNext()) {
+            Client client = it.next();
+            try {
+                client.output.flush();
+            } catch (Exception e) {
+                it.remove();
+            }
+        }
     }
 
     public static class Client {

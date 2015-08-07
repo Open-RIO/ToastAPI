@@ -139,7 +139,7 @@ public class Toast extends RobotBase {
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
         ToastThreadPool.INSTANCE.finish();
-        MotorRegistry.stopAll();
+        shutdownAll();
         System.exit(0);
     }
 
@@ -151,8 +151,19 @@ public class Toast extends RobotBase {
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
         ToastThreadPool.INSTANCE.getService().shutdownNow();
-        MotorRegistry.stopAll();
+        shutdownAll();
         System.exit(-1);
+    }
+
+    private void shutdownAll() {
+        MotorRegistry.stopAll();
+        if (Environment.isEmbedded()) {
+            try {
+                // Short - Long - Short - Short
+                ProcessBuilder builder = new ProcessBuilder("status_led", "blink_pattern", "$((2#1011110101))");
+                builder.start();
+            } catch (Exception e) {}
+        }
     }
 
 }
