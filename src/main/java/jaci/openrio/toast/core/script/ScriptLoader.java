@@ -117,7 +117,7 @@ public class ScriptLoader {
                     ProfilerEntity unz = new ProfilerEntity("unzip").start();
                     unzip(file, extract);
                     unz.stop();
-                    ProfilerEntity mape = new ProfilerEntity("parse").start();
+                    ProfilerEntity mape = new ProfilerEntity("init").start();
                     String n = mapModule(extract, map, engine);
                     mape.stop();
 

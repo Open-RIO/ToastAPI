@@ -5,6 +5,7 @@ import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
+import jaci.openrio.toast.core.network.ToastSessionJoiner;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
@@ -19,6 +20,7 @@ import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -47,6 +49,8 @@ public class ToastBootstrap {
      * build process.
      */
     public static boolean isVerification;
+    public static boolean isHeadless;
+    public static boolean compareStub;
 
     /**
      * Get the root folder for Toast. This is where logs, modules,
@@ -98,7 +102,24 @@ public class ToastBootstrap {
                 } catch (Exception e) { }
             } else if (arg.equalsIgnoreCase("--no-color")) {
                 color = false;
+            } else if (arg.equalsIgnoreCase("--join")) {
+                ToastSessionJoiner.init();
+                return;
+            } else if (arg.equalsIgnoreCase("--headless")) {
+                isHeadless = true;
+            } else if (arg.equalsIgnoreCase("--stub")) {
+                compareStub = true;
             }
+        }
+
+        if (compareStub) {
+            System.out.println("Immediately exiting -- we've been told to exit before initialization for memory and utilization measurement purposes. Type something to end the program.");
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                return;
+            }
+            return;
         }
 
         if (isSimulation) {
@@ -144,7 +165,7 @@ public class ToastBootstrap {
         ClassPatcher classLoader = new ClassPatcher();
         classLoader.identifyPatches(isSimulation);
 
-        if (isSimulation && !isVerification) {
+        if (isSimulation && !isVerification && !isHeadless) {
             SimulationGUI.main(args);
         }
 
