@@ -71,8 +71,8 @@ public class SysLogProxy {
                 System.setErr(errStream);
             }
         } catch (Exception e) {
-            Toast.log().warn("Could not split System Outputs to File");
-            Toast.log().exception(e);
+            System.err.println("System Log Proxy failed...");
+            e.printStackTrace();
         }
 
     }
