@@ -6,7 +6,7 @@ class_list_content = open(CLASSLIST, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE
 
 exported_libs = Dir["build/libs/Toast-*.jar"]
 toast_jar = ""
-for filename in exported_libs.select {|i| i[/.*Toast-([^-]*).jar/]}
+for filename in exported_libs.select {|i| i[/.*Toast-([^-[a-zA-Z]]*).jar/]}
   toast_jar = filename
 end
 
