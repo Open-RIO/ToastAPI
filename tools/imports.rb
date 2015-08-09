@@ -18,7 +18,7 @@ toast_jar_classes = toast_jar_classes.map {|str| str.gsub(/src.main.java./, "")}
 toast_jar_classes_stub = toast_jar_classes.map {|str| str.gsub(/\//, ".").gsub(/\.(class|java)$/, "")}
 
 # List all the entries in the Compiled Toast Jar to make sure libraries are counted
-class_list_content += ` jar -tf #{toast_jar} `.split("\n").grep /.*.class/
+class_list_content += ` jar tf #{toast_jar} `.split("\n").grep /.*.class/
 # Format everything in the ClassList in package form
 classlist = class_list_content.map {|str| str.gsub(/\//, ".").gsub(/\.(class|java)$/, "")}
 

@@ -28,10 +28,6 @@ public class Profiler {
 
     public Profiler(String name) {
         this.name = name;
-        if (name.equals("Main"))
-            this.log = new Logger("Profiler", Logger.ATTR_DEFAULT);
-        else
-            this.log = new Logger("Profiler|" + name, Logger.ATTR_DEFAULT);
     }
 
     public ProfilerSection section(String name) {
@@ -50,7 +46,15 @@ public class Profiler {
         return name;
     }
 
+    private void newlog() {
+        if (name.equals("Main"))
+            this.log = new Logger("Profiler", Logger.ATTR_DEFAULT);
+        else
+            this.log = new Logger("Profiler|" + name, Logger.ATTR_DEFAULT);
+    }
+
     public Logger log() {
+        if (log == null) newlog();
         return log;
     }
 
