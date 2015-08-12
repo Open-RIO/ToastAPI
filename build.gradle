@@ -1,8 +1,3 @@
-/**
-Template file for classes using GradleRIO
-@author Jaci
-*/
-
 buildscript {
   repositories {
 	mavenCentral()
@@ -12,7 +7,7 @@ buildscript {
 	}
   }
   dependencies {
-    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '1.1.6'			//Change this line if you wish to Update GradleRIO
+    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '+'			//Change this line if you wish to Update GradleRIO
   }
 }
 
@@ -26,7 +21,7 @@ apply plugin: 'maven'
 
 gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
 gradlerio.team = "9999"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
-gradlerio.rioIP = "172.22.11.2"                         //Uncomment to specify the IP address of the RIO
+gradlerio.rioIP = "172.22.11.2"                           //Uncomment to specify the IP address of the RIO
 
 repositories {
   maven {
@@ -138,11 +133,6 @@ task updateLatest << {
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
 }
 
-task externalWPI_impl(type: GradleBuild) {
-  dir = '../WPILib/Open-WPI'
-  tasks = ['extractWPI']
-}
-
 task externalWPI << {
   if (new File("../WPILib/Open-WPI").exists()) {
     externalWPI_impl.execute()
@@ -161,7 +151,6 @@ genPatches.dependsOn deletePatches
 compileJava.dependsOn genPatches
 compileJava.dependsOn genVersion
 build.finalizedBy updateLatest
-wpi.finalizedBy externalWPI
 
 task src(type: Jar, dependsOn: classes) {
   classifier = 'sources'
@@ -205,23 +194,6 @@ uploadArchives {
 
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
-    project.task('release', dependsOn: 'build') << {
-      ant.zip(destfile: "releases/Toast-${project.version}.zip") {
-          ant.zipfileset(filemode: 777, dir: "release")
-        }
-  	  try {
-  		    ant.delete(dir: "build/runnable")
-  	  } catch (Exception e) {}
-  	  ant.copy(tofile: "build/runnable/Toast.jar") {
-  		    ant.fileset(dir: "build/latest/")
-  	  }
-  	  ant.copy(todir: "build/runnable"){
-  		    ant.fileset(dir: "runnableScripts/")
-  	  }
-  	  ant.zip(destfile: "releases/Toast-${project.version}-RUNNABLE.zip",
-  		basedir: "build/runnable")
-    }
-
     project.getConfigurations().maybeCreate('verify')
     project.task('verify') << {
       File toast_dir = new File('run/verification')
