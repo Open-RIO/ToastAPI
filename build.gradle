@@ -169,6 +169,18 @@ artifacts {
   archives raw
   archives src
 }
+
+def isPrerelease(project) {
+  println "Project Version: ${project.version}"
+  def m = project.version =~ /(\d+)\.(\d+)\.(\d+)-(\d+[a-zA-Z])/
+  if (!m) return false
+  return true
+}
+
+task prerelease << {
+  println isPrerelease(project) ? "Project is a prerelease" : "Project is not a prerelease"
+}
+
 uploadArchives {
   if (maven) {
     repositories.mavenDeployer {
@@ -179,14 +191,17 @@ uploadArchives {
 
       pom {
 	      groupId = project.group
-		  version = project.version
-		  artifactId = project.archivesBaseName
-		  project {
-			  name project.archivesBaseName
-			  packaging 'jar'
-			  description 'Toast API Module Loader '
-		  }
-		  pom*.whenConfigured { pom -> pom.dependencies.clear() }
+		    version = project.version
+        if (isPrerelease(project))
+          artifactId = project.archivesBaseName + '-pre'
+        else
+		      artifactId = project.archivesBaseName
+		    project {
+			    name project.archivesBaseName
+			    packaging 'jar'
+			    description 'Toast API Module Loader '
+		    }
+		    pom*.whenConfigured { pom -> pom.dependencies.clear() }
       }
     }
   }
