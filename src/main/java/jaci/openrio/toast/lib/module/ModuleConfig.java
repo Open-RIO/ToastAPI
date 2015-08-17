@@ -43,13 +43,14 @@ public class ModuleConfig {
         try {
             JavaScript.getEngine().eval(JavaScript.getSystemLib("Config.js"), js_bind);
             JavaScript.getEngine().eval(JavaScript.getSystemLib("Util.js"), js_bind);
+            JavaScript.getEngine().eval("_config = {}", js_bind);
         } catch (ScriptException e) {
+            e.printStackTrace();
         }
         section.stop("ModuleConfig");
     }
 
     File parent_file;
-    Bindings bindings;
     HashMap<String, Object> defaults;
 
     public ModuleConfig(String name) {
@@ -58,7 +59,6 @@ public class ModuleConfig {
                 base_file = new File(USBMassStorage.config_highest.toast_directory, "config");
                 base_file.mkdirs();
             }
-
             if (!name.contains("."))
                 name = name + ".conf";
             parent_file = new File(base_file, name);
@@ -86,12 +86,9 @@ public class ModuleConfig {
      * and reload defaults. This should only be called by the constructor
      */
     private void load() throws IOException, ScriptException {
-        bindings = JavaScript.getEngine().createBindings();
-        bindings.putAll(js_bind);
-        JavaScript.copyBindings(bindings);
         defaults = new HashMap<>();
         try {
-            JavaScript.getEngine().eval("_config = {}", bindings);
+            JavaScript.getEngine().eval("_config['" + hashCode() + "'] = {}", js_bind);
             reload();
         } catch (Exception e) { }
     }
@@ -114,10 +111,10 @@ public class ModuleConfig {
 
         Gson gson_engine = new GsonBuilder().setPrettyPrinting().create();
         String json_defaults = gson_engine.toJson(defaults);
-        bindings.put("__json_defaults", json_defaults);
-        bindings.put("__json_config", json_config);
+        js_bind.put("__json_defaults", json_defaults);
+        js_bind.put("__json_config", json_config);
         try {
-            JavaScript.getEngine().eval("_config = parse(__json_defaults, __json_config)", bindings);
+            JavaScript.getEngine().eval("_config['" + hashCode() + "'] = parse(__json_defaults, __json_config)", js_bind);
             PrintStream stream = new PrintStream(parent_file);
             String json = toJSON();
             stream.println(json);
@@ -135,7 +132,7 @@ public class ModuleConfig {
         if (o instanceof String) {
             String str = (String) o;
             try {
-                str = JavaScript.getEngine().eval("postProcess(\"" + str + "\");", bindings).toString();
+                str = JavaScript.getEngine().eval("postProcess(\"" + str + "\");", js_bind).toString();
             } catch (ScriptException e) {
                 e.printStackTrace();
             }
@@ -149,7 +146,7 @@ public class ModuleConfig {
      */
     public Object getObject(String name) {
         try {
-            Object o = JavaScript.getEngine().eval("_config." + name, bindings);
+            Object o = JavaScript.getEngine().eval("_config['" + this.hashCode() + "']." + name, js_bind);
             o = postProcess(o);
             return o;
         } catch (ScriptException e) { }
@@ -161,7 +158,12 @@ public class ModuleConfig {
      * configuration file, but will instead return the raw data as a JSONified string. This will also be pretty-printed
      */
     public String toJSON() throws ScriptException {
-        return (String) JavaScript.getEngine().eval("toJSON(_config)", bindings);
+        return (String) JavaScript.getEngine().eval("toJSON(_config['" + hashCode() + "'])", js_bind);
+    }
+
+    @Override
+    public int hashCode() {
+        return parent_file.hashCode();
     }
 
     /**

@@ -44,10 +44,3 @@ var $EXEC = function() {
     reader.close();
     return out;
 };
-
-
-
-$.command("eval", function() {
-    var fcmd = [].slice.call(arguments).join(" ");
-    eval(fcmd);
-});
