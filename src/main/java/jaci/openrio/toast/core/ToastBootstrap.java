@@ -64,6 +64,8 @@ public class ToastBootstrap {
     public static long startTimeMS;
     public static long endTimeMS;
 
+    public static Thread js_thread;
+
     /**
      * The Main Method. Called when the Toast Program is started. This contains multiple arguments, such as
      * -sim, -verify, -groovy, -groovyClass, -core and any others that are required. More of these are outlined in
@@ -75,7 +77,7 @@ public class ToastBootstrap {
         startTimeMS = System.currentTimeMillis();
         color = true;
         ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
-        Thread js_thread = new Thread() {
+        js_thread = new Thread() {
             public void run() {
                 JavaScript.init();
             }
@@ -169,14 +171,6 @@ public class ToastBootstrap {
         if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
 
-        try {
-            System.out.println("Awaiting JavaScript");
-            long aw = System.currentTimeMillis();
-            js_thread.join();
-            System.out.println("Done JavaScript " + (System.currentTimeMillis() - aw));
-        } catch (InterruptedException e) {
-            // never happens, and if it does, than the program will die anyway //
-        }
         ModuleConfig.init();
 
         // -------- NEW PHASE -------- //
@@ -201,7 +195,6 @@ public class ToastBootstrap {
         LoadPhase.INIT.transition();
         toastLogger.info("Nuking Toast...");
         RobotLoader.postCore(Profiler.INSTANCE.section("RobotLoader"));
-        JavaScript.binderInit();
 
         profiler.start("Security");
         ToastSecurityManager.init();
