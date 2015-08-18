@@ -1,6 +1,7 @@
 package jaci.openrio.toast.lib.profiler;
 
-import com.google.gson.JsonObject;
+import com.grack.nanojson.JsonBuilder;
+import com.grack.nanojson.JsonObject;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -88,14 +89,15 @@ public class ProfilerSection {
     }
 
     public JsonObject toJSON() {
-        JsonObject obj = new JsonObject();
+        JsonBuilder<JsonObject> obj = JsonObject.builder();
+
         for (ProfilerSection section : sections()) {
-            obj.add(section.name(), section.toJSON());
+            obj.value(section.name(), section.toJSON());
         }
         for (ProfilerEntity entity : entities()) {
-            obj.addProperty(entity.name(), entity.getDuration());
+            obj.value(entity.name(), entity.getDuration());
         }
-        return obj;
+        return obj.done();
     }
 
 }

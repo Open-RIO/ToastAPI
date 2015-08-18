@@ -1,12 +1,9 @@
 package jaci.openrio.toast.lib.profiler;
 
-import com.google.gson.annotations.SerializedName;
-
 public class ProfilerEntity {
 
     long start_time;
     long end_time;
-    @SerializedName("duration")
     long total_time;
     String name;
 

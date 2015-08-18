@@ -1,7 +1,8 @@
 package jaci.openrio.toast.core.script;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.grack.nanojson.JsonObject;
+import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonParserException;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.Storage;
@@ -124,23 +125,23 @@ public class ScriptLoader {
                     ProfilerSection section = Profiler.INSTANCE.section("JavaScript").section("Module").section(n);
                     section.pushEntity(unz);
                     section.pushEntity(mape);
-                } catch (IOException e) { }
+                } catch (Exception e) { }
             }
         engine.put("__MODULES", map);
     }
 
-    public static String mapModule(String directory) throws FileNotFoundException {
+    public static String mapModule(String directory) throws FileNotFoundException, JsonParserException {
         return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"), JavaScript.getEngine());
     }
 
-    private static String mapModule(File directory, HashMap<String, File> map, ScriptEngine engine) throws FileNotFoundException {
+    private static String mapModule(File directory, HashMap<String, File> map, ScriptEngine engine) throws FileNotFoundException, JsonParserException {
         File metadata = new File(directory, "module.json");
-        JsonObject obj = new JsonParser().parse(new FileReader(metadata)).getAsJsonObject();
-        map.put(obj.get("name").getAsString(), new File(directory, obj.get("script").getAsString()).getAbsoluteFile());
-        String name = obj.get("name").getAsString();
+        JsonObject obj = JsonParser.object().from(new FileReader(metadata));
+        map.put(obj.getString("name"), new File(directory, obj.getString("script")).getAbsoluteFile());
+        String name = obj.getString("name");
         if (obj.has("initscript")) {
             try {
-                load(new File(directory, obj.get("initscript").getAsString()), engine);
+                load(new File(directory, obj.getString("initscript")), engine);
             } catch (Exception e) {
                 Toast.log().info("Error in loading InitScript: " + e);
                 Toast.log().exception(e);

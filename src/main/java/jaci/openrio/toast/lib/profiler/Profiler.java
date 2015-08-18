@@ -1,8 +1,8 @@
 package jaci.openrio.toast.lib.profiler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.grack.nanojson.JsonBuilder;
+import com.grack.nanojson.JsonObject;
+import com.grack.nanojson.JsonWriter;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.lib.log.Logger;
 
@@ -32,7 +32,9 @@ public class Profiler {
 
     public ProfilerSection section(String name) {
         if (!sections.containsKey(name)) {
-            sections.put(name, new ProfilerSection(name, this));
+            ProfilerSection sec = new ProfilerSection(name, this);
+            sections.put(name, sec);
+            return sec;
         }
         return sections.get(name);
     }
@@ -63,8 +65,7 @@ public class Profiler {
     }
 
     public void export(String s) {
-        Gson gson_engine = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson_engine.toJson(toJSON());
+        String json = JsonWriter.indent("\t").string().value(toJSON()).done();
         try {
             File dir = new File(ToastBootstrap.toastHome, "system/profiler");
             dir.mkdirs();
@@ -91,11 +92,12 @@ public class Profiler {
     }
 
     public JsonObject toJSON() {
-        JsonObject obj = new JsonObject();
+        JsonBuilder<JsonObject> obj = JsonObject.builder();
+
         for (ProfilerSection section : sections()) {
-            obj.add(section.name(), section.toJSON());
+            obj.value(section.name(), section.toJSON());
         }
-        return obj;
+        return obj.done();
     }
 
 }

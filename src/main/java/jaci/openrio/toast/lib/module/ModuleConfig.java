@@ -1,19 +1,24 @@
 package jaci.openrio.toast.lib.module;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.grack.nanojson.JsonObject;
+import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonWriter;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
+import jaci.openrio.toast.lib.util.JSONUtil;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.internal.parser.JSONParser;
 
 import javax.script.Bindings;
+import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.util.*;
 
 /**
  * The ModuleConfig is the new replacement for the old GroovyPreferences.
@@ -26,7 +31,6 @@ import java.util.LinkedList;
 public class ModuleConfig {
 
     static File base_file;
-    static Bindings js_bind;
     public static LinkedList<ModuleConfig> allConfigs;
 
     /**
@@ -39,19 +43,12 @@ public class ModuleConfig {
         base_file = new File(ToastBootstrap.toastHome, "config");
         base_file.mkdirs();
         allConfigs = new LinkedList<>();
-        js_bind = JavaScript.getEngine().createBindings();
-        try {
-            JavaScript.getEngine().eval(JavaScript.getSystemLib("Config.js"), js_bind);
-            JavaScript.getEngine().eval(JavaScript.getSystemLib("Util.js"), js_bind);
-            JavaScript.getEngine().eval("_config = {}", js_bind);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
         section.stop("ModuleConfig");
     }
 
     File parent_file;
     HashMap<String, Object> defaults;
+    HashMap<String, Object> full_config;
 
     public ModuleConfig(String name) {
         try {
@@ -88,9 +85,10 @@ public class ModuleConfig {
     private void load() throws IOException, ScriptException {
         defaults = new HashMap<>();
         try {
-            JavaScript.getEngine().eval("_config['" + hashCode() + "'] = {}", js_bind);
             reload();
-        } catch (Exception e) { }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -109,35 +107,69 @@ public class ModuleConfig {
         } catch (Exception e) {
         }
 
-        Gson gson_engine = new GsonBuilder().setPrettyPrinting().create();
-        String json_defaults = gson_engine.toJson(defaults);
-        js_bind.put("__json_defaults", json_defaults);
-        js_bind.put("__json_config", json_config);
+        if (json_config.trim().length() == 0)
+            json_config = "{}";
         try {
-            JavaScript.getEngine().eval("_config['" + hashCode() + "'] = parse(__json_defaults, __json_config)", js_bind);
+            JsonObject obj = JsonParser.object().from(json_config);
+            full_config = deepMerge(defaults, obj);
             PrintStream stream = new PrintStream(parent_file);
             String json = toJSON();
             stream.println(json);
             stream.close();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * PostProcess an object. If the object is of type String, it will be passed to JavaScript to parse
-     * out the ${} tags if they exist. This method is called after {@link #reload()}, so post processing
-     * will not be shown in the Config File, meaning ${} tags won't be overridden by their result.
-     */
-    public Object postProcess(Object o) {
-        if (o instanceof String) {
-            String str = (String) o;
-            try {
-                str = JavaScript.getEngine().eval("postProcess(\"" + str + "\");", js_bind).toString();
-            } catch (ScriptException e) {
-                e.printStackTrace();
+    public static void unpack(HashMap<String, Object> object, String key, Object value) {
+        String[] split = key.split("\\.");
+        HashMap lobj = object;
+        for (int cur = 0; cur < split.length; cur++) {
+            String current = split[cur];
+            if (!(lobj.containsKey(current) && lobj.get(current) instanceof HashMap)) {
+                lobj.put(current, new HashMap<String, Object>());
             }
-            return str;
-        } else return o;
+            if (cur == split.length - 1) {
+                lobj.put(current, value);
+            } else
+                lobj = (HashMap) lobj.get(current);
+        }
+    }
+
+    private static HashMap<String, Object> _deepMerge(HashMap<String, Object> defs, HashMap<String, Object> conf) {
+        HashMap<String, Object> d = new HashMap<>();
+        HashMap<String, Object> c = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry : defs.entrySet()) {
+            unpack(d, entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, Object> entry : conf.entrySet()) {
+            unpack(c, entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, Object> entryC : c.entrySet()) {
+            String kC = entryC.getKey();
+            Object vC = entryC.getValue();
+            if (d.containsKey(kC)) {
+                if (vC instanceof HashMap) {
+                    if (vC instanceof HashMap) {
+                        d.put(kC, _deepMerge((HashMap<String, Object>) d.get(kC), (HashMap<String, Object>) vC));
+                    } else {
+                        d.put(kC, vC);
+                    }
+                } else {
+                    d.put(kC, vC);
+                }
+            } else {
+                d.put(kC, vC);
+            }
+        }
+        return d;
+    }
+
+    public static HashMap<String, Object> deepMerge(HashMap<String, Object> def, JsonObject conf) {
+        return _deepMerge(def, JSONUtil.gsonToHash(conf));
     }
 
     /**
@@ -146,10 +178,13 @@ public class ModuleConfig {
      */
     public Object getObject(String name) {
         try {
-            Object o = JavaScript.getEngine().eval("_config['" + this.hashCode() + "']." + name, js_bind);
-            o = postProcess(o);
-            return o;
-        } catch (ScriptException e) { }
+            String[] keys = name.split("\\.");
+            Object mir = full_config;
+            for (String key : keys) {
+                mir = ((HashMap) mir).get(key);
+            }
+            return mir;
+        } catch (Exception e) { }
         return null;
     }
 
@@ -158,7 +193,7 @@ public class ModuleConfig {
      * configuration file, but will instead return the raw data as a JSONified string. This will also be pretty-printed
      */
     public String toJSON() throws ScriptException {
-        return (String) JavaScript.getEngine().eval("toJSON(_config['" + hashCode() + "'])", js_bind);
+        return JsonWriter.indent("\t").string().value(full_config).done();
     }
 
     @Override
@@ -254,8 +289,11 @@ public class ModuleConfig {
      * Get an array from the Configuration File
      */
     public <T> T[] getArray(String name, T[] def) {
-        ScriptObjectMirror obj = ((ScriptObjectMirror) getOrDefault(name, def));
-        return (T[]) obj.values().toArray(def);
+        Object[] obj = ((Object[]) getOrDefault(name, def));
+        T[] objnew = (T[]) Array.newInstance(def.getClass().getComponentType(), obj.length);
+        for (int i = 0; i < obj.length; i++)
+            objnew[i] = (T) obj[i];
+        return objnew;
     }
 
     /**

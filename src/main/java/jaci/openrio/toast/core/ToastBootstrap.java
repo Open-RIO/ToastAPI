@@ -75,6 +75,12 @@ public class ToastBootstrap {
         startTimeMS = System.currentTimeMillis();
         color = true;
         ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
+        Thread js_thread = new Thread() {
+            public void run() {
+                JavaScript.init();
+            }
+        };
+        js_thread.start();
         profiler.start("ParseArgs");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -133,9 +139,6 @@ public class ToastBootstrap {
         toastHome.mkdirs();
 
         LoadPhase.BOOTSTRAP.transition();
-        JavaScript.init();
-
-        ModuleConfig.init();
 
         profiler.start("Logger");
         SysLogProxy.init();
@@ -154,9 +157,6 @@ public class ToastBootstrap {
         profiler.start("Version");
         Version.init();
         profiler.stop("Version");
-        profiler.start("Security");
-        ToastSecurityManager.init();
-        profiler.stop("Security");
 
         // -------- NEW PHASE -------- //
         LoadPhase.CORE_PREINIT.transition();
@@ -168,6 +168,16 @@ public class ToastBootstrap {
 
         if (args.length > 0)
             toastLogger.info("Toast Started with Run Arguments: " + Arrays.toString(args));
+
+        try {
+            System.out.println("Awaiting JavaScript");
+            long aw = System.currentTimeMillis();
+            js_thread.join();
+            System.out.println("Done JavaScript " + (System.currentTimeMillis() - aw));
+        } catch (InterruptedException e) {
+            // never happens, and if it does, than the program will die anyway //
+        }
+        ModuleConfig.init();
 
         // -------- NEW PHASE -------- //
         LoadPhase.PRE_INIT.transition();
@@ -192,6 +202,11 @@ public class ToastBootstrap {
         toastLogger.info("Nuking Toast...");
         RobotLoader.postCore(Profiler.INSTANCE.section("RobotLoader"));
         JavaScript.binderInit();
+
+        profiler.start("Security");
+        ToastSecurityManager.init();
+        profiler.stop("Security");
+
         profiler.start("WPILib");
         RobotBase.main(args);
     }

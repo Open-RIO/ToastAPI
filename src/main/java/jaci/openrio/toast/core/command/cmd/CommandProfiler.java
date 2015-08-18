@@ -1,7 +1,6 @@
 package jaci.openrio.toast.core.command.cmd;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.grack.nanojson.JsonWriter;
 import jaci.openrio.toast.core.command.AbstractCommand;
 import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.lib.log.Logger;
@@ -40,8 +39,7 @@ public class CommandProfiler extends AbstractCommand implements IHelpable {
         }
 
         if (switches.contains("--json") || switches.contains("-j")) {
-            Gson gson_engine = new GsonBuilder().setPrettyPrinting().create();
-            String json = gson_engine.toJson(inst.toJSON());
+            String json = JsonWriter.indent("\t").string().value(inst.toJSON()).done();
             System.out.println(json);
             return;
         }
