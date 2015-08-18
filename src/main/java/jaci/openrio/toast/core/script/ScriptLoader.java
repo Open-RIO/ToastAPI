@@ -8,7 +8,6 @@ import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.Storage;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
-import jaci.openrio.toast.core.script.js.JSEngine;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerEntity;

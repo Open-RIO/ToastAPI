@@ -1,6 +1,5 @@
 package jaci.openrio.toast.lib.log;
 
-import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 
 import java.io.File;

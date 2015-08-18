@@ -5,8 +5,6 @@ import jaci.openrio.toast.core.command.AbstractCommand;
 import jaci.openrio.toast.core.command.CommandBus;
 import jaci.openrio.toast.core.script.js.JavaScript;
 
-import javax.script.ScriptException;
-
 public class CommandJScript extends AbstractCommand {
 
     @Override

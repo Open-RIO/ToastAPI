@@ -5,20 +5,16 @@ import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonWriter;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
-import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jaci.openrio.toast.lib.util.JSONUtil;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.internal.parser.JSONParser;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.*;
 import java.lang.reflect.Array;
-import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * The ModuleConfig is the new replacement for the old GroovyPreferences.

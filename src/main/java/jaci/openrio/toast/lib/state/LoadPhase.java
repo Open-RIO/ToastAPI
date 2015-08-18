@@ -1,7 +1,5 @@
 package jaci.openrio.toast.lib.state;
 
-import jaci.openrio.toast.lib.profiler.Profiler;
-
 import java.util.Vector;
 import java.util.function.Function;
 

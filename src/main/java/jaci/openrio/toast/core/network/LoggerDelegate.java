@@ -5,8 +5,6 @@ import jaci.openrio.delegate.Security;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.lib.log.ColorPrint;
-import jaci.openrio.toast.lib.log.LogHandler;
-import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.log.SysLogProxy;
 
 import java.io.*;

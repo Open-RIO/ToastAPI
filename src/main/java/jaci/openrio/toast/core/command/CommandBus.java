@@ -7,7 +7,6 @@ import jaci.openrio.toast.core.command.cmd.*;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
-import java.util.function.Function;
 
 /**
  * The main pipeline for commands. This bus handles registering and invocation of commands. This allows for

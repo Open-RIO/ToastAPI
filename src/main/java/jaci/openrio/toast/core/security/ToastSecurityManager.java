@@ -1,13 +1,9 @@
 package jaci.openrio.toast.core.security;
 
 import jaci.openrio.toast.core.ToastBootstrap;
-import jaci.openrio.toast.core.io.usb.USBMassStorage;
 
 import java.io.FilePermission;
 import java.net.SocketPermission;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Permission;
 import java.util.regex.Pattern;
 
