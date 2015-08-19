@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+first_arg = ARGV.shift
+
+VERSION_MATCH = /^(\d+)\.(\d+)\.(\d+)(-(\d+)([a-z]))?$/
+VERSION_ENTRY = /(toast.version=)(.*)/
+
+SETTINGS_FILE = 'build.settings'
+
+def like a, target
+  (a =~ target) != nil
+end
+
+def vers_match
+  File.read(SETTINGS_FILE).match(VERSION_ENTRY)
+end
+
+def replace_version vers
+  unless like vers, VERSION_MATCH
+    puts "Not a valid version string!"
+    exit 1
+  end
+  content = File.read(SETTINGS_FILE)
+  content = content.gsub VERSION_ENTRY, "\\1#{vers}"
+  File.write(SETTINGS_FILE, content)
+end
+
+if like first_arg, /^version$/
+  version = vers_match
+  puts "Current Version: #{version[2]}"
+  print "New Version? "
+  newvers = gets.chop!
+  replace_version newvers
+end
+
+if like first_arg, /^(in|de)c(rement)?$/
+  second_arg = ARGV.shift
+  version = vers_match
+  puts "Current Version: \t#{version[2]}"
+  match = version[2].match(VERSION_MATCH)
+
+  mod = like(first_arg, /inc/) ? 1 : -1
+
+  newv = [match[1].to_i, match[2].to_i, match[3].to_i, match[5].to_i, match[6].ord]
+  if like second_arg, /^maj/
+    newv[0] += mod
+  elsif like second_arg, /^min/
+    newv[1] += mod
+  elsif like second_arg, /^build/
+    newv[2] += mod
+  elsif like second_arg, /^pre/
+    newv[4] += mod
+    if mod == 1
+      if newv[4] > "z".ord
+        newv[4] = "a".ord
+        newv[3] += 1
+      end
+    else
+      if newv[4] < "a".ord
+        newv[4] = "z".ord
+        newv[3] -= 1
+      end
+    end
+  end
+  newv = "#{newv[0]}.#{newv[1]}.#{newv[2]}-#{newv[3]}#{newv[4].chr}"
+  puts "New Version: \t\t#{newv}"
+  replace_version newv
+end

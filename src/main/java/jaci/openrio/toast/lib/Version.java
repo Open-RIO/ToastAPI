@@ -156,9 +156,9 @@ public class Version implements Comparable<Version> {
                 return o.prereleaseType > prereleaseType ? -1 : 1;
             return o.prebuild > prebuild ? -1 : 1;
         } else if (o.preRelease)
-            return -1;
-        else if (preRelease)
             return 1;
+        else if (preRelease)
+            return -1;
         return 0;
     }
 

@@ -15,13 +15,14 @@ apply plugin: 'GradleRIO'                                 //Apply the GradleRIO 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'groovy'
 apply plugin: BuildGradle
 apply plugin: 'maven'
 
 gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
 gradlerio.team = "9999"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
 gradlerio.rioIP = "172.22.11.2"                           //Uncomment to specify the IP address of the RIO
+
+[compileJava, compileTestJava]*.options.collect {options -> options.encoding = 'UTF-8'}   //Keep things in the proper encoding otherwise things get messed up on some compilers
 
 repositories {
   maven {
