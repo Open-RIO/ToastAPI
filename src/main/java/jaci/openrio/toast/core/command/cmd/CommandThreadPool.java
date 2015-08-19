@@ -3,13 +3,13 @@ package jaci.openrio.toast.core.command.cmd;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.command.AbstractCommand;
 import jaci.openrio.toast.core.command.IHelpable;
-import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.log.Logger;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * This command will simply echo data about the {@link jaci.openrio.toast.core.thread.ToastThreadPool} to the console.
+ * This command will simply echo data about the {@link Async} to the console.
  * This is for debugging purposes
  *
  * command_name: 'threads'
@@ -38,7 +38,7 @@ public class CommandThreadPool extends AbstractCommand implements IHelpable {
      */
     @Override
     public void invokeCommand(int argLength, String[] args, String command) {
-        ThreadPoolExecutor e = (ThreadPoolExecutor) ToastThreadPool.INSTANCE.getService();
+        Async e = Async.INSTANCE;
         Logger l = Toast.log();
         l.info("*Toast Thread Pool Instance Data: ");
         l.info(String.format("\t Active Threads: %d, Core Threads: %d", e.getPoolSize(), e.getCorePoolSize()));

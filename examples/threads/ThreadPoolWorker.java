@@ -1,7 +1,7 @@
 package toast.examples;
 
 import jaci.openrio.toast.core.Toast;
-import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.module.ToastModule;
 
 import java.util.concurrent.Callable;
@@ -25,14 +25,14 @@ public class ThreadWorker extends ToastModule {
 
     @Override
     public void start() {
-        ToastThreadPool.INSTANCE.addWorker(new Runnable() {                     // Add a new, void return type method to the Thread Pool
+        Async.INSTANCE.addWorker(new Runnable() {                     // Add a new, void return type method to the Thread Pool
             @Override
             public void run() {
                 Toast.log().info("Hello from the threadpool!");
             }
         });
 
-        Future<Integer> future = ToastThreadPool.INSTANCE.addWorker(new Callable<Integer>() {       // Add a new, non-void return type method to the Thread Pool
+        Future<Integer> future = Async.INSTANCE.addWorker(new Callable<Integer>() {       // Add a new, non-void return type method to the Thread Pool
             @Override
             public Integer call() throws Exception {
                 return 5 * 2;

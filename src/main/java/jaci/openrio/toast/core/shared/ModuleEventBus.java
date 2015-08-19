@@ -1,6 +1,6 @@
 package jaci.openrio.toast.core.shared;
 
-import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.core.thread.Async;
 
 import java.util.Vector;
 
@@ -46,7 +46,7 @@ public class ModuleEventBus {
      * @param data The data passed to the event, or null if none are provided
      */
     public static void raiseConcurrentEvent(String sender, String event_type, Object... data) {
-        ToastThreadPool.INSTANCE.addWorker(new Runnable() {
+        Async.INSTANCE.submit(new Runnable() {
             public void run() {
                 for (ModuleEventListener listener : listeners)
                     listener.onModuleEvent(sender, event_type, data);

@@ -9,7 +9,7 @@ import jaci.openrio.toast.core.network.ToastSessionJoiner;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
-import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.Assets;
 import jaci.openrio.toast.lib.Version;
 import jaci.openrio.toast.lib.crash.CrashHandler;
@@ -181,7 +181,7 @@ public class ToastBootstrap {
         ToastConfiguration.init();
         profiler.stop("Configuration");
         profiler.start("ThreadPool");
-        ToastThreadPool.init();
+        Async.init();
         profiler.stop("ThreadPool");
 
         ClassPatcher classLoader = new ClassPatcher();

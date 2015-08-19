@@ -8,7 +8,7 @@ import jaci.openrio.toast.core.network.SocketManager;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.thread.Heartbeat;
 import jaci.openrio.toast.core.thread.HeartbeatListener;
-import jaci.openrio.toast.core.thread.ToastThreadPool;
+import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.FRCHooks;
 import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
@@ -152,7 +152,7 @@ public class Toast extends RobotBase {
      */
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
-        ToastThreadPool.INSTANCE.finish();
+        Async.INSTANCE.finish();
         shutdownAll();
         System.exit(0);
     }
@@ -164,7 +164,7 @@ public class Toast extends RobotBase {
      */
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
-        ToastThreadPool.INSTANCE.getService().shutdownNow();
+        Async.INSTANCE.shutdownNow();
         shutdownAll();
         System.exit(-1);
     }
