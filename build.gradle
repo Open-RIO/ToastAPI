@@ -209,6 +209,11 @@ uploadArchives {
   }
 }
 
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.6'
+}
+
+
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
     project.getConfigurations().maybeCreate('verify')
