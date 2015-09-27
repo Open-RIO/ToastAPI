@@ -138,6 +138,9 @@ public class JavaScript {
         return null;
     }
 
+    /**
+     * Load a file relative to the current USB mass storage device. This is desired among module makers.
+     */
     public static Object loadFileHere(String loaddir, String file) {
         try {
             requireLoad();
