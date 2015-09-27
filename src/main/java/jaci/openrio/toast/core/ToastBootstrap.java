@@ -64,8 +64,6 @@ public class ToastBootstrap {
     public static long startTimeMS;
     public static long endTimeMS;
 
-    public static Thread js_thread;
-
     /**
      * The Main Method. Called when the Toast Program is started. This contains multiple arguments, such as
      * -sim, -verify, -groovy, -groovyClass, -core and any others that are required. More of these are outlined in
@@ -77,12 +75,7 @@ public class ToastBootstrap {
         startTimeMS = System.currentTimeMillis();
         color = true;
         ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
-        js_thread = new Thread() {
-            public void run() {
-                JavaScript.init();
-            }
-        };
-        js_thread.start();
+        JavaScript.startLoading();
         profiler.start("ParseArgs");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

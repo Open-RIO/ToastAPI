@@ -43,24 +43,24 @@ public class ScriptLoader {
      * Load all the scripts in the given directory into the provided ScriptEngine. Only files with the defined filenames
      * will be accepted into the loader. This function will recursively search in each Sub-Directory of the parent directory
      */
-    public static List<String> loadAll(String homedir, ScriptEngine engine, String... filenames) throws FileNotFoundException {
+    public static List<String> loadAll(String homedir, String... filenames) throws FileNotFoundException {
         List<String> list = new ArrayList<String>();
         if (!USBMassStorage.overridingModules()) {
-            searchModules(new File(getScriptDirByType(homedir), "modules"), engine);
+            searchModules(new File(getScriptDirByType(homedir), "modules"));
         }
 
         for (MassStorageDevice device : USBMassStorage.connectedDevices) {
             if (device.concurrent_modules || device.override_modules)
-                searchModules(new File(new File(device.toast_directory, "script/" + homedir), "modules"), engine);
+                searchModules(new File(new File(device.toast_directory, "script/" + homedir), "modules"));
         }
 
         Profiler.INSTANCE.section("JavaScript").start("Load");
         if (!USBMassStorage.overridingModules())
-            search(getScriptDirByType(homedir), engine, list, filenames);
+            search(getScriptDirByType(homedir), list, filenames);
 
         for (MassStorageDevice device : USBMassStorage.connectedDevices) {
             if (device.concurrent_modules || device.override_modules)
-                search(new File(device.toast_directory, "script/" + homedir), engine, list, filenames);
+                search(new File(device.toast_directory, "script/" + homedir), list, filenames);
         }
         Profiler.INSTANCE.section("JavaScript").stop("Load");
         return list;
@@ -69,7 +69,7 @@ public class ScriptLoader {
     /**
      * Recursively search a directory (and its subdirectory) for candidate files and load them into the ScriptEngine.
      */
-    private static void search(File dir, ScriptEngine engine, List<String> list, String... filenames) throws FileNotFoundException {
+    private static void search(File dir, List<String> list, String... filenames) throws FileNotFoundException {
         dir.mkdirs();
 
         File[] files = dir.listFiles(new FilenameFilter() {
@@ -82,20 +82,21 @@ public class ScriptLoader {
             }
         });
 
-        if (files != null)
+        if (files != null && files.length > 0) {
             for (File file : files) {
                 if (!file.isDirectory()) {
                     try {
-                        load(file, engine);
+                        load(file, JavaScript.getEngine());
                     } catch (ScriptException e) {
                         Toast.log().error("Could not load Script: " + file);
                         Toast.log().exception(e);
                     }
                 }
             }
+        }
     }
 
-    private static void searchModules(File dir, ScriptEngine engine) {
+    private static void searchModules(File dir) {
         dir.mkdirs();
         HashMap<String, File> map = new HashMap<>();
         File extraction = new File(dir, ".extraction_cache");
@@ -110,7 +111,7 @@ public class ScriptLoader {
             }
         });
 
-        if (modules != null)
+        if (modules != null && modules.length > 0) {
             for (File file : modules) {
                 try {
                     File extract = new File(extraction, file.getName().replace(".jsm", ""));
@@ -118,7 +119,7 @@ public class ScriptLoader {
                     unzip(file, extract);
                     unz.stop();
                     ProfilerEntity mape = new ProfilerEntity("init").start();
-                    String n = mapModule(extract, map, engine);
+                    String n = mapModule(extract, map);
                     mape.stop();
 
                     ProfilerSection section = Profiler.INSTANCE.section("JavaScript").section("Module").section(n);
@@ -126,21 +127,22 @@ public class ScriptLoader {
                     section.pushEntity(mape);
                 } catch (Exception e) { }
             }
-        engine.put("__MODULES", map);
+            JavaScript.getEngine().put("__MODULES", map);
+        }
     }
 
     public static String mapModule(String directory) throws FileNotFoundException, JsonParserException {
-        return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"), JavaScript.getEngine());
+        return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"));
     }
 
-    private static String mapModule(File directory, HashMap<String, File> map, ScriptEngine engine) throws FileNotFoundException, JsonParserException {
+    private static String mapModule(File directory, HashMap<String, File> map) throws FileNotFoundException, JsonParserException {
         File metadata = new File(directory, "module.json");
         JsonObject obj = JsonParser.object().from(new FileReader(metadata));
         map.put(obj.getString("name"), new File(directory, obj.getString("script")).getAbsoluteFile());
         String name = obj.getString("name");
         if (obj.has("initscript")) {
             try {
-                load(new File(directory, obj.getString("initscript")), engine);
+                load(new File(directory, obj.getString("initscript")), JavaScript.getEngine());
             } catch (Exception e) {
                 Toast.log().info("Error in loading InitScript: " + e);
                 Toast.log().exception(e);

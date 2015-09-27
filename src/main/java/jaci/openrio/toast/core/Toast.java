@@ -73,12 +73,6 @@ public class Toast extends RobotBase {
         try {
             ProfilerSection section = Profiler.INSTANCE.section("Setup");
             section.stop("WPILib");
-            try {
-                ToastBootstrap.js_thread.join();
-            } catch (InterruptedException e) {
-                // never happens, and if it does, then the program will die anyway //
-            }
-            JavaScript.binderInit();
 
             // -------- NEW PHASE -------- //
             LoadPhase.PRE_START.transition();

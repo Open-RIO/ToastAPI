@@ -3,12 +3,15 @@ package jaci.openrio.toast.core.script.js;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.core.script.ScriptLoader;
+import jaci.openrio.toast.core.thread.NonVitalLoadTask;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
 import javax.script.*;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.Time;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +27,27 @@ public class JavaScript {
     static ScriptEngine engine;
     static String engine_type;
     static List<String> loadedScripts;
+
+    /* Load Task Stuff */
+
+    static NonVitalLoadTask loadTask;
+
+    public static void startLoading() {
+        loadTask = new NonVitalLoadTask(new Runnable() {
+            @Override
+            public void run() {
+                init();
+                binderInit();
+            }
+        });
+        loadTask.startLoading();
+    }
+
+    public static void requireLoad() {
+        loadTask.requireLoaded();
+    }
+
+    /* JS Stuff */
 
     /**
      * Initialize the ScriptEngine and its manager. This is called by Toast, so don't worry about
@@ -62,12 +86,8 @@ public class JavaScript {
      */
     public static void loaderInit() {
         try {
-            if (supported()) {
-                put("__toast", Toast.getToast());
-
-                ScriptLoader.getScriptDirByType("js").mkdirs();
-                loadedScripts = ScriptLoader.loadAll("js", engine, ToastConfiguration.config.getArray("javascript.autoload", new String[] {"main.js"}));
-            }
+            ScriptLoader.getScriptDirByType("js").mkdirs();
+            loadedScripts = ScriptLoader.loadAll("js", ToastConfiguration.config.getArray("javascript.autoload", new String[] {"main.js"}));
         } catch (Exception e) {
             Toast.log().error("Could not Load JavaScript script files: " + e);
             Toast.log().exception(e);
@@ -79,6 +99,7 @@ public class JavaScript {
      */
     public static Object loadFile(String file) {
         try {
+            requireLoad();
             if (supported()) {
                 ScriptLoader.getScriptDirByType("js").mkdirs();
                 if (file.contains(".js")) {
@@ -99,6 +120,7 @@ public class JavaScript {
      */
     public static Object loadFileRelative(String loaddir, String file) {
         try {
+            requireLoad();
             if (supported()) {
                 return ScriptLoader.loadRelative(loaddir, engine, (file.contains(".") ? file : file + ".js"));
             }
@@ -111,6 +133,7 @@ public class JavaScript {
 
     public static Object loadFileHere(String loaddir, String file) {
         try {
+            requireLoad();
             if (supported()) {
                 return ScriptLoader.loadHere(loaddir, engine, (file.contains(".") ? file : file + ".js"));
             }
@@ -126,7 +149,7 @@ public class JavaScript {
      */
     private static void loadSystem() {
         try {
-            eval("__GLOBAL = this");
+            engine.eval("__GLOBAL = this");
 
             loadSystemLib("Map.js");
             loadSystemLib("Toast.js");
@@ -141,6 +164,7 @@ public class JavaScript {
      * bindings of the ScriptEngine. This is a shortcut for engine.eval()
      */
     public static Object eval(String script) throws ScriptException {
+        requireLoad();
         checkSupported();
         return engine.eval(script);
     }
@@ -150,6 +174,7 @@ public class JavaScript {
      * bindings of the ScriptEngine. This is a shortcut for engine.eval()
      */
     public static Object eval(Reader reader) throws ScriptException {
+        requireLoad();
         checkSupported();
         return engine.eval(reader);
     }
@@ -158,6 +183,7 @@ public class JavaScript {
      * Put an object into the Engine's global bindings. This is the same as registering a 'var' in the JavaScript.
      */
     public static void put(String key, Object o) {
+        requireLoad();
         checkSupported();
         engine.put(key, o);
     }
@@ -167,6 +193,7 @@ public class JavaScript {
      * engine.
      */
     public static Object get(String key) {
+        requireLoad();
         checkSupported();
         return engine.get(key);
     }
@@ -191,6 +218,7 @@ public class JavaScript {
      * to all the ScriptEngine's features, including its bindings and other evaluation methods. Use this with caution
      */
     public static ScriptEngine getEngine() {
+        requireLoad();
         return engine;
     }
 
@@ -236,6 +264,7 @@ public class JavaScript {
      * Copy Toast's bindings (loaded classes) to your own Bindings object to access all of Toast's SystemLibs.
      */
     public static void copyBindings(Bindings target) {
+        requireLoad();
         Bindings source = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         target.putAll(source);
     }
