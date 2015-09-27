@@ -64,7 +64,7 @@ dependencies {
   compile 'jaci.openrio.delegate:NetworkDelegate:1.2.1'
   //compile 'com.google.code.gson:gson:2.3.1'
   compile 'com.grack:nanojson:+'
-  deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
+  deployerJars 'org.apache.maven.wagon:wagon-ssh:2.4'
 }
 
 archivesBaseName = "Toast"
@@ -210,7 +210,7 @@ uploadArchives {
 }
 
 task wrapper(type: Wrapper) {
-   gradleVersion = '2.6'
+   gradleVersion = '2.1'
 }
 
 
