@@ -77,6 +77,9 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
         } catch (ScriptException e) { }
     }
 
+    /**
+     * Add a command callback to the command bus for command registration inside of JavaScript
+     */
     public static void addCommand(String name, JSObject object) {
         CommandBus.registerCommand(new AbstractCommand() {
             @Override
@@ -91,6 +94,9 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
         });
     }
 
+    /**
+     * Launch the given callback in a new Java thread.
+     */
     public static Thread thread(JSObject object) {
         return new Thread(new Runnable() {
             @Override
@@ -100,6 +106,10 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
         });
     }
 
+    /**
+     * Launch the given callback in a new Java thread, but with arguments being
+     * passed to it.
+     */
     public static Thread threadArgs(JSObject obj) {
         return new ThreadWithArgs(obj);
     }
@@ -113,11 +123,17 @@ public class JSEngine implements StateListener.Transition, StateListener.Ticker,
             object = target;
         }
 
+        /**
+         * Launch the thread and set arguments
+         */
         public void start(Object... arguments) {
             this.args = arguments;
             this.start();
         }
 
+        /**
+         * Call the callback with the given arguments.
+         */
         @Override
         public void run() {
             object.call(object, args);

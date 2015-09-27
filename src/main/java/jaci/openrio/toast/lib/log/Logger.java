@@ -141,6 +141,9 @@ public class Logger {
         log(message, level.getName().toUpperCase(), level.getColor().name().toLowerCase(), level.getPrintSteam());
     }
 
+    /**
+     * Log a message without any padding or prefixes.
+     */
     public void raw(String message) {
         log(message, "raw", "none", System.out);
     }

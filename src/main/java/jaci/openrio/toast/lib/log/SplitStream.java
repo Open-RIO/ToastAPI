@@ -21,6 +21,10 @@ public class SplitStream extends OutputStream {
         this.outs = new ArrayList<>(Arrays.asList(streams));
     }
 
+    /**
+     * Add an output stream to the splitstream. Use this to delegate logger and
+     * system.out output to your own handler or file.
+     */
     public void add(OutputStream stream) {
         outs.add(stream);
     }

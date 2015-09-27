@@ -22,6 +22,10 @@ public class ToastSessionJoiner {
     static DataOutputStream commands_out;
     static BufferedReader logger_in;
 
+    /**
+     * Start the joiner. This simply connects to the designated Toast instance on localhost and
+     * creates a logger and command bus bridge.
+     */
     public static void init() {
         LOGGER_DELEGATE = new DelegateClient("localhost", 5805, "TOAST_logger");
         COMMAND_DELEGATE = new DelegateClient("localhost", 5805, "TOAST_command");

@@ -117,6 +117,10 @@ public class ModuleConfig {
         }
     }
 
+    /**
+     * Unpack a period delimited string and get the object at that pointer. i.e test.test2.test3 translates to
+     * test["test2"]["test3"]
+     */
     public static void unpack(HashMap<String, Object> object, String key, Object value) {
         String[] split = key.split("\\.");
         HashMap lobj = object;
@@ -132,6 +136,9 @@ public class ModuleConfig {
         }
     }
 
+    /**
+     * Merge 2 Maps together deeply, merging inner maps and arrays.
+     */
     private static HashMap<String, Object> _deepMerge(HashMap<String, Object> defs, HashMap<String, Object> conf) {
         HashMap<String, Object> d = new HashMap<>();
         HashMap<String, Object> c = new HashMap<>();
@@ -164,6 +171,9 @@ public class ModuleConfig {
         return d;
     }
 
+    /**
+     * Deep merge a JSON object and the defaults array
+     */
     public static HashMap<String, Object> deepMerge(HashMap<String, Object> def, JsonObject conf) {
         return _deepMerge(def, JSONUtil.jsonToHash(conf));
     }
@@ -192,6 +202,9 @@ public class ModuleConfig {
         return JsonWriter.indent("\t").string().value(full_config).done();
     }
 
+    /**
+     * The hash-code of the file of the configuration, preventing duplicates.
+     */
     @Override
     public int hashCode() {
         return parent_file.hashCode();

@@ -96,6 +96,11 @@ public class ScriptLoader {
         }
     }
 
+    /**
+     * Search for modules in the given directory. This will extract the modules into a subfolder
+     * named .extraction_cache and prepare the modules for mapping, as well as launch any init-scripts
+     * required.
+     */
     private static void searchModules(File dir) {
         dir.mkdirs();
         HashMap<String, File> map = new HashMap<>();
@@ -131,10 +136,16 @@ public class ScriptLoader {
         }
     }
 
+    /**
+     * Map a module with the given (extracted) directory into the JavaScript engine.
+     */
     public static String mapModule(String directory) throws FileNotFoundException, JsonParserException {
         return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"));
     }
 
+    /**
+     * Map a module with the given (extracted) directory into the JavaScript engine.
+     */
     private static String mapModule(File directory, HashMap<String, File> map) throws FileNotFoundException, JsonParserException {
         File metadata = new File(directory, "module.json");
         JsonObject obj = JsonParser.object().from(new FileReader(metadata));
@@ -151,6 +162,9 @@ public class ScriptLoader {
         return name;
     }
 
+    /**
+     * Unzip a .jsm module into the given target directory. Usually, this is inside of the .extraction_cache folder.
+     */
     private static void unzip(File source, File target) throws IOException {
         ZipFile zf = new ZipFile(source);
         Enumeration<? extends ZipEntry> entries = zf.entries();
@@ -194,12 +208,18 @@ public class ScriptLoader {
         return returnVal[0];
     }
 
+    /**
+     * Load a module into the javascript engine
+     */
     public static Object loadModule(String homedir, ScriptEngine engine, String name) throws FileNotFoundException, ScriptException {
         HashMap<String, File> mp = (HashMap<String, File>) engine.get("__MODULES");
         Object ret = load(mp.get(name), engine);
         return ret;
     }
 
+    /**
+     * Load a relative file into the JavaScript engine. This will work across USB Mass Storage devices.
+     */
     public static Object loadRelative(String basedir, ScriptEngine engine, String loadtarget) {
         String rel = USBMassStorage.relativize(new File(basedir));
         final Object[] load = {null};
@@ -217,6 +237,10 @@ public class ScriptLoader {
         return load[0];
     }
 
+    /**
+     * LOad a file relative here. This is relative, but will not work across USB Mass Storage devices. This should
+     * be used by Module-Makers for including files in their own modules.
+     */
     public static Object loadHere(String basedir, ScriptEngine engine, String loadtarget) throws FileNotFoundException, ScriptException {
         File file = new File(basedir);
         file = (file.isDirectory() ? file : file.getParentFile());

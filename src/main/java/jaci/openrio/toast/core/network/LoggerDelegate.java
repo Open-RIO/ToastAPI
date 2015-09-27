@@ -96,6 +96,9 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
         }.start();
     }
 
+    /**
+     * Write data to every client socket
+     */
     @Override
     public void write(int b) throws IOException {
         Iterator<Client> it = clients.iterator();
@@ -109,6 +112,9 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
         }
     }
 
+    /**
+     * Write data to every client socket
+     */
     @Override
     public void write(byte b[]) throws IOException {
         Iterator<Client> it = clients.iterator();
@@ -122,6 +128,9 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
         }
     }
 
+    /**
+     * Write data to every client socket
+     */
     @Override
     public void write(byte b[], int off, int len) throws IOException {
         Iterator<Client> it = clients.iterator();
@@ -135,6 +144,9 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
         }
     }
 
+    /**
+     * Flush data to every client socket
+     */
     @Override
     public void flush() throws IOException {
         Iterator<Client> it = clients.iterator();

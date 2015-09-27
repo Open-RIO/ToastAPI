@@ -32,6 +32,9 @@ public class JavaScript {
 
     static NonVitalLoadTask loadTask;
 
+    /**
+     * Start loading the JavaScript engine. This is done internally
+     */
     public static void startLoading() {
         loadTask = new NonVitalLoadTask(new Runnable() {
             @Override
@@ -43,6 +46,10 @@ public class JavaScript {
         loadTask.startLoading();
     }
 
+    /**
+     * Require the JavaScript engine to be loaded before continuing. Call this
+     * if you need JavaScript in upcoming code execution.
+     */
     public static void requireLoad() {
         loadTask.requireLoaded();
     }

@@ -85,6 +85,9 @@ public class USBMassStorage {
         }
     }
 
+    /**
+     * Relativize a File path across USB Mass Storage devices.
+     */
     public static String relativize(File file) {
         Path them = file.getAbsoluteFile().toPath();
         if (them.startsWith(ToastBootstrap.toastHome.getAbsoluteFile().toPath())) {
@@ -98,6 +101,9 @@ public class USBMassStorage {
         return "";
     }
 
+    /**
+     * Relativize 2 paths to each other
+     */
     private static String relativize_0(Path dest, Path home) {
         return home.relativize(dest).toString();
     }

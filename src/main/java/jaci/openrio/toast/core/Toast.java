@@ -147,7 +147,7 @@ public class Toast extends RobotBase {
     public void shutdownSafely() {
         log().info("Robot Shutting Down...");
         Async.INSTANCE.finish();
-        shutdownAll();
+        shutdownCommon();
         System.exit(0);
     }
 
@@ -159,11 +159,14 @@ public class Toast extends RobotBase {
     public void shutdownCrash() {
         log().info("Robot Error Detected... Shutting Down...");
         Async.INSTANCE.shutdownNow();
-        shutdownAll();
+        shutdownCommon();
         System.exit(-1);
     }
 
-    public void shutdownAll() {
+    /**
+     * A common method called by both shutdownSafely() and shutdownCrash()
+     */
+    public void shutdownCommon() {
         MotorRegistry.stopAll();
     }
 
