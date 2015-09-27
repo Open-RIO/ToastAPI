@@ -8,6 +8,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+/**
+ * The SessionJoiner acts as an interface between Toast and.. well... Toast. Calling toast with the --join arguments
+ * will attempt to join the Toast console on the local host, useful for when you SSH into the RoboRIO.
+ *
+ * @author Jaci
+ */
 public class ToastSessionJoiner {
 
     static DelegateClient LOGGER_DELEGATE;

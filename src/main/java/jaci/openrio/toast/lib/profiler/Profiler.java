@@ -13,7 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
- * A Time Cop. This keeps track of the amount of time everything takes to complete during initialization.
+ * A Time Cop. This keeps track of the amount of time everything takes to complete during initialization. This is
+ * used to test optimizations and help you track down what's taking your robot so long to start up.
  *
  * @author Jaci
  */
@@ -26,10 +27,20 @@ public class Profiler {
 
     HashMap<String, ProfilerSection> sections = new LinkedHashMap<>();
 
+    /**
+     * Create a new Profiler
+     *
+     * @param name   The name of the profiler. This is used in saving the profiler log to file.
+     */
     public Profiler(String name) {
         this.name = name;
     }
 
+    /**
+     * Get (or create) a profiler section. This is the subset of the profiler action everything fits under, and is
+     * shown in the root of the profiler tree.
+     * @param name The name of the section. Short n' sweet
+     */
     public ProfilerSection section(String name) {
         if (!sections.containsKey(name)) {
             ProfilerSection sec = new ProfilerSection(name, this);
@@ -39,31 +50,33 @@ public class Profiler {
         return sections.get(name);
     }
 
+    /**
+     * @return A list of all the sections currently in the profiler
+     */
     public ProfilerSection[] sections() {
         Collection<ProfilerSection> values = sections.values();
         return values.toArray(new ProfilerSection[values.size()]);
     }
 
+    /**
+     * The name of the profiler, set in the Constructor.
+     */
     public String name() {
         return name;
     }
 
-    private void newlog() {
-        if (name.equals("Main"))
-            this.log = new Logger("Profiler", Logger.ATTR_DEFAULT);
-        else
-            this.log = new Logger("Profiler|" + name, Logger.ATTR_DEFAULT);
-    }
-
-    public Logger log() {
-        if (log == null) newlog();
-        return log;
-    }
-
+    /**
+     * Export the profiler log to file, using the name of the profiler as the filename.
+     * Saved in standard JSON pretty print format
+     */
     public void export() {
         export(null);
     }
 
+    /**
+     * Export the profiler log to file. Filename format goes #profilername#-#param1#.json
+     * Saved in standard JSON pretty print format.
+     */
     public void export(String s) {
         String json = JsonWriter.indent("\t").string().value(toJSON()).done();
         try {
@@ -91,6 +104,9 @@ public class Profiler {
         }
     }
 
+    /**
+     * Convert the profiler to a JSON Object. All times are stored in Nanoseconds.
+     */
     public JsonObject toJSON() {
         JsonBuilder<JsonObject> obj = JsonObject.builder();
 

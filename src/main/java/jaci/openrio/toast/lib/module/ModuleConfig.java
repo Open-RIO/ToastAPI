@@ -165,7 +165,7 @@ public class ModuleConfig {
     }
 
     public static HashMap<String, Object> deepMerge(HashMap<String, Object> def, JsonObject conf) {
-        return _deepMerge(def, JSONUtil.gsonToHash(conf));
+        return _deepMerge(def, JSONUtil.jsonToHash(conf));
     }
 
     /**

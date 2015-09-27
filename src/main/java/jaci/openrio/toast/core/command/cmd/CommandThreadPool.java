@@ -6,8 +6,6 @@ import jaci.openrio.toast.core.command.IHelpable;
 import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.log.Logger;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 /**
  * This command will simply echo data about the {@link Async} to the console.
  * This is for debugging purposes

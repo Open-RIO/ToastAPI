@@ -82,6 +82,9 @@ public class RobotLoader {
 
     /* Loaders */
 
+    /**
+     * Load a module candidate from a directory. This is usually used in -sim --search.
+     */
     static void loadDirectory(File file, ModuleCandidate candidate) throws IOException {
         File[] files = file.listFiles();
         if (files != null)
@@ -89,6 +92,10 @@ public class RobotLoader {
                 loadSubDirectory(file, f, candidate);
     }
 
+    /**
+     * Load a subdirectory into a module candidate. This is recursive in order to search for classfiles
+     * and extract their path
+     */
     static void loadSubDirectory(File main, File dig, ModuleCandidate candidate) {
         if (dig.isDirectory()) {
             File[] files = dig.listFiles();
@@ -103,6 +110,13 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Load a Jar File as a ModuleCandidate. This will automatically parse Manifest attributes
+     * and other related functions for module discovery.
+     * @param file                  The file of the module.jar
+     * @param expandClasspath       Should we expand the classpath to this jarfile if it's a valid module?
+     * @throws IOException
+     */
     static void loadJar(File file, boolean expandClasspath) throws IOException {
         JarFile jar = new JarFile(file);
         ModuleCandidate container = new ModuleCandidate();
@@ -142,6 +156,9 @@ public class RobotLoader {
 
     /* Searchers */
 
+    /**
+     * Detect any modules that are present in a development environment (-sim --search)
+     */
     static void loadDevEnvironment(ProfilerSection section) {
         section.start("DevEnv");
         for (URL url : sysLoader.getURLs()) {
@@ -160,6 +177,10 @@ public class RobotLoader {
         section.stop("DevEnv");
     }
 
+    /**
+     * Search a directory for .jar files to load as modules. Jars will be automatically loaded, however,
+     * non .jar files will still be injected into the classpath.
+     */
     public static void search(File dir) {
         File[] files = dir.listFiles(new FilenameFilter() {
             @Override
@@ -192,6 +213,9 @@ public class RobotLoader {
 
     /* Candidation */
 
+    /**
+     * Start discovery for Module Candidates.
+     */
     private static void loadCandidates(ProfilerSection section) {
         section.start("Candidate");
         File[] search_dirs = new File[] { new File(ToastBootstrap.toastHome, "modules/") };
@@ -204,6 +228,9 @@ public class RobotLoader {
         section.stop("Candidate");
     }
 
+    /**
+     * Parse the core module candidates and attempt to load them into preinit
+     */
     private static void parseCoreEntries(ProfilerSection section) {
         section.start("Parse");
         for (String clazz : coreClasses) {
@@ -218,10 +245,16 @@ public class RobotLoader {
         section.stop("Parse");
     }
 
+    /**
+     * Returns false if the NoLoad annotation is present, which stops 'api' classes being loaded.
+     */
     static boolean classLoadable(Class clazz) {
         return !clazz.isAnnotationPresent(NoLoad.class);
     }
 
+    /**
+     * Attempt to load this class as a ToastModule into the container
+     */
     static void parseClass(String clazz, ModuleCandidate candidate) {
         try {
             Class c = Class.forName(clazz);
@@ -233,6 +266,9 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Parse non-core module candidates into their respective containers.
+     */
     private static void parseEntries(ProfilerSection section) {
         section.start("Parse");
         for (ModuleCandidate candidate : getCandidates()) {
@@ -255,6 +291,10 @@ public class RobotLoader {
 
     /* Construction */
 
+    /**
+     * Construct all the candidate modules. This will start parsing the names and versions of all the
+     * module container main classes, thus setting them up ready for prestart and start.
+     */
     private static void constructModules(ProfilerSection section) {
         for (ModuleContainer container : getContainers()) {
             try {
@@ -269,6 +309,11 @@ public class RobotLoader {
         }
     }
 
+    /**
+     * Resolve any dependency branches on the ToastModule class. This will load classes if modules or
+     * class definitions are present in the Toast environment, acting as a soft dependency
+     * {@link jaci.openrio.toast.core.loader.annotation.Branch}
+     */
     private static void resolveBranches(ProfilerSection section) {
         ProfilerSection section1 = section.section("Dependency");
         for (ModuleContainer container : getContainers()) {
@@ -280,6 +325,9 @@ public class RobotLoader {
 
     /* Callers */
 
+    /**
+     * Initialize core modules by calling their init() method.
+     */
     public static void initCore(ProfilerSection section) {
         ProfilerSection section1 = section.section("CoreJava");
         section1.start("Init");
@@ -292,6 +340,9 @@ public class RobotLoader {
         section1.stop("Init");
     }
 
+    /**
+     * Post initialize core modules by calling their postinit() method.
+     */
     public static void postCore(ProfilerSection section) {
         ProfilerSection section1 = section.section("CoreJava");
         section1.start("Post");
@@ -304,7 +355,10 @@ public class RobotLoader {
         section1.stop("Post");
     }
 
-
+    /**
+     * Prestart modules in order of their {@link jaci.openrio.toast.core.loader.annotation.Priority} annotations
+     * (assuming the annotation is present, else treat as normal). Queued prestart methods are also invoked (dependencies)
+     */
     public static void prestart(ProfilerSection section) {
         dispatch("prestart", section);
         for (Method method : queuedPrestart) {
@@ -319,7 +373,8 @@ public class RobotLoader {
     }
 
     /**
-     * Start all modules that have been loaded.
+     * Start modules in order of their {@link jaci.openrio.toast.core.loader.annotation.Priority} annotations
+     * (assuming the annotation is present, else treat as normal).
      */
     public static void start(ProfilerSection section) {
         dispatch("start", section);
@@ -327,6 +382,9 @@ public class RobotLoader {
 
     /* Util */
 
+    /**
+     * Dispatch a method to all containers
+     */
     public static void dispatch(String method, ProfilerSection section) {
         if (exec == null) {
             ToastModule[] mods = new ToastModule[getContainers().size()];
@@ -339,6 +397,9 @@ public class RobotLoader {
         exec.call(method);
     }
 
+    /**
+     * Expand the classpath to include the provided URL
+     */
     public static void addURL(URL u) throws IOException {
         Class sysclass = URLClassLoader.class;
         try {
@@ -348,6 +409,9 @@ public class RobotLoader {
         } catch (Throwable t) { }
     }
 
+    /**
+     * Returns true if the provided string is a valid class name and a definition is present in the classpath.
+     */
     public static boolean classExists(String clazz) {
         try {
             Class.forName(clazz);

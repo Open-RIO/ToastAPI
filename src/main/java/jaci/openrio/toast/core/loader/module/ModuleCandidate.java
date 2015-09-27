@@ -1,9 +1,9 @@
 package jaci.openrio.toast.core.loader.module;
 
-import jaci.openrio.toast.core.script.js.JavaScript;
+import jaci.openrio.toast.lib.util.ToastUtil;
 
-import javax.script.ScriptException;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Vector;
 public class ModuleCandidate {
 
     File moduleFile;
-    Vector<String> classMembers = new Vector<>();
+    List<String> classMembers = new Vector<>();
     boolean coreplugin;
     String pluginClass;
     boolean bypass;
@@ -112,14 +112,7 @@ public class ModuleCandidate {
      */
     public void freeMemory() {
         if (classMembers.size() > 0) {
-            JavaScript.put("__tmp_candidate", classMembers);
-            try {
-                JavaScript.eval("__tmp_candidate_arr = arr_to_vector(find_common_pkg(__tmp_candidate))");
-                classMembers = (Vector<String>) JavaScript.get("__tmp_candidate_arr");
-                JavaScript.eval("delete __tmp_candidate_arr; delete __tmp_candidate");
-            } catch (ScriptException e) {
-                classMembers.clear();
-            }
+            classMembers = ToastUtil.findCommonPkgs(classMembers);
         }
     }
 
