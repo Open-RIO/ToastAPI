@@ -4,10 +4,8 @@ import java.util.HashMap;
 
 /**
  * The GlobalBlackboard is a {@link java.util.HashMap} with a single instance that allows
- * for data to be shared more generally than the {@link jaci.openrio.toast.core.loader.module.ModuleStorage} object.
- *
- * This class is intended to be used by the {@link jaci.openrio.toast.core.command.cmd.CommandGroovyScript} class to
- * allow variables to be altered simply, and can be accessed from the Script command using '_global'
+ * for data to be shared globally among all Modules and Toast itself. This is used to store
+ * data throughout the entire Toast session that can be read at any time.
  *
  * @author Jaci
  */

@@ -97,6 +97,15 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
     }
 
     /**
+     * Attempt to close the Client Socket
+     */
+    public void close(Client client) {
+        try {
+            client.client.close();
+        } catch (IOException e) {}
+    }
+
+    /**
      * Write data to every client socket
      */
     @Override
@@ -108,6 +117,7 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
                 client.output.write(b);
             } catch (Exception e) {
                 it.remove();
+                close(client);
             }
         }
     }
@@ -124,6 +134,7 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
                 client.output.write(b);
             } catch (Exception e) {
                 it.remove();
+                close(client);
             }
         }
     }
@@ -140,6 +151,7 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
                 client.output.write(b, off, len);
             } catch (Exception e) {
                 it.remove();
+                close(client);
             }
         }
     }
@@ -156,6 +168,7 @@ public class LoggerDelegate extends OutputStream implements BoundDelegate.Connec
                 client.output.flush();
             } catch (Exception e) {
                 it.remove();
+                close(client);
             }
         }
     }

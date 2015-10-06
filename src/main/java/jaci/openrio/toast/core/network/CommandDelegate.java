@@ -52,8 +52,17 @@ public class CommandDelegate implements BoundDelegate.ConnectionCallback {
                 this.setName("CommandDelegate");
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    while (true)
-                        CommandBus.parseMessage(reader.readLine());
+                    while (true) {
+                        String line = reader.readLine();
+                        if (line != null)
+                            CommandBus.parseMessage(line);
+                        else {
+                            try {
+                                clientSocket.close();           // Close the socket in case it hasn't been already
+                                return;
+                            } catch (Exception ignored) {}
+                        }
+                    }
 
                 } catch (Throwable e) {
                     try {
