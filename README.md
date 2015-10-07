@@ -70,10 +70,6 @@ Teams create their own Module to control their robot, but might choose to load o
   }
   ```
 
-  JavaScript code can also be executed inside of configuration files by using the ``` ${} ``` syntax, for example:
-  ``` JavaScript
-  "motd": "Today is: ${new Date()}"
-  ```
 
 ## Crash and Logging
 Robots Crash. A lot. Whether it's programmatically or physically, something needs to be done, so lets fix both.  
