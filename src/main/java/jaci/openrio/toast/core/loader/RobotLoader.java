@@ -259,13 +259,13 @@ public class RobotLoader {
             search_dirs = Storage.USB_Module("modules");
             lib_dirs = Storage.USB_Module("libs");
         }
-        for (File dir : search_dirs) {
-            dir.mkdirs();
-            search(dir);
-        }
         for (File dir : lib_dirs) {
             dir.mkdirs();
             search_libs(dir);
+        }
+        for (File dir : search_dirs) {
+            dir.mkdirs();
+            search(dir);
         }
         section.stop("Candidate");
     }
