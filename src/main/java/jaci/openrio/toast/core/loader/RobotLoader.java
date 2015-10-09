@@ -211,6 +211,41 @@ public class RobotLoader {
             }
     }
 
+    /**
+     * Similar method to {@link #search(File)}, but will not search for Toast files, but will instead
+     * just add it to the load path. This is for libraries that don't load Toast, like Apache Commons,
+     * Language Libraries or others.
+     */
+    public static void search_libs(File dir) {
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        });
+
+        if (files != null)
+            for (File file : files) {
+                try {
+                    addURL(file.toURI().toURL());
+                } catch (Exception e) { }
+            }
+
+        File[] otherFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.endsWith(".jar");
+            }
+        });
+
+        if (otherFiles != null)
+            for (File file : otherFiles) {
+                try {
+                    addURL(file.toURI().toURL());
+                } catch (Exception e) { }
+            }
+    }
+
     /* Candidation */
 
     /**
@@ -219,11 +254,18 @@ public class RobotLoader {
     private static void loadCandidates(ProfilerSection section) {
         section.start("Candidate");
         File[] search_dirs = new File[] { new File(ToastBootstrap.toastHome, "modules/") };
-        if (!isCorePhase)
+        File[] lib_dirs = new File[0];
+        if (!isCorePhase) {
             search_dirs = Storage.USB_Module("modules");
+            lib_dirs = Storage.USB_Module("libs");
+        }
         for (File dir : search_dirs) {
             dir.mkdirs();
             search(dir);
+        }
+        for (File dir : lib_dirs) {
+            dir.mkdirs();
+            search_libs(dir);
         }
         section.stop("Candidate");
     }
