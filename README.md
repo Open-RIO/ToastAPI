@@ -130,6 +130,8 @@ Next up, Toast stops all the Motors on the RoboRIO, all working Threads are kill
 ## Expansion and Storage
 The RoboRIO doesn't have a lot of space, which becomes a problem for modules that like to take up a lot of disk space. To ensure the RoboRIO doesn't destroy its filesystem, Toast has support for USB Mass Storage devices. In short, USB drives can be used to either Override all the modules on the RoboRIO, or run modules alongside them. Data Dumps can be done to USB devices, as well as data restoring. USB Drives can be of any size, 1GB, 2GB, hell, even 64GB. It's up to you.
 
+If you want to generate an Autorun file for your USB Drive to work with Toast, you can go to [this page](http://dev.imjac.in/toast/usb/) to create one, or run ``` usb generate ``` in your Toast CommandBus
+
 ## Commands
 Toast aims to be as flexible as possible, and as such, we provide a CommandBus implementation. The Command Bus can be accessed through the RoboRIO, Remote Console or even a Web UI or Mobile Device. The Command Bus simply takes a text input from the user, and parses it to an operation. Modules can add their own commands, or even invoke them. Commands are used to give an easy interface between the User and the Robot while the code is running.
 
