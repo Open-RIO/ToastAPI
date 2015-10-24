@@ -146,10 +146,7 @@ Modules are given freedom in which ports they choose. STRICT and LOOSE will act 
 Many other tools are available to the Toast User, but those that haven't been listed in this readme can be found in the Toast Whitepaper.  
 
 # Deployment
-Toast deployment is easily taken care of by [ButterKnife](https://github.com/Open-RIO/ButterKnife).  
-To deploy the latest version of Toast to your RoboRIO, simply download ButterKnife from the [ButterKnife releases](https://github.com/Open-RIO/ButterKnife/releases).  
-On Windows, double click the ``` butterknife.exe ``` file.  
-On Linux or Mac, run ``` ruby butterknife ```.
+Toast Deployment is managed through gradle in the Toast releases. Instructions for deploying the Toast Framework to your RoboRIO can be found on the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Deploying-Toast-to-your-RoboRIO).
 
 
 ## Module Deployment
