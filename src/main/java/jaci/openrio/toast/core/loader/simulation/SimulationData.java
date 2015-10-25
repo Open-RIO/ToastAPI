@@ -30,7 +30,8 @@ public class SimulationData {
      */
     public static void setDIO(byte port, byte val) {
         dioValues[port] = val;
-        SimulationGUI.INSTANCE.dioSpinners[port].setValue(val);
+        if (SimulationGUI.INSTANCE != null)
+            SimulationGUI.INSTANCE.dioSpinners[port].setValue(val);
     }
 
     /**
@@ -38,7 +39,8 @@ public class SimulationData {
      */
     public static void setDIODir(byte port, byte val) {
         dioDirections[port] = val;
-        SimulationGUI.INSTANCE.dioSpinners[port].setEditable(val == 1);
+        if (SimulationGUI.INSTANCE != null)
+            SimulationGUI.INSTANCE.dioSpinners[port].setEditable(val == 1);
     }
 
     /**
@@ -51,7 +53,8 @@ public class SimulationData {
      */
     public static void setPWM(byte port, double val) {
         pwmValues[port] = val;
-        SimulationGUI.INSTANCE.pwmSpinners[port].setValue(val);
+        if (SimulationGUI.INSTANCE != null)
+            SimulationGUI.INSTANCE.pwmSpinners[port].setValue(val);
     }
 
     /**
