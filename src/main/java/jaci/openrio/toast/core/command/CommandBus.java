@@ -46,6 +46,7 @@ public class CommandBus {
         registerCommand(new CommandProfiler());
         registerCommand(new CommandReloadConfigs());
         registerCommand(new CommandJScript());
+        registerCommand(new CommandEnvironment());
     }
 
     /**

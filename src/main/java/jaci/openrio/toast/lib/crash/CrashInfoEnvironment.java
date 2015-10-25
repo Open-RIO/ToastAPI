@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib.crash;
 
+import jaci.openrio.toast.core.Environment;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.Version;
 
@@ -45,17 +46,6 @@ public class CrashInfoEnvironment implements CrashInfoProvider {
      */
     @Override
     public List<String> getCrashInfo(Throwable t) {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(String.format("%10s %s", "Toast:", Version.version().get()));
-        list.add(String.format("%10s %s", "Type:", getEnvironmentalType()));
-        list.add(String.format("%10s %s", "FMS:", isCompetition()));
-        list.add(String.format("%10s %s %s (%s)", "OS:", getOS_Name(), getOS_Version(), getOS_Architecture()));
-        list.add(String.format("%10s %s (%s)", "Java:", getJava_version(), getJava_vendor()));
-        list.add(String.format("%10s %s", "Java Path:", getJava_home()));
-        if (JavaScript.supported()) {
-            list.add(String.format("%10s %s", "JScript:", "Supported (" + JavaScript.engineType() + ")"));
-        } else
-            list.add(String.format("%10s %s", "JScript:", "Unsupported"));
-        return list;
+        return Environment.toLines();
     }
 }

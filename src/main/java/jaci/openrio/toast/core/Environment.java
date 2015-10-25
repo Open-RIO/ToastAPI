@@ -1,6 +1,11 @@
 package jaci.openrio.toast.core;
 
+import jaci.openrio.toast.core.script.js.JavaScript;
+import jaci.openrio.toast.lib.Version;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The Environment Class is used as a set of hooks to obtain data regarding the Environment the Robot is working in.
@@ -130,6 +135,31 @@ public class Environment {
      */
     public static String getJava_home() {
         return System.getProperty("java.home");
+    }
+
+    /**
+     * Get a String List of all the Environment Details, nicely formatted for Command Output or Crash Logs.
+     */
+    public static ArrayList<String> toLines() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(String.format("%10s %s", "Toast:", Version.version().get()));
+        list.add(String.format("%10s %s", "Type:", getEnvironmentalType()));
+        list.add(String.format("%10s %s", "FMS:", isCompetition()));
+        list.add(String.format("%10s %s %s (%s)", "OS:", getOS_Name(), getOS_Version(), getOS_Architecture()));
+        list.add(String.format("%10s %s (%s)", "Java:", getJava_version(), getJava_vendor()));
+        list.add(String.format("%10s %s", "Java Path:", getJava_home()));
+        if (JavaScript.supported()) {
+            list.add(String.format("%10s %s", "JScript:", "Supported (" + JavaScript.engineType() + ")"));
+        } else
+            list.add(String.format("%10s %s", "JScript:", "Unsupported"));
+        return list;
+    }
+
+    /**
+     * Get all the environment details as a single String with newlines.
+     */
+    public static String asString() {
+        return String.join("\n", toLines());
     }
 
     public static enum OS {
