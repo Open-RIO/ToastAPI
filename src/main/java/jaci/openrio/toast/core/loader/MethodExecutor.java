@@ -4,6 +4,7 @@ import jaci.openrio.toast.core.loader.annotation.Priority;
 import jaci.openrio.toast.lib.module.ToastModule;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class MethodExecutor {
      * method defined.
      * @param method    The name of the method to execute.
      */
-    public void call(String method) {
+    public void call(String method) throws InvocationTargetException {
         call(method, new Class[0]);
     }
 
@@ -93,20 +94,19 @@ public class MethodExecutor {
      * @param argTypes  The types of args the method uses.
      * @param args      The arg values to pass to the newly invoked method
      */
-    public void call(String method, Class[] argTypes, Object... args) {
+    public void call(String method, Class[] argTypes, Object... args) throws InvocationTargetException {
         MethodIdentifier id = parse(method, argTypes);
         for (MethodContainer container : callStacks.get(id)) {
-            try {
-                ToastModule mod = null;
-                if (section != null && container.obj instanceof ToastModule) {
-                    mod = (ToastModule) container.obj;
-                    section.section(mod.getModuleName()).start(method);
-                }
-                container.method.invoke(container.obj);
-                if (mod != null)
-                    section.section(mod.getModuleName()).stop(method);
-            } catch (Exception e) {
+            ToastModule mod = null;
+            if (section != null && container.obj instanceof ToastModule) {
+                mod = (ToastModule) container.obj;
+                section.section(mod.getModuleName()).start(method);
             }
+            try {
+                container.method.invoke(container.obj);
+            } catch (IllegalAccessException e) { }
+            if (mod != null)
+                section.section(mod.getModuleName()).stop(method);
         }
     }
 

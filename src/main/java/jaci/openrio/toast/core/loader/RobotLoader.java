@@ -14,6 +14,7 @@ import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -401,7 +402,7 @@ public class RobotLoader {
      * Prestart modules in order of their {@link jaci.openrio.toast.core.loader.annotation.Priority} annotations
      * (assuming the annotation is present, else treat as normal). Queued prestart methods are also invoked (dependencies)
      */
-    public static void prestart(ProfilerSection section) {
+    public static void prestart(ProfilerSection section) throws InvocationTargetException {
         dispatch("prestart", section);
         for (Method method : queuedPrestart) {
             try {
@@ -418,7 +419,7 @@ public class RobotLoader {
      * Start modules in order of their {@link jaci.openrio.toast.core.loader.annotation.Priority} annotations
      * (assuming the annotation is present, else treat as normal).
      */
-    public static void start(ProfilerSection section) {
+    public static void start(ProfilerSection section) throws InvocationTargetException {
         dispatch("start", section);
     }
 
@@ -427,7 +428,7 @@ public class RobotLoader {
     /**
      * Dispatch a method to all containers
      */
-    public static void dispatch(String method, ProfilerSection section) {
+    public static void dispatch(String method, ProfilerSection section) throws InvocationTargetException {
         if (exec == null) {
             ToastModule[] mods = new ToastModule[getContainers().size()];
             for (int i = 0; i < mods.length; i++) {
