@@ -140,7 +140,10 @@ public class ScriptLoader {
      * Map a module with the given (extracted) directory into the JavaScript engine.
      */
     public static String mapModule(String directory) throws FileNotFoundException, JsonParserException {
-        return mapModule(new File(directory), (HashMap<String, File>) JavaScript.getEngine().get("__MODULES"));
+        ScriptEngine engine = JavaScript.getEngine();
+        if (engine.get("__MODULES") == null)
+            engine.put("__MODULES", new HashMap<String, File>());
+        return mapModule(new File(directory), (HashMap<String, File>) engine.get("__MODULES"));
     }
 
     /**
