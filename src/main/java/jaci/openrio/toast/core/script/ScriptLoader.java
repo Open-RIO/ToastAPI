@@ -130,7 +130,9 @@ public class ScriptLoader {
                     ProfilerSection section = Profiler.INSTANCE.section("JavaScript").section("Module").section(n);
                     section.pushEntity(unz);
                     section.pushEntity(mape);
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             JavaScript.getEngine().put("__MODULES", map);
         }
@@ -177,6 +179,7 @@ public class ScriptLoader {
                 new File(target, ze.getName()).mkdirs();
             } else {
                 File out = new File(target, ze.getName());
+                out.getParentFile().mkdirs();
                 InputStream is = zf.getInputStream(ze);
                 FileOutputStream fos = new FileOutputStream(out);
                 byte[] bytes = new byte[1024];
