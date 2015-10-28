@@ -4,7 +4,7 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib
 Travis CI Build Status:  
 [![Build status](http://dev.imjac.in/travisalt/Open-RIO/ToastAPI)](https://travis-ci.org/Open-RIO/ToastAPI/)  
 
-[Current Whitepaper](http://www.chiefdelphi.com/media/papers/3148)  
+[Current Whitepaper](http://www.chiefdelphi.com/media/papers/3174)  
 [Current Metrics](https://dev.imjac.in/toast/metrics/)  
 
 ## Table of Contents
