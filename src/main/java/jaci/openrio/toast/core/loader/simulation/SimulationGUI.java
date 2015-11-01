@@ -229,7 +229,7 @@ public class SimulationGUI extends JPanel {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setColor(new Color(180, 180, 180));
         g.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 9));
-        g.drawString("Toast Simulation GUI      -by OpenRIO-", 540, 490);
+        g.drawString("Toast Simulation GUI      -by OpenRIO-", 500, 490);
     }
 
 }
