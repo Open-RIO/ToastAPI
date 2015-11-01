@@ -33,7 +33,7 @@ public class GuiButton extends JComponent implements MouseListener {
      * @param toggle Should the button act as a toggle?
      * @param parent The parent panel for the button.
      */
-    public GuiButton(int x, int y, int width, int height, boolean state, String label, boolean toggle, JPanel parent) {
+    public GuiButton(int x, int y, int width, int height, boolean state, String label, boolean toggle, JComponent parent) {
         this.x = x;
         this.y = y;
         this.state = state;

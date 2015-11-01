@@ -62,6 +62,7 @@ public class SimulationGUI extends JPanel {
     GuiNumberSpinner[] dioSpinners = new GuiNumberSpinner[10];
     GuiNumberSpinner[] pwmSpinners = new GuiNumberSpinner[10];
     GuiNumberSpinner[] accelSpinners = new GuiNumberSpinner[3];
+    GuiRelay[] relays = new GuiRelay[4];
 
     public SimulationGUI() {
         INSTANCE = this;
@@ -169,10 +170,33 @@ public class SimulationGUI extends JPanel {
             }
         });
 
+        createLabel("FWD", 235, 467, 40, 9, new Color(150, 150, 150));
+        createLabel("REV", 235, 479, 40, 9, new Color(150, 150, 150));
+        for (int i = 0; i < SimulationData.relay_fwd.length; i++) {
+            boolean isForward = SimulationData.relay_fwd[i];
+            boolean isReverse = SimulationData.relay_rvs[i];
+
+            GuiRelay relay = new GuiRelay(267 + (int)(21.5 * i), 472, 10, 22, this);
+            relay.setForward(isForward);
+            relay.setReverse(isReverse);
+
+            relays[i] = relay;
+        }
+
         GuiRobotState disabled = new GuiRobotState(575, 20, RobotState.DISABLED, this);
         GuiRobotState auto = new GuiRobotState(575, 50, RobotState.AUTONOMOUS, this);
         GuiRobotState teleop = new GuiRobotState(575, 80, RobotState.TELEOP, this);
         GuiRobotState test = new GuiRobotState(575, 110, RobotState.TEST, this);
+
+        GuiButton pneumaticsButton = new GuiButton(20, 100, 100, 30, false, "Pneumatics", false, this);
+        pneumaticsButton.setCallback(new GuiButton.ButtonCallback() {
+            @Override
+            public void onClick() {
+                if (PneumaticsGUI.INSTANCE == null)
+                    PneumaticsGUI.create();
+            }
+            public void onToggle(boolean state) { }
+        });
     }
 
     /**

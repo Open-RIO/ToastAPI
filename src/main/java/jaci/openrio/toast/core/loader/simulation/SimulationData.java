@@ -91,6 +91,74 @@ public class SimulationData {
     /** JOYSTICKS **/
     public static SimulatedJoystick[] joysticks = new SimulatedJoystick[6];
 
+    /** RELAYS **/
+    public static boolean[] relay_fwd = new boolean[4];
+    public static boolean[] relay_rvs = new boolean[4];
+
+    /**
+     * Set a Relay to a given Forward/Reverse mode
+     */
+    public static void setRelay(byte port, boolean forward, boolean on) {
+        if (forward)
+            relay_fwd[port] = on;
+        else
+            relay_rvs[port] = on;
+
+        if (SimulationGUI.INSTANCE != null) {
+            SimulationGUI.INSTANCE.relays[port].setForward(relay_fwd[port]);
+            SimulationGUI.INSTANCE.relays[port].setReverse(relay_rvs[port]);
+        }
+    }
+
+    /** PNEUMATICS **/
+    public static boolean[] enabled_compressors = new boolean[3];
+    public static boolean[] loop_compressors = new boolean[3];
+    public static boolean[] compressor_pressure = new boolean[3];
+    public static float[] compressor_current = new float[3];
+    public static boolean[][] solenoids = new boolean[3][8];
+
+    /**
+     * Set a compressor with the Module ID to be connected
+     */
+    public static void setCompressor(byte id) {
+        enabled_compressors[id] = true;
+        if (PneumaticsGUI.INSTANCE != null)
+            PneumaticsGUI.INSTANCE.pcms[id].repaint();
+    }
+
+    /**
+     * Set the compressor in the current ID to be in a run loop (running w/ pressure switch)
+     */
+    public static void setCompressorLoop(byte id, boolean loop) {
+        loop_compressors[id] = loop;
+        if (PneumaticsGUI.INSTANCE != null)
+            PneumaticsGUI.INSTANCE.pcms[id].repaint();
+    }
+
+    /**
+     * Set the compressor pressure switch to on or off
+     */
+    public static void setCompressorPressureSwitch(byte id, boolean state) {
+        compressor_pressure[id] = state;
+        if (PneumaticsGUI.INSTANCE != null)
+            PneumaticsGUI.INSTANCE.pcms[id].repaint();
+    }
+
+    /**
+     * Check if the compressor is running
+     */
+    public static boolean compressorRunning(byte id) {
+        return enabled_compressors[id] && loop_compressors[id] && !compressor_pressure[id];
+    }
+
+    public static void setSolenoid(byte module, byte channel, boolean state) {
+        solenoids[module][channel] = state;
+        if (PneumaticsGUI.INSTANCE != null)
+            PneumaticsGUI.INSTANCE.pcms[module].repaint();
+    }
+
+    /** JOYSTICKS **/
+
     /**
      * Register a Simulated Joystick on the Data class
      */
