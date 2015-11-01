@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.loader.simulation;
 
 import jaci.openrio.toast.lib.math.MathHelper;
+import jaci.openrio.toast.core.Environment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,11 @@ public class GuiNumberSpinner {
         minus = new JButton("-");
         minus.setBounds(x + 40, y, 10, 10);
         minus.setFont(new Font("Arial", 0, 9));
+        
+        if(Environment.getOS() == Environment.OS.WINDOWS) {
+            plus.setBorder(null);
+            minus.setBorder(null);
+        }
 
         label = new JLabel(String.valueOf(val), SwingConstants.CENTER);
         label.setBounds(x + 10, y, 30, 10);
