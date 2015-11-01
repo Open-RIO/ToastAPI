@@ -32,6 +32,28 @@ repositories {
   mavenCentral()
 }
 
+eclipse {
+    classpath {
+        file.whenMerged { cp ->
+            def src_patch = new org.gradle.plugins.ide.eclipse.model.SourceFolder('patches/src/main/java', "build/pat_out")
+            def src_patch_f = new org.gradle.plugins.ide.eclipse.model.SourceFolder('patches_full/src/main/java', "build/pat_out")
+
+            if (cp.entries.find() { it.path == src_patch.path } == null)
+              cp.entries.add(src_patch)
+            if (cp.entries.find() { it.path == src_patch_f.path } == null)
+              cp.entries.add(src_patch_f)
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file('patches/src/main/java')
+        sourceDirs += file('patches_full/src/main/java')
+    }
+}
+
+task dummy() {}
 
 def maven = true
 
@@ -216,6 +238,8 @@ task wrapper(type: Wrapper) {
 
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
+    jaci.openrio.gradle.ToastIDE.init(project)
+
     project.getConfigurations().maybeCreate('verify')
     project.task('verify') << {
       File toast_dir = new File('run/verification')
