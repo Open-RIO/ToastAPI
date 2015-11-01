@@ -179,6 +179,8 @@ We're Open Source, which means we're open to contributions. Got something you wa
 - Credit yourself! Add @author to your JavaDoc comments so people can thank you
 - Submit it to us via Pull Request. This makes it easy for us to merge your changes
 
+Don't forget, we also have a [Contribution Guide](https://github.com/Open-RIO/ToastAPI/wiki/Contributing-to-Toast) to make sure you setup your Development Environment correctly.
+
 Thanks for helping improving Toast!  
 
 # Why did I call it 'Toast'?  
