@@ -1,7 +1,7 @@
 package jaci.openrio.toast.core.loader.simulation;
 
-import jaci.openrio.toast.lib.math.MathHelper;
 import jaci.openrio.toast.core.Environment;
+import jaci.openrio.toast.lib.math.MathHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +24,7 @@ public class GuiNumberSpinner {
 
     JComponent parent;
     Callback cb;
+    GuiProgress progress;
 
     public GuiNumberSpinner(int x, int y, double value, double step, double min, double max, boolean editable, JComponent parent) {
         this.x = x; this.y = y; this.val = MathHelper.round(value, 2); this.step = step; this.min = min; this.max = max;
@@ -44,7 +45,7 @@ public class GuiNumberSpinner {
         }
 
         label = new JLabel(String.valueOf(val), SwingConstants.CENTER);
-        label.setBounds(x + 10, y, 30, 10);
+        label.setBounds(x + 10, y, 35, 10);
         label.setFont(new Font("Arial", 0, 10));
         label.setForeground(new Color(180, 180, 180));
         parent.add(label);
@@ -52,6 +53,22 @@ public class GuiNumberSpinner {
         setEditable(editable);
         attachHooks();
         refresh();
+    }
+
+    /**
+     * Set the font size of the label
+     */
+    public GuiNumberSpinner setFontSize(int size) {
+        label.setFont(new Font("Arial", 0, size));
+        return this;
+    }
+
+    /**
+     * Enable a progress bar on the side of the spinner
+     */
+    public GuiNumberSpinner enableProgress() {
+        progress = new GuiProgress(x + 50, y, 100, 10, parent);
+        return this;
     }
 
     /**
@@ -67,7 +84,7 @@ public class GuiNumberSpinner {
      * 2 decimal places.
      */
     public void setValue(double val) {
-        this.val = MathHelper.round(Math.max(-1, Math.min(1, val)), 2);
+        this.val = MathHelper.round(Math.max(min, Math.min(max, val)), 2);
         refresh();
     }
 
@@ -128,6 +145,10 @@ public class GuiNumberSpinner {
 
         plus.repaint();
         minus.repaint();
+
+        if (progress != null) {
+            progress.setValue(val / max);
+        }
     }
 
     public static interface Callback {

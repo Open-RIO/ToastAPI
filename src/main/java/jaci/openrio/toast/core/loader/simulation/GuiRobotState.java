@@ -66,6 +66,14 @@ public class GuiRobotState extends JComponent implements MouseListener {
     }
 
     /**
+     * Apply this button
+     */
+    public void apply() {
+        SimulationData.currentState = this.state;
+        repaint();
+    }
+
+    /**
      * Stub Method - Not Used
      */
     @Override
@@ -89,7 +97,7 @@ public class GuiRobotState extends JComponent implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (inBounds(e))
-            SimulationData.currentState = this.state;
+            apply();
 
         this.setBackground(bgPassive);
         this.repaint();

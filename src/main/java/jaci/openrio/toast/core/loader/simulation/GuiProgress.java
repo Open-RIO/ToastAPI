@@ -3,16 +3,16 @@ package jaci.openrio.toast.core.loader.simulation;
 import javax.swing.*;
 import java.awt.*;
 
-public class GuiRelay extends JComponent {
-
-    boolean isForward;
-    boolean isReverse;
+public class GuiProgress extends JComponent {
 
     int x,y,width,height;
+    double val;
 
-    JPanel parent;
+    JComponent parent;
 
-    public GuiRelay(int x, int y, int width, int height, JPanel parent) {
+    static Color grey = new Color(80, 80, 80);
+
+    public GuiProgress(int x, int y, int width, int height, JComponent parent) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -27,19 +27,11 @@ public class GuiRelay extends JComponent {
     }
 
     /**
-     * Set to true if this relay is in forward mode
+     * Set value
      */
-    public void setForward(boolean on) {
-        this.isForward = on;
-        this.repaint();
-    }
-
-    /**
-     * Set to true if this relay is in Reverse Mode
-     */
-    public void setReverse(boolean on) {
-        this.isReverse = on;
-        this.repaint();
+    public void setValue(double value) {
+        val = value;
+        repaint();
     }
 
     /**
@@ -55,13 +47,10 @@ public class GuiRelay extends JComponent {
      * This is called once per refresh
      */
     public void paint(Graphics2D g) {
-        g.setColor(this.getBackground());
-        g.fillRect(0, 0, width, height);
-        g.setColor(this.getForeground());
-        if (isForward)
-            g.fillRect(0, 0, width, height / 2);
-        if (isReverse)
-            g.fillRect(0, height/2, width, height / 2);
+        g.setColor(val > 0 ? this.getForeground() : this.getBackground());
+        g.fillRect(width / 2, 0, (int) (val * width / 2), height);
+        g.setColor(grey);
+        g.fillRect(width / 2 - 1, 0, 2, height);
     }
 
 }

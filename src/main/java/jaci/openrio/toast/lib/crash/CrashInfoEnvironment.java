@@ -1,13 +1,8 @@
 package jaci.openrio.toast.lib.crash;
 
 import jaci.openrio.toast.core.Environment;
-import jaci.openrio.toast.core.script.js.JavaScript;
-import jaci.openrio.toast.lib.Version;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static jaci.openrio.toast.core.Environment.*;
 
 /**
  * A CrashInfoProvider that contains information about the Environment. This includes things like

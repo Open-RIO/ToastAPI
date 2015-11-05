@@ -2,7 +2,6 @@ package jaci.openrio.toast.core.loader.simulation;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 public class GuiPCM extends JComponent {
 

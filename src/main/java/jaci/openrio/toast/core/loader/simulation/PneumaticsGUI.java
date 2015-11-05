@@ -1,7 +1,5 @@
 package jaci.openrio.toast.core.loader.simulation;
 
-import jaci.openrio.toast.core.Toast;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -40,6 +38,8 @@ public class PneumaticsGUI extends JPanel {
         this.setPreferredSize(new Dimension(400, 375));
         this.setVisible(true);
         this.setLayout(null);
+
+        CommonGUI.setup_keys(this, this::reinitElements);
 
         initElements();
     }

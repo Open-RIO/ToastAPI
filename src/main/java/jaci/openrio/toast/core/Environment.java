@@ -5,7 +5,6 @@ import jaci.openrio.toast.lib.Version;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * The Environment Class is used as a set of hooks to obtain data regarding the Environment the Robot is working in.

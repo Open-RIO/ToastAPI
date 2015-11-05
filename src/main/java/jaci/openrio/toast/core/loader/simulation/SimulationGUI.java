@@ -2,6 +2,7 @@ package jaci.openrio.toast.core.loader.simulation;
 
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.loader.simulation.jni.InterruptContainer;
+import jaci.openrio.toast.core.loader.simulation.srx.TalonSRX_GUI;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.state.RobotState;
 
@@ -64,6 +65,8 @@ public class SimulationGUI extends JPanel {
     GuiNumberSpinner[] accelSpinners = new GuiNumberSpinner[3];
     GuiRelay[] relays = new GuiRelay[4];
 
+    GuiRobotState disabled, auto, test, teleop;
+
     public SimulationGUI() {
         INSTANCE = this;
 
@@ -72,7 +75,27 @@ public class SimulationGUI extends JPanel {
         this.setVisible(true);
         this.setLayout(null);
 
+        CommonGUI.setup_keys(this, this::reinitElements);
+
         initElements();
+
+        CommonGUI.registerKeyCommand(this, "D", () -> { setState(RobotState.DISABLED); });
+        CommonGUI.registerKeyCommand(this, "A", () -> { setState(RobotState.AUTONOMOUS); });
+        CommonGUI.registerKeyCommand(this, "T", () -> { setState(RobotState.TELEOP); });
+
+        CommonGUI.registerKeyCommand(this, "C", this::openSRX);
+        CommonGUI.registerKeyCommand(this, "P", this::openPneumatics);
+    }
+
+    /**
+     * Set the state and repaint
+     */
+    public void setState(RobotState state) {
+        SimulationData.currentState = state;
+        disabled.repaint();
+        auto.repaint();
+        teleop.repaint();
+        test.repaint();
     }
 
     /**
@@ -120,6 +143,7 @@ public class SimulationGUI extends JPanel {
             double val = SimulationData.pwmValues[i];
 
             GuiNumberSpinner spinner = new GuiNumberSpinner(540, 214 + (22 * i), val, 0.05, -1, 1, false, this);
+            spinner.enableProgress();
             pwmSpinners[i] = spinner;
         }
 
@@ -183,20 +207,44 @@ public class SimulationGUI extends JPanel {
             relays[i] = relay;
         }
 
-        GuiRobotState disabled = new GuiRobotState(575, 20, RobotState.DISABLED, this);
-        GuiRobotState auto = new GuiRobotState(575, 50, RobotState.AUTONOMOUS, this);
-        GuiRobotState teleop = new GuiRobotState(575, 80, RobotState.TELEOP, this);
-        GuiRobotState test = new GuiRobotState(575, 110, RobotState.TEST, this);
+        disabled = new GuiRobotState(575, 20, RobotState.DISABLED, this);
+        auto = new GuiRobotState(575, 50, RobotState.AUTONOMOUS, this);
+        teleop = new GuiRobotState(575, 80, RobotState.TELEOP, this);
+        test = new GuiRobotState(575, 110, RobotState.TEST, this);
 
         GuiButton pneumaticsButton = new GuiButton(20, 100, 100, 30, false, "Pneumatics", false, this);
         pneumaticsButton.setCallback(new GuiButton.ButtonCallback() {
             @Override
             public void onClick() {
-                if (PneumaticsGUI.INSTANCE == null)
-                    PneumaticsGUI.create();
+                openPneumatics();
             }
             public void onToggle(boolean state) { }
         });
+
+        GuiButton srxButton = new GuiButton(20, 140, 100, 30, false, "CAN Talon SRX", false, this);
+        srxButton.setCallback(new GuiButton.ButtonCallback() {
+            @Override
+            public void onClick() {
+                openSRX();
+            }
+            public void onToggle(boolean state) { }
+        });
+    }
+
+    /**
+     * Open the Talon SRX Sub-GUI
+     */
+    public void openSRX() {
+        if (TalonSRX_GUI.INSTANCE == null)
+            TalonSRX_GUI.create();
+    }
+
+    /**
+     * Open the Pneumatics Sub-GUI
+     */
+    public void openPneumatics() {
+        if (PneumaticsGUI.INSTANCE == null)
+            PneumaticsGUI.create();
     }
 
     /**
