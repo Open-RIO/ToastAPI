@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
+import jaci.openrio.toast.core.loader.simulation.DriverStationCommunications;
 import jaci.openrio.toast.core.loader.simulation.SimulationGUI;
 import jaci.openrio.toast.core.network.ToastSessionJoiner;
 import jaci.openrio.toast.core.script.js.JavaScript;
@@ -182,6 +183,7 @@ public class ToastBootstrap {
 
         if (isSimulation && !isVerification && !isHeadless) {
             SimulationGUI.main(args);
+            DriverStationCommunications.init();
         }
 
         // -------- NEW PHASE -------- //

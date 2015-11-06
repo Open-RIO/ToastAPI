@@ -1,6 +1,7 @@
 package edu.wpi.first.wpilibj.communication;
 
 import edu.wpi.first.wpilibj.hal.JNIWrapper;
+import jaci.openrio.toast.core.loader.simulation.DriverStationCommunications;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
@@ -160,7 +161,7 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 	}
 
 	private static int NativeHALGetAllianceStation() {
-		return 0;
+		return SimulationData.alliance_station;
 	}
 
 	public static HALAllianceStationID HALGetAllianceStation() {
@@ -185,12 +186,20 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 	public static int kMaxJoystickAxes = 12;
 	public static int kMaxJoystickPOVs = 12;
 	public static short[] HALGetJoystickAxes(byte joystickNum) {
+		if (DriverStationCommunications.connected)
+            return DriverStationCommunications.joyaxis[joystickNum];
 		return SimulationData.getJoystick(joystickNum).encodeAxis();
 	}
 	public static short[] HALGetJoystickPOVs(byte joystickNum) {
+        if (DriverStationCommunications.connected)
+            return DriverStationCommunications.joypov[joystickNum];
 		return SimulationData.getJoystick(joystickNum).encodePOV();
 	}
 	public static int HALGetJoystickButtons(byte joystickNum, ByteBuffer count) {
+        if (DriverStationCommunications.connected) {
+            count.put(0, DriverStationCommunications.joybuttoncount[joystickNum]);
+            return DriverStationCommunications.joybuttons[joystickNum];
+        }
 		SimulatedJoystick joystick = SimulationData.getJoystick(joystickNum);
 		count.put(0, (byte) joystick.getButtons().length);
 		return joystick.encodeButtons();

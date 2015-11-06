@@ -176,5 +176,14 @@ public class SimulationData {
     }
 
     public static RobotState currentState = RobotState.DISABLED;
+    public static int alliance_station = 0;
+
+    /**
+     * Repaint the State of the Simulation GUI
+     */
+    public static void repaintState() {
+        if (SimulationGUI.INSTANCE != null)
+            SimulationGUI.INSTANCE.repaintState();
+    }
 
 }

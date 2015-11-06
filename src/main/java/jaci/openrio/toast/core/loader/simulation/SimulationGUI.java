@@ -92,6 +92,13 @@ public class SimulationGUI extends JPanel {
      */
     public void setState(RobotState state) {
         SimulationData.currentState = state;
+        repaintState();
+    }
+
+    /**
+     * Repaint State Buttons
+     */
+    public void repaintState() {
         disabled.repaint();
         auto.repaint();
         teleop.repaint();

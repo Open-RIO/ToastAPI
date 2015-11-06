@@ -86,7 +86,8 @@ public class ToastSecurityManager extends SecurityManager {
 
     private String[] exceptionPorts = new String[] {
             "1735",   //NetworkTables
-            "0"       //Not yet bound / multicast
+            "0",       //Not yet bound / multicast
+            "1110", "1150"   // Driver Station
     };
     /**
      * Handles the given SocketPermission. This serves to warn the user if a socket is using a port that FMS cannot forward, but will never
