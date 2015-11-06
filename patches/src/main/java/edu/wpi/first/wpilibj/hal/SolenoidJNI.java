@@ -2,8 +2,8 @@ package edu.wpi.first.wpilibj.hal;
 
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
-import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class SolenoidJNI extends JNIWrapper {
 

@@ -5,8 +5,6 @@ import jaci.openrio.toast.core.loader.simulation.GuiScrollbar;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
