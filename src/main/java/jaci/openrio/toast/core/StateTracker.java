@@ -39,8 +39,7 @@ public class StateTracker {
      * Start the StateTracker loop
      */
     public static void init(Toast impl) {
-        //This is usually Framework_Iterative, but we're setting it to value 3 in the hopes people can read it as a Toast implementation.
-        UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Framework, 3);
+        UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Framework, 1);
         StateTracker.impl = impl;
         boolean isAlive;
         if (ToastBootstrap.isVerification)
