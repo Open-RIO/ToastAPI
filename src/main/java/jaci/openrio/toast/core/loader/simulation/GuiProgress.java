@@ -48,7 +48,12 @@ public class GuiProgress extends JComponent {
      */
     public void paint(Graphics2D g) {
         g.setColor(val > 0 ? this.getForeground() : this.getBackground());
-        g.fillRect(width / 2, 0, (int) (val * width / 2), height);
+
+        if (val >= 0)
+            g.fillRect(width / 2, 0, (int) (val * width / 2), height);
+        else        // OS X Can't draw negative rectangles, so we need to shift it over
+            g.fillRect(width / 2 + (int)(val * width / 2), 0, (int)(-val * width / 2), height);
+
         g.setColor(grey);
         g.fillRect(width / 2 - 1, 0, 2, height);
     }
