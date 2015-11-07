@@ -28,9 +28,9 @@ public class DriverStationCommunications {
             String bonjour_target = ToastConfiguration.Property.SIM_BONJOUR_TARGET.asString();
             try {
                 ProcessBuilder pb = new ProcessBuilder("dns-sd", "-P", "roboRIO-TOAST", "_ni._tcp", "local", "3580", "roboRIO-TOAST.local", "127.0.0.1");
-                pb.start();
+                Process p = pb.start();
                 ProcessBuilder pb2 = new ProcessBuilder("dns-sd", "-P", "roboRIO-" + bonjour_target, "_ni._tcp", "local", "3580", "roboRIO-" + bonjour_target + ".local", "127.0.0.1");
-                pb2.start();
+                Process p2 = pb2.start();
             } catch (Exception e) {
                 Toast.log().error("Could not start Toast DriverStation Bonjour Service (do you have Bonjour installed?): " + e);
             }
