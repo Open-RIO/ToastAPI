@@ -44,7 +44,7 @@ public class ClassPatcher extends URLClassLoader {
 
         if (stream != null) {
             try {
-                byte[] buf = new byte[10000];
+                byte[] buf = new byte[50000];
                 int len = stream.read(buf);
 
                 Method m = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
