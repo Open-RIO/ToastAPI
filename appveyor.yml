@@ -1,0 +1,18 @@
+branches:
+  only:
+    - master
+    - development
+
+skip_tags: true
+
+install:
+- "gradlew.bat wpi"
+- "gradlew.bat build"
+- "gradlew.bat generateExternalPatches"
+- "gradlew.bat build"
+
+build_script:
+- "gradlew.bat verify"
+
+artifacts:
+- path: "build\libs\*.*"
