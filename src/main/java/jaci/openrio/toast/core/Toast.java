@@ -14,7 +14,6 @@ import jaci.openrio.toast.lib.crash.CrashHandler;
 import jaci.openrio.toast.lib.log.Logger;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
-import jaci.openrio.toast.lib.registry.MotorRegistry;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.util.Random;
@@ -166,8 +165,6 @@ public class Toast extends RobotBase {
     /**
      * A common method called by both shutdownSafely() and shutdownCrash()
      */
-    public void shutdownCommon() {
-        MotorRegistry.stopAll();
-    }
+    public void shutdownCommon() { }
 
 }
