@@ -1,8 +1,11 @@
 #![](doc/resources/logo_tiny_text.png)
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
 
-Travis CI Build Status:  
-[![Build status](http://dev.imjac.in/travisalt/Open-RIO/ToastAPI)](https://travis-ci.org/Open-RIO/ToastAPI/)  
+
+| Branch | Windows | Linux / Mac |
+|--------|---------|-------------|
+| Master | [![Build status](https://ci.appveyor.com/api/projects/status/l44bg3bl8o75osgt/branch/master?svg=true)](https://ci.appveyor.com/project/JacisNonsense/toastapi/branch/master) | [![Build Status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=master)](https://travis-ci.org/Open-RIO/ToastAPI) |
+| Development | [![Build status](https://ci.appveyor.com/api/projects/status/l44bg3bl8o75osgt/branch/development?svg=true)](https://ci.appveyor.com/project/JacisNonsense/toastapi/branch/development) | [![Build Status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=development)](https://travis-ci.org/Open-RIO/ToastAPI) |
 
 [![Come chat, or just hang out](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Open-RIO/ToastAPI?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 
