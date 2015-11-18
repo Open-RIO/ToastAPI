@@ -1,4 +1,6 @@
 #![](doc/resources/logo_tiny_text.png)
+
+[![Join the chat at https://gitter.im/Open-RIO/ToastAPI](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Open-RIO/ToastAPI?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
 
 Travis CI Build Status:  
