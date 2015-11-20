@@ -3,12 +3,6 @@ jimport("edu.wpi.first.wpilibj.SpeedController", "_imports['SpeedController']");
 jimport("edu.wpi.first.wpilibj.RobotDrive", "_imports['RobotDrive']");
 jimport("jaci.openrio.toast.lib.registry.Registrar", "_imports['Registrar']");
 var _motor_types = {Talon: "talon", TalonSRX: "talonSRX", CANTalon: "canTalon", Victor: "victor", Jaguar: "jaguar", CANJaguar: "canJaguar", VictorSP: "victorSP"};
-_imports['motors'] = {};
-
-for (var curtype in _motor_types) {
-    if (_motor_types.hasOwnProperty(curtype))
-        jimport("edu.wpi.first.wpilibj." + _motor_types[curtype], "_imports['motors']['" + curtype + "']");
-}
 
 $.drive = function() {
     if (arguments.length == 2) {
