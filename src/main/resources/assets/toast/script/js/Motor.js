@@ -1,7 +1,8 @@
 var _imports = {};
 jimport("edu.wpi.first.wpilibj.SpeedController", "_imports['SpeedController']");
 jimport("edu.wpi.first.wpilibj.RobotDrive", "_imports['RobotDrive']");
-var _motor_types = {Talon: "Talon", TalonSRX: "CANTalon", Victor: "Victor", Jaguar: "Jaguar", CANJaguar: "CANJaguar"};
+jimport("jaci.openrio.toast.lib.registry.Registrar", "_imports['Registrar']");
+var _motor_types = {Talon: "talon", TalonSRX: "talonSRX", CANTalon: "canTalon", Victor: "victor", Jaguar: "jaguar", CANJaguar: "canJaguar", VictorSP: "victorSP"};
 _imports['motors'] = {};
 
 for (var curtype in _motor_types) {
@@ -23,8 +24,8 @@ $.motor = function() {
     if (arguments.length == 1) {
         port = arguments[0];
     } else if (arguments.length == 2) {
-        port = arguments[0];
-        type = arguments[1];
+        type = arguments[0];
+        port = arguments[1];
     } else throw new Error("Invalid arguments -- Expecting 1..2");
-    return new _imports['motors'][type](port);
+    return _imports['Registrar'][_motor_types[type]](port);
 };

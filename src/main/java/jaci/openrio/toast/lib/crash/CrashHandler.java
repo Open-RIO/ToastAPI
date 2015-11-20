@@ -49,6 +49,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         providers.add(new CrashInfoToast());
         providers.add(new CrashInfoEnvironment());
+        providers.add(new CrashInfoModules());
     }
 
     /**
