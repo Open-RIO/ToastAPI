@@ -16,4 +16,13 @@ public class MathHelper {
         BigDecimal bd = new BigDecimal(d).setScale(res, BigDecimal.ROUND_HALF_UP);
         return bd.doubleValue();
     }
+
+    /**
+     * Clamp an angle (in degrees) to 360, and transform negative angles into their positive counterparts.
+     */
+    public static double clampAngle(double angle) {
+        double newAngle = angle % 360;
+        if (newAngle < 0) newAngle = 360 + newAngle;
+        return newAngle;
+    }
 }

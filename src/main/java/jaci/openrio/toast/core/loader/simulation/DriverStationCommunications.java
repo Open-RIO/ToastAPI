@@ -115,7 +115,9 @@ public class DriverStationCommunications {
                 for (int pv = 0; pv < pov_count; pv++) {
                     int a1 = buffer[b + 1 + (pv*2)];
                     int a2 = buffer[b + 1 + (pv*2) + 1];
-                    joypov[joyid][pv] = (short) (a1 << 8 | a2);
+                    if (a2 < 0) a2 = 256 + a2;
+                    short result = (short) (a1 << 8 | a2);
+                    joypov[joyid][pv] = result;
                 }
 
                 joyid++;
