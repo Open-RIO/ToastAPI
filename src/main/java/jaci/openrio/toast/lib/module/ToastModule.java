@@ -3,6 +3,8 @@ package jaci.openrio.toast.lib.module;
 import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 
+import java.util.HashMap;
+
 /**
  * The Base class for all Toast Modules. This should be extending instead of {@link edu.wpi.first.wpilibj.RobotBase} if you wish
  * for your module to work with Toast.
@@ -49,4 +51,9 @@ public abstract class ToastModule {
      * can be useful for triggering things before the robot is in Pre-Initialization.
      */
     public void onConstruct() { }
+
+    /**
+     * Returns a HashMap of Custom data to add to the Crash Log if appropriate.
+     */
+    public HashMap<String, String> getCustomData() { return null; }
 }

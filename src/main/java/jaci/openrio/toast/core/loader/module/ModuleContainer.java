@@ -5,6 +5,8 @@ import jaci.openrio.toast.core.loader.RobotLoader;
 import jaci.openrio.toast.core.loader.annotation.Branch;
 import jaci.openrio.toast.lib.module.ToastModule;
 
+import java.util.HashMap;
+
 /**
  * The container object for a Module that has been identified, verified and is ready to be loaded. Toast will store the
  * .class object for a module if it is a subtype of {@link jaci.openrio.toast.lib.module.ToastModule} and will be instantiated
@@ -31,6 +33,12 @@ public class ModuleContainer {
         this.moduleCandidate = candidate;
     }
 
+    public ModuleContainer(ToastModule module, ModuleCandidate candidate) {
+        this.moduleInstance = module;
+        this.moduleClass = module.getClass();
+        this.moduleCandidate = candidate;
+    }
+
     /**
      * Get the {@link jaci.openrio.toast.core.loader.module.ModuleCandidate} for this container
      */
@@ -43,7 +51,8 @@ public class ModuleContainer {
      * data from it. This is handled by toast and shouldn't be called
      */
     public void construct() throws IllegalAccessException, InstantiationException {
-        moduleInstance = moduleClass.newInstance();
+        if (moduleInstance == null) moduleInstance = moduleClass.newInstance();
+
         name = moduleInstance.getModuleName();
         version = moduleInstance.getModuleVersion();
 

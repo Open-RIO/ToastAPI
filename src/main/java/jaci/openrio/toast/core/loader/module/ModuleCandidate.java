@@ -23,6 +23,8 @@ public class ModuleCandidate {
     String pluginClass;
     boolean bypass;
     String bypassClass;
+    boolean isWrapper;
+    String wrapperClazz;
 
     /**
      * Set the file (.jar) of the module candidate.
@@ -47,6 +49,14 @@ public class ModuleCandidate {
     public void setBypass(boolean state, String bypassClass) {
         bypass = state;
         this.bypassClass = bypassClass;
+    }
+
+    /**
+     * Set this to a RobotBase wrapper class
+     */
+    public void setWrapper(boolean state, String clazz) {
+        isWrapper = state;
+        wrapperClazz = clazz;
     }
 
     /**
@@ -83,6 +93,20 @@ public class ModuleCandidate {
      */
     public String getBypassClass() {
         return bypassClass;
+    }
+
+    /**
+     * Returns true if this is a RobotBase wrapper class
+     */
+    public boolean isWrapper() {
+        return isWrapper;
+    }
+
+    /**
+     * Get the RobotBase class this is acting as a wrapper of.
+     */
+    public String getWrapperClass() {
+        return wrapperClazz;
     }
 
     /**

@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.loader;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.Storage;
@@ -7,6 +8,7 @@ import jaci.openrio.toast.core.loader.annotation.NoLoad;
 import jaci.openrio.toast.core.loader.module.ModuleCandidate;
 import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.lib.log.Logger;
+import jaci.openrio.toast.lib.module.ModuleWrapper;
 import jaci.openrio.toast.lib.module.ToastModule;
 import jaci.openrio.toast.lib.profiler.ProfilerEntity;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
@@ -137,6 +139,10 @@ public class RobotLoader {
                 if (attr.getValue("Toast-Plugin-Class") != null) {
                     String bypassClass = (String) attr.getValue("Toast-Plugin-Class");
                     container.setBypass(true, bypassClass);
+                }
+                if (attr.getValue("Robot-Class") != null) {
+                    String wrapperClazz = attr.getValue("Robot-Class");
+                    container.setWrapper(true, wrapperClazz);
                 }
             }
         }
@@ -310,6 +316,20 @@ public class RobotLoader {
     }
 
     /**
+     * Attempt to load this class as a ModuleWrapper into a container
+     */
+    static void parseWrapper(String clazz, ModuleCandidate candidate) {
+        try {
+            Class c = Class.forName(clazz);
+            if (RobotBase.class.isAssignableFrom(c) && classLoadable(c) && !Toast.class.isAssignableFrom(c)) {
+                ModuleWrapper wrapper = new ModuleWrapper(candidate.getModuleFile(), c, candidate);
+                getContainers().add(new ModuleContainer(wrapper, candidate));
+            }
+        } catch (Throwable e) {
+        }
+    }
+
+    /**
      * Parse non-core module candidates into their respective containers.
      */
     private static void parseEntries(ProfilerSection section) {
@@ -317,6 +337,8 @@ public class RobotLoader {
         for (ModuleCandidate candidate : getCandidates()) {
             if (candidate.isBypass()) {
                 parseClass(candidate.getBypassClass(), candidate);
+            } else if (candidate.isWrapper()) {
+                parseWrapper(candidate.getWrapperClass(), candidate);
             } else
                 for (String clazz : candidate.getClassEntries()) {
                     parseClass(clazz, candidate);

@@ -4,7 +4,9 @@ import jaci.openrio.toast.core.loader.module.ModuleContainer;
 import jaci.openrio.toast.core.loader.module.ModuleManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * CrashInfoProvider for Modules. This prints out important information about the modules, including the
@@ -49,6 +51,13 @@ public class CrashInfoModules implements CrashInfoProvider {
             text.add("\tOwned Packages: ");
             for (String pack : module.getCandidate().getClassEntries())
                 text.add("\t\t" + pack);
+
+            HashMap<String, String> customData = module.getModule().getCustomData();
+            if (customData != null) {
+                text.add("\tCustom Data: ");
+                for (Map.Entry<String, String> entry : customData.entrySet())
+                    text.add("\t\t" + entry.getKey() + ": " + entry.getValue());
+            }
         }
 
         return text;
