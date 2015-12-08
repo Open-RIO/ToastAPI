@@ -25,4 +25,20 @@ public class MathHelper {
         if (newAngle < 0) newAngle = 360 + newAngle;
         return newAngle;
     }
+
+    public static double r2d(double angleInRads) {
+        return angleInRads * 180 / Math.PI;
+    }
+
+    public static double d2r(double angleInDegrees) {
+        return angleInDegrees * Math.PI / 180;
+    }
+
+    public static double radial(double angleInDegrees) {
+        double radialMod = angleInDegrees % 360;
+        if (radialMod < 0) {
+            radialMod = radialMod + 360;
+        }
+        return radialMod;
+    }
 }
