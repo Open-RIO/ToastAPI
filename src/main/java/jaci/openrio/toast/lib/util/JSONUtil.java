@@ -46,4 +46,10 @@ public class JSONUtil {
         return hash;
     }
 
+    /**
+     * Convert a String - Object HashMap to a JSON Object. This function will recurse deeply.
+     */
+    public static JsonObject hashToJson(HashMap<String, Object> hash) {
+        return new JsonObject(hash);        // That was easier than expected
+    }
 }
