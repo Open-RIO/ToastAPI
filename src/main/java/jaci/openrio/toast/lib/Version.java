@@ -23,6 +23,9 @@ public class Version implements Comparable<Version> {
     static boolean known = false;
     static Pattern versionPattern = Pattern.compile("(\\d*).(\\d*).(\\d*)(-(\\d*)([a-z]))?");
 
+    static String full_commit_hash;
+    static String short_commit_hash;
+
     /**
      * Initialize the Version. This reads from the toast.version file in the jar file, parsing the Regex and validating the Toast
      * File's Version for modules to read.
@@ -35,6 +38,13 @@ public class Version implements Comparable<Version> {
             ToastBootstrap.toastLogger.info("Toast Version: " + version);
             known = true;
             vers = new Version(version);
+
+            reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getResourceAsStream("assets/toast/toast.git_info")));
+            full_commit_hash = reader.readLine();
+            short_commit_hash = reader.readLine();
+            reader.close();
+
+            ToastBootstrap.toastLogger.info("Toast Commit Hash: " + short_commit_hash);
         } catch (Exception e) {
             ToastBootstrap.toastLogger.error("Could not retrieve Toast Version, Using Default: (" + version + ")");
         }
@@ -53,6 +63,20 @@ public class Version implements Comparable<Version> {
      */
     public static Version version() {
         return vers;
+    }
+
+    /**
+     * Get the full Git commit hash of the Toast build
+     */
+    public static String getCommitHash() {
+        return full_commit_hash;
+    }
+
+    /**
+     * Get the short Git commit hash of the Toast build
+     */
+    public static String getShortCommitHash() {
+        return short_commit_hash;
     }
 
     /**

@@ -5,9 +5,11 @@ buildscript {
 		name = "GradleRIO"
 		url = "http://dev.imjac.in/maven"
 	}
+    jcenter()
   }
   dependencies {
     classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '+'			//Change this line if you wish to Update GradleRIO
+    classpath group: 'org.ajoberstar', name: 'grgit', version: '1.1.0'
   }
 }
 
@@ -17,6 +19,10 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: BuildGradle
 apply plugin: 'maven'
+
+ext {
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))      //Used for Toast's internal versioning system
+}
 
 gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
 gradlerio.team = "9999"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
@@ -147,6 +153,11 @@ task genVersion << {
   try {
     new File("src/main/resources/assets/toast/toast.version").withWriter {
       it.writeLine(settings.toast.version)
+    }
+    
+    new File("src/main/resources/assets/toast/toast.git_info").withWriter {
+      it.writeLine(git.head().id)
+      it.writeLine(git.head().abbreviatedId)
     }
   } catch (Exception e) {
   }

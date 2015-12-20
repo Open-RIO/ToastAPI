@@ -121,8 +121,8 @@ public class Environment {
 
     /**
      * Get the Java Version. This follows the standard '1.8.0_33' system. This should be prefixed with '1.8.x_', otherwise
-     * chances are Java is out of date and Toast won't work properly. Update 25 or above is usually required for Groovy
-     * to work.
+     * chances are Java is out of date and Toast won't work properly. Update 25 or above is usually required for proper
+     * usage.
      */
     public static String getJava_version() {
         return System.getProperty("java.version");
@@ -142,14 +142,15 @@ public class Environment {
     public static ArrayList<String> toLines() {
         ArrayList<String> list = new ArrayList<>();
         list.add(String.format("%10s %s", "Toast:", Version.version().get()));
+        list.add(String.format("%10s %s (%s)", "Git:", Version.getShortCommitHash(), Version.getCommitHash()));
         list.add(String.format("%10s %s", "Type:", getEnvironmentalType()));
         list.add(String.format("%10s %s", "FMS:", isCompetition()));
         list.add(String.format("%10s %s %s (%s)", "OS:", getOS_Name(), getOS_Version(), getOS_Architecture()));
         list.add(String.format("%10s %s (%s)", "Java:", getJava_version(), getJava_vendor()));
         list.add(String.format("%10s %s", "Java Path:", getJava_home()));
-        if (JavaScript.supported()) {
+        if (JavaScript.supported())
             list.add(String.format("%10s %s", "JScript:", "Supported (" + JavaScript.engineType() + ")"));
-        } else
+        else
             list.add(String.format("%10s %s", "JScript:", "Unsupported"));
         return list;
     }
