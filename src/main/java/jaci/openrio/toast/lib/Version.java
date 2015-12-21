@@ -46,7 +46,7 @@ public class Version implements Comparable<Version> {
 
             ToastBootstrap.toastLogger.info("Toast Commit Hash: " + short_commit_hash);
         } catch (Exception e) {
-            ToastBootstrap.toastLogger.error("Could not retrieve Toast Version, Using Default: (" + version + ")");
+            ToastBootstrap.toastLogger.error("Could not retrieve Toast Version or Git Hash.");
         }
     }
 
