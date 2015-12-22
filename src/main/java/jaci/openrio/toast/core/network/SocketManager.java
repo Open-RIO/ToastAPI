@@ -7,7 +7,7 @@ import jaci.openrio.delegate.DelegateServer;
  * The class responsible for managing Socket communication between Toast Modules and other programs running
  * on the Driver Station. This class implements the NetworkDelegate API in order to make sure modules do
  * not conflict on sockets, as well as making sure sockets are within the limits FMS provides, having only
- * 10 sockets available, specifically, 5800-5810. This SocketManager listens on ports 5806-5810, having the
+ * 10 sockets available, specifically, 5800-5810. This SocketManager listens on ports 5806-5807, having the
  * master socket on port 5805. It is recommended to look though the NetworkDelegate API Documentation for
  * more information regarding the master-slave socket lifecycle. Ports 5800-5804 are left open for communication
  * that requires a specific protocol, such as the WebUI that needs a HTTP communication. Unless you absolutely
@@ -17,7 +17,7 @@ import jaci.openrio.delegate.DelegateServer;
  */
 public class SocketManager {
 
-    static DelegateServer delegateServer = DelegateServer.createRange(5805, 5806, 5810);
+    static DelegateServer delegateServer = DelegateServer.createRange(5805, 5806, 5807);
 
     static boolean launch = false;
 
