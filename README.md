@@ -1,4 +1,4 @@
-#![](doc/resources/logo_christmas_tiny_text.png)
+#![](doc/resources/logo_tiny_text.png)
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
 
 
