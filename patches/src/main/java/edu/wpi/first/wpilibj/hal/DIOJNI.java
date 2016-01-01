@@ -32,6 +32,7 @@ public class DIOJNI extends JNIWrapper {
 	}
 
 	public static void pulse(ByteBuffer digital_port_pointer, double pulseLength, IntBuffer status) {
+		//TODO: Implement Pulse Control
 	}
 
 	public static byte isPulsing(ByteBuffer digital_port_pointer, IntBuffer status) {

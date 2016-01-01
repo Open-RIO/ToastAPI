@@ -42,6 +42,7 @@ public class NonVitalLoadTask {
     public void startLoading() {
         __loading_thread = new Thread(__loading_runnable);
         __loading_thread.start();
+        __loading_thread.setPriority(Thread.MIN_PRIORITY);
     }
 
 }
