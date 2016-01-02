@@ -3,9 +3,6 @@ package edu.wpi.first.wpilibj.hal;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 public class HALUtil extends JNIWrapper {
 	public static final int NULL_PARAMETER = -1005;
 	public static final int SAMPLE_RATE_TOO_HIGH = 1001;
@@ -16,37 +13,40 @@ public class HALUtil extends JNIWrapper {
 	public static final int NO_AVAILABLE_RESOURCES = -104;
 	public static final int PARAMETER_OUT_OF_RANGE = -1028;
 
-	public static ByteBuffer initializeMutexNormal() {
-		return ByteBuffer.allocate(1);
+	public static long initializeMutexNormal() {
+		return 0L;
 	}
-	public static void deleteMutex(ByteBuffer sem) {
+	public static void deleteMutex(long sem) {
 	}
-	public static ByteBuffer initializeMultiWait() {
-		return ByteBuffer.allocate(1);
+	public static long initializeMultiWait() {
+		return 0L;
 	}
-	public static void deleteMultiWait(ByteBuffer sem) {
+	public static void deleteMultiWait(long sem) {
 	}
 
-	public static byte takeMultiWait(ByteBuffer sem, ByteBuffer m, int timeOut) {
+	public static void takeMultiWait(long sem, long mut) {
 		try {
+			// This method is actually only used by the Driver Station awaiting control packets, or a timeout (whichever is first)
+			// to avoid  creating a complicated method for no reason, I'll just Thread.sleep for 20ms, which is close the time
+			// the Driver Station takes between sending control packets.
+			// It's hacky, and bad practise, I know, but I don't give a shit. Welcome to being a programmer.
 			Thread.sleep(20);
 		} catch (Exception e) {}
-		return 0;
 	}
 
-	public static short getFPGAVersion(IntBuffer status) {
+	public static short getFPGAVersion() {
 		return 2009;
 	}
 
-	public static int getFPGARevision(IntBuffer status) {
+	public static int getFPGARevision() {
 		return 0;
 	}
 
-	public static long getFPGATime(IntBuffer status) {
+	public static long getFPGATime() {
 		return ToastBootstrap.startTimeNS - System.nanoTime();
 	}
 
-	public static boolean getFPGAButton(IntBuffer status) {
+	public static boolean getFPGAButton() {
 		return SimulationData.userButtonPressed;
 	}
 
@@ -62,9 +62,6 @@ public class HALUtil extends JNIWrapper {
 	}
 	public static String getHALstrerror(){
 		return getHALstrerror(getHALErrno());
-	}
-
-	public static void checkStatus(IntBuffer status) {
 	}
 
 }

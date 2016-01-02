@@ -132,6 +132,8 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 		return 0;
 	}
 
+	public static void setNewDataSem(long mutexId) {}
+
 	public static int FRCNetworkCommunicationUsageReportingReport(byte resource, byte instanceNumber, byte context, String feature) {
 		//TODO: Report
 		return 0;

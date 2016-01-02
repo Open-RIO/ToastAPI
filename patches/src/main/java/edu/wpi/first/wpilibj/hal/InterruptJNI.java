@@ -2,9 +2,6 @@ package edu.wpi.first.wpilibj.hal;
 
 import jaci.openrio.toast.core.loader.simulation.jni.InterruptContainer;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 public class InterruptJNI extends JNIWrapper {
 
     public interface InterruptJNIHandlerFunction {
@@ -13,53 +10,52 @@ public class InterruptJNI extends JNIWrapper {
 
     ;
 
-    private static InterruptContainer get(ByteBuffer point) {
-        return InterruptContainer.getByIndex(point.get(0));
+    private static InterruptContainer get(long point) {
+        return InterruptContainer.getByIndex((int)point);
     }
 
-    public static void initializeInterruptJVM(IntBuffer status) {
+    public static void initializeInterruptJVM() {
     }
 
-    public static ByteBuffer initializeInterrupts(int interruptIndex, byte watcher, IntBuffer status) {
+    public static long initializeInterrupts(int interruptIndex, byte watcher) {
         InterruptContainer container = new InterruptContainer();
-        return ByteBuffer.allocate(1).put((byte) InterruptContainer.interrupts.indexOf(container));
+        return InterruptContainer.interrupts.indexOf(container);
     }
 
-    public static void cleanInterrupts(ByteBuffer interrupt_pointer, IntBuffer status) {
-        byte index = interrupt_pointer.get(0);
+    public static void cleanInterrupts(long interrupt_pointer) {
         InterruptContainer.interrupts.remove(get(interrupt_pointer));
     }
 
-    public static int waitForInterrupt(ByteBuffer interrupt_pointer, double timeout, boolean ignorePrevious, IntBuffer status) {
+    public static int waitForInterrupt(long interrupt_pointer, double timeout, boolean ignorePrevious) {
         get(interrupt_pointer).waitForInterrupt(timeout);
         return 0;
     }
 
-    public static void enableInterrupts(ByteBuffer interrupt_pointer, IntBuffer status) {
+    public static void enableInterrupts(long interrupt_pointer) {
         get(interrupt_pointer).setEnabled(true);
     }
 
-    public static void disableInterrupts(ByteBuffer interrupt_pointer, IntBuffer status) {
+    public static void disableInterrupts(long interrupt_pointer) {
         get(interrupt_pointer).setEnabled(false);
     }
 
-    public static double readRisingTimestamp(ByteBuffer interrupt_pointer, IntBuffer status) {
+    public static double readRisingTimestamp(long interrupt_pointer) {
         return get(interrupt_pointer).getTime(true);
     }
 
-    public static double readFallingTimestamp(ByteBuffer interrupt_pointer, IntBuffer status) {
+    public static double readFallingTimestamp(long interrupt_pointer) {
         return get(interrupt_pointer).getTime(false);
     }
 
-    public static void requestInterrupts(ByteBuffer interrupt_pointer, byte routing_module, int routing_pin, byte routing_analog_trigger, IntBuffer status) {
+    public static void requestInterrupts(long interrupt_pointer, byte routing_module, int routing_pin, byte routing_analog_trigger) {
         get(interrupt_pointer).setPin(routing_pin);
     }
 
-    public static void attachInterruptHandler(ByteBuffer interrupt_pointer, InterruptJNIHandlerFunction handler, Object param, IntBuffer status) {
+    public static void attachInterruptHandler(long interrupt_pointer, InterruptJNIHandlerFunction handler, Object param) {
         get(interrupt_pointer).setFunc(handler, param);
     }
 
-    public static void setInterruptUpSourceEdge(ByteBuffer interrupt_pointer, byte risingEdge, byte fallingEdge, IntBuffer status) {
+    public static void setInterruptUpSourceEdge(long interrupt_pointer, byte risingEdge, byte fallingEdge) {
         get(interrupt_pointer).setup(risingEdge != 0, fallingEdge != 0);
     }
 

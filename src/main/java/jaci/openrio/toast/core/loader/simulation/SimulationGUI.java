@@ -83,7 +83,7 @@ public class SimulationGUI extends JPanel {
         CommonGUI.registerKeyCommand(this, "A", () -> { setState(RobotState.AUTONOMOUS); });
         CommonGUI.registerKeyCommand(this, "T", () -> { setState(RobotState.TELEOP); });
 
-        CommonGUI.registerKeyCommand(this, "C", this::openSRX);
+//        CommonGUI.registerKeyCommand(this, "C", this::openSRX);
         CommonGUI.registerKeyCommand(this, "P", this::openPneumatics);
     }
 
@@ -228,14 +228,14 @@ public class SimulationGUI extends JPanel {
             public void onToggle(boolean state) { }
         });
 
-        GuiButton srxButton = new GuiButton(20, 140, 100, 30, false, "CAN Talon SRX", false, this);
-        srxButton.setCallback(new GuiButton.ButtonCallback() {
-            @Override
-            public void onClick() {
-                openSRX();
-            }
-            public void onToggle(boolean state) { }
-        });
+//        GuiButton srxButton = new GuiButton(20, 140, 100, 30, false, "CAN Talon SRX", false, this);
+//        srxButton.setCallback(new GuiButton.ButtonCallback() {
+//            @Override
+//            public void onClick() {
+//                openSRX();
+//            }
+//            public void onToggle(boolean state) { }
+//        });
     }
 
     /**

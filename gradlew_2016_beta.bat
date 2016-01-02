@@ -6,6 +6,7 @@ REM If you're going to use this file, copy it somewhere that isn't tracked by Gi
 
 set WPI_BUILD_DIR=D:\Programming\FRC\WPILib\all_wpi_pre2016\allwpilib\wpilibj\build\libs
 set WPI_BUILD_ARTIFACT=:wpilibj
-set NT_BUILD_INCLUDE=OFF
+set NT_BUILD_DIR=D:\Programming\FRC\WPILib\all_wpi_pre2016\ntcore\native\build\libs
+set NT_BUILD_ARTIFACT=:ntcore-windows
 
 gradlew %*

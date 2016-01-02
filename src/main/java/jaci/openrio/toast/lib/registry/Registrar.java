@@ -135,6 +135,22 @@ public class Registrar<ID, Type> {
     }
 
     /**
+     * Get a Spark instance from the Registrar
+     * @param pwmPort the PWM port to use
+     */
+    public static Spark spark(int pwmPort) {
+        return pwmRegistrar.fetch(pwmPort, Spark.class, () -> { return new Spark(pwmPort); });
+    }
+
+    /**
+     * Get an SD540 instance from the Registrar
+     * @param pwmPort the PWM port to use
+     */
+    public static SD540 sd540(int pwmPort) {
+        return pwmRegistrar.fetch(pwmPort, SD540.class, () -> { return new SD540(pwmPort); });
+    }
+
+    /**
      * Get a Talon SRX [CAN] instance from the Registrar
      * @param canID the CAN Device ID to use
      */

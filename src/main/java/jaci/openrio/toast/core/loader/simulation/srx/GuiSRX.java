@@ -43,7 +43,7 @@ public class GuiSRX extends JComponent {
      * On Talon Update
      */
     public void update() {
-        control_mode.setText("Control Mode: " + CANTalon.ControlMode.valueOf(wrapper.mode).toString());
+//        control_mode.setText("Control Mode: " + CANTalon.ControlMode.valueOf(wrapper.mode).toString());
         slotid.setText("Slot ID: " + wrapper.slotid);
         follower.setText("Following: " + wrapper.follower);
 

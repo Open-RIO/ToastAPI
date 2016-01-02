@@ -2,7 +2,7 @@ var _imports = {};
 jimport("edu.wpi.first.wpilibj.SpeedController", "_imports['SpeedController']");
 jimport("edu.wpi.first.wpilibj.RobotDrive", "_imports['RobotDrive']");
 jimport("jaci.openrio.toast.lib.registry.Registrar", "_imports['Registrar']");
-var _motor_types = {Talon: "talon", TalonSRX: "talonSRX", CANTalon: "canTalon", Victor: "victor", Jaguar: "jaguar", CANJaguar: "canJaguar", VictorSP: "victorSP"};
+var _motor_types = {Talon: "talon", TalonSRX: "talonSRX", CANTalon: "canTalon", Victor: "victor", Jaguar: "jaguar", CANJaguar: "canJaguar", VictorSP: "victorSP", Spark: 'spark', SD540: 'sd540'};
 
 $.drive = function() {
     if (arguments.length == 2) {

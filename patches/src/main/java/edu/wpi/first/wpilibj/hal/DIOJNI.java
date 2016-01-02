@@ -2,48 +2,44 @@ package edu.wpi.first.wpilibj.hal;
 
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 public class DIOJNI extends JNIWrapper {
 
-	public static ByteBuffer initializeDigitalPort(ByteBuffer port_pointer, IntBuffer status) {
+	public static long initializeDigitalPort(long port_pointer) {
 		return port_pointer;
 	}
 
-	public static byte allocateDIO(ByteBuffer digital_port_pointer, byte input, IntBuffer status) {
-		SimulationData.setDIODir(digital_port_pointer.get(0), input);
+	public static byte allocateDIO(long digital_port_pointer, byte input) {
+		SimulationData.setDIODir((byte)digital_port_pointer, input);
 		return input;
 	}
 
-	public static void freeDIO(ByteBuffer digital_port_pointer, IntBuffer status) {
+	public static void freeDIO(long digital_port_pointer) { }
+
+	public static void setDIO(long digital_port_pointer, short value) {
+		SimulationData.setDIO((byte)digital_port_pointer, (byte)value);
 	}
 
-	public static void setDIO(ByteBuffer digital_port_pointer, short value, IntBuffer status) {
-		SimulationData.setDIO(digital_port_pointer.get(0), (byte)value);
+	public static byte getDIO(long digital_port_pointer) {
+		return SimulationData.dioValues[(byte)digital_port_pointer];
 	}
 
-	public static byte getDIO(ByteBuffer digital_port_pointer, IntBuffer status) {
-		return SimulationData.dioValues[digital_port_pointer.get(0)];
+	public static byte getDIODirection(long digital_port_pointer) {
+		return SimulationData.dioDirections[(byte)digital_port_pointer];
 	}
 
-	public static byte getDIODirection(ByteBuffer digital_port_pointer, IntBuffer status) {
-		return SimulationData.dioDirections[digital_port_pointer.get(0)];
-	}
-
-	public static void pulse(ByteBuffer digital_port_pointer, double pulseLength, IntBuffer status) {
+	public static void pulse(long digital_port_pointer, double pulseLength) {
 		//TODO: Implement Pulse Control
 	}
 
-	public static byte isPulsing(ByteBuffer digital_port_pointer, IntBuffer status) {
+	public static byte isPulsing(long digital_port_pointer) {
 		return 0;
 	}
 
-	public static byte isAnyPulsing(IntBuffer status) {
+	public static byte isAnyPulsing() {
 		return 0;
 	}
 
-	public static short getLoopTiming(IntBuffer status) {
+	public static short getLoopTiming() {
 		return 80;
 	}
 
