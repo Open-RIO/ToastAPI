@@ -44,6 +44,12 @@ public class SimulationData {
     }
 
     /**
+     * DIGITAL GLITCH FILTER *
+     */
+    public static int[] glitchFilters = new int[10];
+    public static int[] filterDurations = new int[20];
+
+    /**
      * PWM OUT *
      */
     public static double[] pwmValues = new double[10];
