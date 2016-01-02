@@ -22,7 +22,7 @@ public class ToastConfiguration {
     }
 
     public static enum Property {
-        THREAD_POOL_SIZE("threading.pool_size", 4),
+        THREAD_POOL_SIZE("threading.pool_size", 1),
 
         COMMANDS_DELEGATE_PASSWORD("delegate.command.password", ""),
         COMMANDS_DELEGATE_ALGORITHM("delegate.command.algorithm", "SHA256"),

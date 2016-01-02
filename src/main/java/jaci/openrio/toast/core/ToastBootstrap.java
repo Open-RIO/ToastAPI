@@ -72,6 +72,7 @@ public class ToastBootstrap {
      * the GlobalBlackboard
      */
     public static void main(String[] args) {
+        Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 2);      // Slightly above normal priority, but below maximum priority.
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
         color = true;

@@ -68,7 +68,7 @@ public class Toast extends RobotBase {
      * is used for Pre-Initialization Tasks.
      */
     @Override
-    protected void prestart() {
+    public void startCompetition() {
         try {
             ProfilerSection section = Profiler.INSTANCE.section("Setup");
             section.stop("WPILib");
@@ -85,6 +85,7 @@ public class Toast extends RobotBase {
 
             RobotLoader.prestart(Profiler.INSTANCE.section("RobotLoader"));
             FRCHooks.robotReady();
+            startCompetition_2();
         } catch (Exception e) {
             CrashHandler.handle(e);
         }
@@ -92,9 +93,11 @@ public class Toast extends RobotBase {
 
     /**
      * The robot is setup and ready to go. Let's rock.
+     *
+     * For some reason, WPILib removed the 'prestart' method in the 2016 release, so naming this 'startCompetition_2'
+     * was the best I could deal with today.
      */
-    @Override
-    public void startCompetition() {
+    public void startCompetition_2() {
         try {
             // -------- NEW PHASE -------- //
             LoadPhase.START.transition();
@@ -116,6 +119,7 @@ public class Toast extends RobotBase {
             ToastBootstrap.endTimeMS = System.currentTimeMillis();
             log().info("Total Initiation Time: " + (double)(ToastBootstrap.endTimeMS - ToastBootstrap.startTimeMS) / 1000D + " seconds");
             Profiler.INSTANCE.export();
+
             StateTracker.init(this);
         } catch (Exception e) {
             CrashHandler.handle(e);
