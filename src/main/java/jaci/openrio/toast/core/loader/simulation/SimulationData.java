@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import edu.wpi.first.wpilibj.Utility;
 import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;
 import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
@@ -190,6 +191,30 @@ public class SimulationData {
     public static void repaintState() {
         if (SimulationGUI.INSTANCE != null)
             SimulationGUI.INSTANCE.repaintState();
+    }
+
+    /** NOTIFIER JNI **/
+    public static Runnable[] notifiers = new Runnable[10];
+    public static long[] notifierTriggerTimes = new long[10];
+
+    /**
+     * Really crude way of calling a Notifier, but it works. Good enough for simulation.
+     */
+    public static void notifierUpdate() {
+        for (int i = 0; i < notifiers.length; i++) {
+            Runnable rnbl = notifiers[i];
+            long millis = notifierTriggerTimes[i];
+
+            if (rnbl != null && millis > 0) {
+                new Thread(() -> {
+                    try {
+                        long modified_time = millis - (Utility.getFPGATime() / 1000);
+                        if (modified_time > 0) Thread.sleep(modified_time);
+                        rnbl.run();
+                    } catch (InterruptedException e) { }
+                }).start();
+            }
+        }
     }
 
 }

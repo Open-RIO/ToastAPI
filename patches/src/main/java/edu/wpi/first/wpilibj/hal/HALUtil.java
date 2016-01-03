@@ -43,7 +43,7 @@ public class HALUtil extends JNIWrapper {
 	}
 
 	public static long getFPGATime() {
-		return ToastBootstrap.startTimeNS - System.nanoTime();
+		return (System.nanoTime() - ToastBootstrap.startTimeNS) / 1000;
 	}
 
 	public static boolean getFPGAButton() {
