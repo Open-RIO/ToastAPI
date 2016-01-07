@@ -1,6 +1,5 @@
 language: java
 install:
-- "./gradlew wpi"
 - "./gradlew build"
 - "./gradlew generateExternalPatches"
 - "./gradlew build"
