@@ -7,8 +7,6 @@ install:
 - ruby tools/setup.rb
 - ruby tools/inspector.rb
 - ruby tools/imports.rb
-script:
-- "./gradlew verify"
 jdk:
 - oraclejdk8
 notifications:

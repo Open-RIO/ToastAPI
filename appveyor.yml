@@ -6,7 +6,6 @@ branches:
 skip_tags: true
 
 install:
-- "gradlew.bat wpi"
 - "gradlew.bat build"
 - "gradlew.bat generateExternalPatches"
 - "gradlew.bat build"
