@@ -7,8 +7,6 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib
 | Master | [![Build status](https://ci.appveyor.com/api/projects/status/l44bg3bl8o75osgt/branch/master?svg=true)](https://ci.appveyor.com/project/JacisNonsense/toastapi/branch/master) | [![Build Status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=master)](https://travis-ci.org/Open-RIO/ToastAPI) |
 | Development | [![Build status](https://ci.appveyor.com/api/projects/status/l44bg3bl8o75osgt/branch/development?svg=true)](https://ci.appveyor.com/project/JacisNonsense/toastapi/branch/development) | [![Build Status](https://travis-ci.org/Open-RIO/ToastAPI.svg?branch=development)](https://travis-ci.org/Open-RIO/ToastAPI) |
 
-**PLEASE NOTE:** The development branch is currently migrating to the 2016 WPILib dependency. Because of this, Travis and Appveyor are seeing the builds as faulty, however if you have cloned the 2016 WPILib sources, they should build fine. Stable, prebuilt versions of the 2016 Toast Library will be available on maven as they become stable.
-
 [![Come chat, or just hang out](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Open-RIO/ToastAPI?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 
 [Current Whitepaper](http://www.chiefdelphi.com/media/papers/3174)  
@@ -26,7 +24,7 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib
   - [Others](#others)
 - [Deployment](#deployment)
   - [Module Deployment](#module-deployment)
-- [Developing a Module](#developing-a-module-installing-toast)
+- [Developing a Module (**Install Toast Here**)](#developing-a-module-installing-toast)
 - [Reporting Bugs](#reporting-bugs)
 - [Contributions](#contributions)
 
