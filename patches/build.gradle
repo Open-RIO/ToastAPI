@@ -15,10 +15,7 @@ settings.withReader {
 }
 
 dependencies {
-  String apiDest = System.getProperty("user.home") + "/wpilib/java/extracted/library/"
-
-  compile fileTree(dir: apiDest + "lib", include: "*.jar", exclude: "*-sources.jar")
-  compile fileTree(dir: "../build/libs", include: "*${settings.toast.version}-raw.jar")
+  compile fileTree(dir: "../build/libs", include: "*${settings.toast.version}.jar")
 }
 
 task genPatches << {
