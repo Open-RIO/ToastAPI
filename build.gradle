@@ -190,8 +190,9 @@ build.finalizedBy updateLatest
 task src(type: Jar, dependsOn: classes) {
   classifier = 'sources'
   from sourceSets.main.allSource
-  from(zipTree("${System.getProperty("user.home")}/wpilib/java/extracted/library/lib/WPILib-sources.jar"))
-  from(zipTree("${System.getProperty("user.home")}/wpilib/java/extracted/library/lib/NetworkTables-sources.jar"))
+  project.getConfigurations().wpi_source.resolve().each {
+    from(zipTree(it))
+  }
 }
 
 task raw(type: Jar, dependsOn: classes) {
