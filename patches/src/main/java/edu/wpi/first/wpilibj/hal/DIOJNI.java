@@ -8,7 +8,7 @@ public class DIOJNI extends JNIWrapper {
 		return port_pointer;
 	}
 
-	public static byte allocateDIO(long digital_port_pointer, byte input) {
+	public static boolean allocateDIO(long digital_port_pointer, boolean input) {
 		SimulationData.setDIODir((byte)digital_port_pointer, input);
 		return input;
 	}
@@ -19,12 +19,12 @@ public class DIOJNI extends JNIWrapper {
 		SimulationData.setDIO((byte)digital_port_pointer, (byte)value);
 	}
 
-	public static byte getDIO(long digital_port_pointer) {
-		return SimulationData.dioValues[(byte)digital_port_pointer];
+	public static boolean getDIO(long digital_port_pointer) {
+		return SimulationData.dioValues[(byte)digital_port_pointer] == 1;
 	}
 
-	public static byte getDIODirection(long digital_port_pointer) {
-		return SimulationData.dioDirections[(byte)digital_port_pointer];
+	public static boolean getDIODirection(long digital_port_pointer) {
+		return SimulationData.dioDirections[(byte)digital_port_pointer] == 1;
 	}
 
 	public static void pulse(long digital_port_pointer, double pulseLength) {

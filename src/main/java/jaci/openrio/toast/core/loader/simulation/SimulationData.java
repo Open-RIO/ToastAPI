@@ -1,6 +1,7 @@
 package jaci.openrio.toast.core.loader.simulation;
 
 import edu.wpi.first.wpilibj.Utility;
+import edu.wpi.first.wpilibj.hal.NotifierJNI;
 import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;
 import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
@@ -38,10 +39,10 @@ public class SimulationData {
     /**
      * Set the digital IO direction on the given port, as Input or Output
      */
-    public static void setDIODir(byte port, byte val) {
-        dioDirections[port] = val;
+    public static void setDIODir(byte port, boolean val) {
+        dioDirections[port] = (byte) (val ? 1 : 0);
         if (SimulationGUI.INSTANCE != null)
-            SimulationGUI.INSTANCE.dioSpinners[port].setEditable(val == 1);
+            SimulationGUI.INSTANCE.dioSpinners[port].setEditable(val);
     }
 
     /**
@@ -194,7 +195,7 @@ public class SimulationData {
     }
 
     /** NOTIFIER JNI **/
-    public static Runnable[] notifiers = new Runnable[10];
+    public static NotifierJNI.NotifierJNIHandlerFunction[] notifiers = new NotifierJNI.NotifierJNIHandlerFunction[10];
     public static long[] notifierTriggerTimes = new long[10];
 
     /**
@@ -202,7 +203,7 @@ public class SimulationData {
      */
     public static void notifierUpdate() {
         for (int i = 0; i < notifiers.length; i++) {
-            Runnable rnbl = notifiers[i];
+            NotifierJNI.NotifierJNIHandlerFunction rnbl = notifiers[i];
             long millis = notifierTriggerTimes[i];
 
             if (rnbl != null && millis > 0) {
@@ -210,7 +211,7 @@ public class SimulationData {
                     try {
                         long modified_time = millis - (Utility.getFPGATime() / 1000);
                         if (modified_time > 0) Thread.sleep(modified_time);
-                        rnbl.run();
+                        rnbl.apply(Utility.getFPGATime());
                     } catch (InterruptedException e) { }
                 }).start();
             }
