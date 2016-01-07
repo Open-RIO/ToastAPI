@@ -162,9 +162,9 @@ Toast Deployment is managed through gradle in the Toast releases. Instructions f
   - Plug your USB into your computer and copy your module to ``` toast/modules ``` on your USB.
   - Plug your USB back into your RoboRIO and you're done
 
-# Developing a Module
+# Developing a Module (Installing Toast on your System)
 
-Developing a Module for Toast can be done in many ways, and as such, we've moved Module Development to the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki)
+Developing a Module for Toast can be done in many ways, and as such, we've moved Module Development to the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)
 
 # Reporting Bugs
 Find something wrong with Toast? Think it needs more butter, or just isn't Toasted enough? Great! Head over to our [issues page](https://github.com/Open-RIO/ToastAPI/issues) and see if your issue has already been submitted. If it hasn't, go ahead and hit 'new issue' and give us a detailed description of what's wrong. If possible, we'd like you to include as much of the following information possible so we can track down that bug and squash it as quickly as possible.  
