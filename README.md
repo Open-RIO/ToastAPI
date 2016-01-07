@@ -26,7 +26,7 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib
   - [Others](#others)
 - [Deployment](#deployment)
   - [Module Deployment](#module-deployment)
-- [Developing a Module](#developing-a-module)
+- [Developing a Module](#developing-a-module-installing-toast)
 - [Reporting Bugs](#reporting-bugs)
 - [Contributions](#contributions)
 
@@ -162,7 +162,7 @@ Toast Deployment is managed through gradle in the Toast releases. Instructions f
   - Plug your USB into your computer and copy your module to ``` toast/modules ``` on your USB.
   - Plug your USB back into your RoboRIO and you're done
 
-# Developing a Module (Installing Toast on your System)
+# Developing a Module (Installing Toast)
 
 Developing a Module for Toast can be done in many ways, and as such, we've moved Module Development to the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)
 
