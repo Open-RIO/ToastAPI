@@ -64,16 +64,16 @@ public class SRX_Reg {
 
         public void setDemand(int value) {
             cache_value = -1;
-//            if (mode == CANTalon.ControlMode.Voltage.value)
-//                voltage = (double)value / 256;
-//            else if (mode == CANTalon.ControlMode.Follower.value)
-//                follower = value;
-//            else if (mode == CANTalon.ControlMode.Position.value)
-//                position = value;
-//            else if (mode == CANTalon.ControlMode.Speed.value)
-//                speed = value;
-//            else if (mode == CANTalon.ControlMode.Disabled.value)
-//                cache_value = value;
+            if (mode == CANTalon.TalonControlMode.Voltage.value)
+                voltage = (double)value / 256;
+            else if (mode == CANTalon.TalonControlMode.Follower.value)
+                follower = value;
+            else if (mode == CANTalon.TalonControlMode.Position.value)
+                position = value;
+            else if (mode == CANTalon.TalonControlMode.Speed.value)
+                speed = value;
+            else if (mode == CANTalon.TalonControlMode.Disabled.value)
+                cache_value = value;
 
             update();
         }

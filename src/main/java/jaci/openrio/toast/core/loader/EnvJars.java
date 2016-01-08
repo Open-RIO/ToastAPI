@@ -24,6 +24,11 @@ public class EnvJars {
         add("idea_rt");
         add("gragent");
         add("groovy-.*");
+        add("nanojson-.*");
+        add("NetworkDelegate-.*");
+        add("NetworkTables-.*");
+        add("wpilib.*");
+        add(".*javafx.*");
     }
 
     /**
@@ -66,7 +71,7 @@ public class EnvJars {
      */
     public static boolean isJDKJar(File f) {
         String file = f.getAbsolutePath();
-        String jdk = new File(Environment.getJava_home()).getAbsolutePath();
+        String jdk = new File(Environment.getJava_home()).getParentFile().getAbsolutePath();        // Parent for libs
         return file.startsWith(jdk);
     }
 
