@@ -175,80 +175,239 @@ public class CanTalonJNI extends JNIWrapper {
 
     public static void SetIzone(long handle, int slotIdx, int zone) {}
     
-    public static native void SetCloseLoopRampRate(long handle, int slotIdx, int closeLoopRampRate);
-    public static native void SetVoltageCompensationRate(long handle, double voltagePerMs);
-    public static native void SetSensorPosition(long handle, int pos);
-    public static native void SetForwardSoftLimit(long handle, int forwardLimit);
-    public static native void SetReverseSoftLimit(long handle, int reverseLimit);
-    public static native void SetForwardSoftEnable(long handle, int enable);
-    public static native void SetReverseSoftEnable(long handle, int enable);
-    public static native double GetPgain(long handle, int slotIdx);
-    public static native double GetIgain(long handle, int slotIdx);
-    public static native double GetDgain(long handle, int slotIdx);
-    public static native double GetFgain(long handle, int slotIdx);
-    public static native int GetIzone(long handle, int slotIdx);
-    public static native int GetCloseLoopRampRate(long handle, int slotIdx);
-    public static native double GetVoltageCompensationRate(long handle);
-    public static native int GetForwardSoftLimit(long handle);
-    public static native int GetReverseSoftLimit(long handle);
-    public static native int GetForwardSoftEnable(long handle);
-    public static native int GetReverseSoftEnable(long handle);
-    public static native int GetPulseWidthRiseToFallUs(long handle);
-    public static native int IsPulseWidthSensorPresent(long handle);
-    public static native void SetModeSelect2(long handle, int modeSelect, int demand);
-    public static native void SetStatusFrameRate(long handle, int frameEnum, int periodMs);
-    public static native void ClearStickyFaults(long handle);
-    public static native void ChangeMotionControlFramePeriod(long handle, int periodMs);
-    public static native void ClearMotionProfileTrajectories(long handle);
-    public static native int GetMotionProfileTopLevelBufferCount(long handle);
-    public static native boolean IsMotionProfileTopLevelBufferFull(long handle);
-    public static native void PushMotionProfileTrajectory(long handle, int targPos, int targVel, int profileSlotSelect, int timeDurMs, int velOnly, int isLastPoint, int zeroPos);
-    public static native void ProcessMotionProfileBuffer(long handle);
-    public static native int GetFault_OverTemp(long handle);
-    public static native int GetFault_UnderVoltage(long handle);
-    public static native int GetFault_ForLim(long handle);
-    public static native int GetFault_RevLim(long handle);
-    public static native int GetFault_HardwareFailure(long handle);
-    public static native int GetFault_ForSoftLim(long handle);
-    public static native int GetFault_RevSoftLim(long handle);
-    public static native int GetStckyFault_OverTemp(long handle);
-    public static native int GetStckyFault_UnderVoltage(long handle);
-    public static native int GetStckyFault_ForLim(long handle);
-    public static native int GetStckyFault_RevLim(long handle);
-    public static native int GetStckyFault_ForSoftLim(long handle);
-    public static native int GetStckyFault_RevSoftLim(long handle);
-    public static native int GetAppliedThrottle(long handle);
-    public static native int GetCloseLoopErr(long handle);
-    public static native int GetFeedbackDeviceSelect(long handle);
-    public static native int GetModeSelect(long handle);
-    public static native int GetLimitSwitchEn(long handle);
-    public static native int GetLimitSwitchClosedFor(long handle);
-    public static native int GetLimitSwitchClosedRev(long handle);
-    public static native int GetSensorPosition(long handle);
-    public static native int GetSensorVelocity(long handle);
-    public static native double GetCurrent(long handle);
-    public static native int GetBrakeIsEnabled(long handle);
-    public static native int GetEncPosition(long handle);
-    public static native int GetEncVel(long handle);
-    public static native int GetEncIndexRiseEvents(long handle);
-    public static native int GetQuadApin(long handle);
-    public static native int GetQuadBpin(long handle);
-    public static native int GetQuadIdxpin(long handle);
-    public static native int GetAnalogInWithOv(long handle);
-    public static native int GetAnalogInVel(long handle);
-    public static native double GetTemp(long handle);
-    public static native double GetBatteryV(long handle);
-    public static native int GetResetCount(long handle);
-    public static native int GetResetFlags(long handle);
-    public static native int GetFirmVers(long handle);
-    public static native int GetPulseWidthPosition(long handle);
-    public static native int GetPulseWidthVelocity(long handle);
-    public static native int GetPulseWidthRiseToRiseUs(long handle);
-    public static native int GetActTraj_IsValid(long handle);
-    public static native int GetActTraj_ProfileSlotSelect(long handle);
-    public static native int GetActTraj_VelOnly(long handle);
-    public static native int GetActTraj_IsLast(long handle);
-    public static native int GetOutputType(long handle);
+    public static void SetCloseLoopRampRate(long handle, int slotIdx, int closeLoopRampRate) {}
+    public static void SetVoltageCompensationRate(long handle, double voltagePerMs) {}
+    public static void SetSensorPosition(long handle, int pos) {}
+    public static void SetForwardSoftLimit(long handle, int forwardLimit) {}
+    public static void SetReverseSoftLimit(long handle, int reverseLimit) {}
+    public static void SetForwardSoftEnable(long handle, int enable) {}
+    public static void SetReverseSoftEnable(long handle, int enable) {}
+
+    public static double GetPgain(long handle, int slotIdx) {
+        return SRX_Reg.wrappers.get(handle).gains[slotIdx][0];
+    }
+
+    public static double GetIgain(long handle, int slotIdx) {
+        return SRX_Reg.wrappers.get(handle).gains[slotIdx][1];
+    }
+    public static double GetDgain(long handle, int slotIdx) {
+        return SRX_Reg.wrappers.get(handle).gains[slotIdx][2];
+    }
+
+    public static double GetFgain(long handle, int slotIdx) {
+        return SRX_Reg.wrappers.get(handle).gains[slotIdx][3];
+    }
+
+    public static int GetIzone(long handle, int slotIdx) {
+        return 0;
+    }
+
+    public static int GetCloseLoopRampRate(long handle, int slotIdx) {
+        return 0;
+    }
+
+    public static double GetVoltageCompensationRate(long handle) {
+        return 0;
+    }
+
+    public static int GetForwardSoftLimit(long handle) {
+        return 0;
+    }
+    public static int GetReverseSoftLimit(long handle) {
+        return 0;
+    }
+    public static int GetForwardSoftEnable(long handle) {
+        return 0;
+    }
+    public static int GetReverseSoftEnable(long handle) {
+        return 0;
+    }
+    public static int GetPulseWidthRiseToFallUs(long handle) {
+        return 0;
+    }
+    public static int IsPulseWidthSensorPresent(long handle) {
+        return 0;
+    }
+    public static native void SetModeSelect2(long handle, int modeSelect, int demand);      // Not Used
+
+    public static void SetStatusFrameRate(long handle, int frameEnum, int periodMs) {}
+    public static void ClearStickyFaults(long handle) {}
+    public static void ChangeMotionControlFramePeriod(long handle, int periodMs) {}
+    public static void ClearMotionProfileTrajectories(long handle) {}
+
+    // Trajectory Support is currently not available in simulation.
+
+    public static int GetMotionProfileTopLevelBufferCount(long handle) {
+        return 0;
+    }
+
+    public static boolean IsMotionProfileTopLevelBufferFull(long handle) {
+        return false;
+    }
+    public static void PushMotionProfileTrajectory(long handle, int targPos, int targVel, int profileSlotSelect, int timeDurMs, int velOnly, int isLastPoint, int zeroPos) { }
+    public static void ProcessMotionProfileBuffer(long handle) { }
+
+    public static int GetFault_OverTemp(long handle) {
+        return 0;
+    }
+    public static int GetFault_UnderVoltage(long handle) {
+        return 0;
+    }
+    public static int GetFault_ForLim(long handle) {
+        return 0;
+    }
+    public static int GetFault_RevLim(long handle) {
+        return 0;
+    }
+    public static int GetFault_HardwareFailure(long handle) {
+        return 0;
+    }
+    public static int GetFault_ForSoftLim(long handle) {
+        return 0;
+    }
+    public static int GetFault_RevSoftLim(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_OverTemp(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_UnderVoltage(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_ForLim(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_RevLim(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_ForSoftLim(long handle) {
+        return 0;
+    }
+    public static int GetStckyFault_RevSoftLim(long handle) {
+        return 0;
+    }
+
+    public static int GetAppliedThrottle(long handle) {
+        return (int) (SRX_Reg.wrappers.get(handle).pvbus * 1023);
+    }
+
+    public static int GetCloseLoopErr(long handle) {
+        return 0;
+    }
+
+    public static native int GetFeedbackDeviceSelect(long handle);          // Not Used
+
+    public static int GetModeSelect(long handle) {
+        return SRX_Reg.wrappers.get(handle).mode;
+    }
+
+//    public static native int GetLimitSwitchEn(long handle);
+    public static int GetLimitSwitchClosedFor(long handle) {
+        return 1;
+    }
+
+    public static int GetLimitSwitchClosedRev(long handle) {
+        return 1;
+    }
+
+    public static int GetSensorPosition(long handle) {
+        return SRX_Reg.wrappers.get(handle).position;
+    }
+
+    public static int GetSensorVelocity(long handle) {
+        return SRX_Reg.wrappers.get(handle).speed;
+    }
+
+    public static double GetCurrent(long handle) {
+        return 10.0;
+    }
+
+    public static int GetBrakeIsEnabled(long handle) {
+        return 0;
+    }
+
+    //TODO Encoder Impl
+    public static int GetEncPosition(long handle) {
+        return 0;
+    }
+
+    public static int GetEncVel(long handle) {
+        return 0;
+    }
+
+    public static int GetEncIndexRiseEvents(long handle) {
+        return 0;
+    }
+
+    public static int GetQuadApin(long handle) {
+        return 0;
+    }
+
+    public static int GetQuadBpin(long handle) {
+        return 0;
+    }
+
+    public static int GetQuadIdxpin(long handle) {
+        return 0;
+    }
+
+    public static int GetAnalogInWithOv(long handle) {
+        return 0;
+    }
+
+    public static int GetAnalogInVel(long handle) {
+        return 0;
+    }
+
+    public static double GetTemp(long handle) {
+        return 20.0;                // Not too hot, not too cold
+    }
+
+    public static double GetBatteryV(long handle) {
+        return 12.0;
+    }
+
+    public static int GetResetCount(long handle) {
+        return 0;
+    }
+
+    public static int GetResetFlags(long handle) {
+        return 0;
+    }
+
+    public static int GetFirmVers(long handle) {
+        return 0;
+    }
+
+    public static int GetPulseWidthPosition(long handle) {
+        return 0;
+    }
+
+    public static int GetPulseWidthVelocity(long handle) {
+        return 0;
+    }
+
+    public static int GetPulseWidthRiseToRiseUs(long handle) {
+        return 0;
+    }
+
+    public static int GetActTraj_IsValid(long handle) {
+        return 0;
+    }
+
+    public static int GetActTraj_ProfileSlotSelect(long handle) {
+        return 0;
+    }
+
+    public static int GetActTraj_VelOnly(long handle) {
+        return 0;
+    }
+
+    public static int GetActTraj_IsLast(long handle) {
+        return 0;
+    }
+
+    public static native int GetOutputType(long handle);            // Not Used
     public static native int GetHasUnderrun(long handle);
     public static native int GetIsUnderrun(long handle);
     public static native int GetNextID(long handle);
@@ -256,13 +415,26 @@ public class CanTalonJNI extends JNIWrapper {
     public static native int GetCount(long handle);
     public static native int GetActTraj_Velocity(long handle);
     public static native int GetActTraj_Position(long handle);
-    public static native void SetDemand(long handle, int param);
-    public static native void SetOverrideLimitSwitchEn(long handle, int param);
-    public static native void SetFeedbackDeviceSelect(long handle, int param);
-    public static native void SetRevMotDuringCloseLoopEn(long handle, int param);
-    public static native void SetOverrideBrakeType(long handle, int param);
-    public static native void SetModeSelect(long handle, int param);
-    public static native void SetProfileSlotSelect(long handle, int param);
-    public static native void SetRampThrottle(long handle, int param);
-    public static native void SetRevFeedbackSensor(long handle, int param);
+
+    public static void SetDemand(long handle, int param) {
+        SRX_Reg.wrappers.get(handle).setDemand(param);
+    }
+
+    public static void SetOverrideLimitSwitchEn(long handle, int param) { }
+
+    public static void SetFeedbackDeviceSelect(long handle, int param) { }
+
+    public static void SetRevMotDuringCloseLoopEn(long handle, int param) { }
+    public static void SetOverrideBrakeType(long handle, int param) { }
+
+    public static void SetModeSelect(long handle, int param) {
+        SRX_Reg.wrappers.get(handle).setMode(param);
+    }
+
+    public static void SetProfileSlotSelect(long handle, int param) {
+        SRX_Reg.wrappers.get(handle).setSlotID(param);
+    }
+
+    public static void SetRampThrottle(long handle, int param) { }
+    public static void SetRevFeedbackSensor(long handle, int param) { }
 }

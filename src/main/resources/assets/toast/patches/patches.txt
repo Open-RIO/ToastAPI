@@ -17,3 +17,5 @@ edu/wpi/first/wpilibj/hal/CompressorJNI.sim
 edu/wpi/first/wpilibj/hal/RelayJNI.sim
 edu/wpi/first/wpilibj/hal/SolenoidJNI.sim
 edu/wpi/first/wpilibj/hal/CanTalonJNI.sim
+edu/wpi/first/wpilibj/hal/DigitalGlitchFilterJNI.sim
+edu/wpi/first/wpilibj/hal/NotifierJNI.sim
