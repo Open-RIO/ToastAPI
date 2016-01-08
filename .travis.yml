@@ -1,4 +1,15 @@
 language: java
+
+# Make NetworkTables happy
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.8
+      - g++-4.8
+      - oracle-java8-installer
+      
 install:
 - "./gradlew build"
 - "./gradlew generateExternalPatches"
@@ -7,6 +18,7 @@ install:
 - ruby tools/setup.rb
 - ruby tools/inspector.rb
 - ruby tools/imports.rb
+- "./gradlew verify"
 jdk:
 - oraclejdk8
 notifications:
