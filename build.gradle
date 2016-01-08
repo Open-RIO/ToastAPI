@@ -42,12 +42,12 @@ eclipse {
     classpath {
         file.whenMerged { cp ->
             def src_patch = new org.gradle.plugins.ide.eclipse.model.SourceFolder('patches/src/main/java', "build/pat_out")
-            def src_patch_f = new org.gradle.plugins.ide.eclipse.model.SourceFolder('patches_full/src/main/java', "build/pat_out")
+            // def src_patch_f = new org.gradle.plugins.ide.eclipse.model.SourceFolder('patches_full/src/main/java', "build/pat_out")           // Commented until we actually get global patches to stop eclipse from complaining
 
             if (cp.entries.find() { it.path == src_patch.path } == null)
               cp.entries.add(src_patch)
-            if (cp.entries.find() { it.path == src_patch_f.path } == null)
-              cp.entries.add(src_patch_f)
+            // if (cp.entries.find() { it.path == src_patch_f.path } == null)
+            //   cp.entries.add(src_patch_f)
         }
     }
 }
