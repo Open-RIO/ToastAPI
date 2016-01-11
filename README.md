@@ -1,5 +1,7 @@
 #![](doc/resources/logo_tiny_text.png)
-An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib  
+An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib.
+
+### Now ready for the 2016 FIRST Robotics Competition!
 
 
 | Branch | Windows | Linux / Mac |
@@ -12,73 +14,44 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib
 [Current Whitepaper](http://www.chiefdelphi.com/media/papers/3174)  
 [Current Metrics](https://dev.imjac.in/toast/metrics/)  
 
-## Table of Contents
-- [What is Toast?](#what-is-toast)
-  - [Simulation](#simulation)
-  - [Configuration and Scripting](#configuration-and-scripting)
-  - [Crash and Logging](#crash-and-logging)
-  - [Expansion and Storage](#expansion-and-storage)
-  - [Commands](#commands)
-  - [Security](#security)
-    - [Ports and Networking](#ports-and-networking)
-  - [Others](#others)
-- [Deployment](#deployment)
-  - [Module Deployment](#module-deployment)
-- [Developing a Module (**Install Toast Here**)](#developing-a-module-installing-toast)
-- [Reporting Bugs](#reporting-bugs)
-- [Contributions](#contributions)
+
+# Installing Toast
+Toast installation and Module Development Instructions can be found in the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)
 
 # What is Toast?
-Toast is an API designed for the RoboRIO and teams competing in the FIRST Robotics Competition. Toast is built on top of WPILib and provides useful tools for increased stability, ease of use and usability. Toast also features a full Robot Simulation tool, meaning Robot Code can be tested at school, home, or even on the plane to the next match.
+Toast is a modular robotics framework for the *FIRST* Robotics Competition, built atop WPILib.
 
-Toast is modular, and is designed with a core. This core is loaded no matter what and contains essential tools such as Logging, Crash Handling and of course, Module Loading. Modules are code that use Toast and WPILib as a base API and can be loaded/unloaded at will. These are stored in .jar files much like any other program and are loaded at Runtime. This allows for an extremely modular workflow in Toast. Modules can be written in a variety of languages, including Java, JavaScript natively, and even Ruby, Groovy, LUA and others through the help of other Modules.
+Toast provides base code for your Robotics Program to build on top of. The Toast JAR (packaged with WPILib) is kept on the RoboRIO,
+with your code (and other modules) stored as other JAR files for Toast to load. This allows for code to be modular, and for teams
+to collaborate and share their code like never before. For example, one team may decide to release a module for Vision Targeting. For
+other teams, installing this module onto their RoboRIO is as simple as copying the file to your RoboRIO. In fact, we'll do it for you.
 
-Teams create their own Module to control their robot, but might choose to load other modules as well, such as a WebUI, Autonomous Recorder or even Vision Tracking. Modules can be optional, or depend on each other. This allows for the FIRST community to share their code and creations on a whole new level. A brief visual representation of how Toast loads and organized modules is given below:
-![The 'pipeline' of how Toast Modules work](doc/resources/Pipeline.png)
+Even better, Toast has a full simulation environment. This allows motor controllers, pneumatics, and just about anything on the Robot to 
+be simulated without any external tools. The code you simulate is the exact same code that is sent to your Robot, so you can be confident that
+it will work.
 
-## Simulation
-  Simulation is one of the staple features of Toast, and allows for teams to test their code without having a robot present. This is done Natively, and no extra programs are needed. If Toast detects a simulation environment, we'll go ahead and start up a little GUI for you, which helps display all the relevant details including Digital IO, PWM, Relay, Analog and allows you to change Robot State, Battery Voltage and even Accelerometer Information. By extension, Joysticks can also be simulated.
+Below is a simple graph representing how Toast works.
+![](doc/resources/Pipeline.png)
 
-  ![The Simulation GUI](doc/resources/SimulationGUI.png)
+# Simulation
+Below is an example of the Toast Simulation GUI
+![](doc/resources/SimulationGUI.png)
 
-## Configuration and Scripting
-  By default, Toast comes packaged with a JavaScript interface thanks to the Oracle Nashorn Project. Toast uses this JavaScript implementation to allow for easy JSON Configuration Files, as well as to allow modules to extend their functionality. Modules can be written in Java, but can also be written entirely in JavaScript as well, allowing for a versatile combination of languages.
+The Toast Simulation GUI redirects calls to regular WPILib code to a simulation GUI for you to view. This GUI is launched straight from your IDE and
+requires no extra code. Simulation is available on Linux, Mac OS X and Windows platforms, both 32 and 64 bit. Other platforms will need to build the NetworkTables-Core
+library manually.
 
-  Configuration Files are automatically generated, and are formatted in the familiar JSON syntax. For example, here's Toast.
-  ``` JavaScript
-  {
-      "delegate": {
-          "command": {
-              "algorithm": "SHA256",
-              "password": ""
-          },
-          "logger": {
-              "password": "",
-              "algorithm": "SHA256"
-          }
-      },
-      "security": {
-          "policy": "STRICT"
-      },
-      "threading": {
-          "pool_size": 4
-      },
-      "optimization": {
-          "gc": {
-              "enabled": false,
-              "time": 30
-          }
-      },
-      "experimental": {
-          "threaded_loading": false
-      }
-  }
-  ```
+Simulation also has support for the 2016 FRC Driver Station. Instructions for the Driver Station can be found [here](https://github.com/Open-RIO/ToastAPI/wiki/Simulating-Joysticks-and-the-Driver-Station)
 
+# USB
+SSH'ing into the RoboRIO to copy modules isn't always the most pleasant experience. To remedy this, Toast has full support onboard for USB Mass Storage
+devices. Modules can be put on a USB device that is connected to your RoboRIO's USB Ports. Any modules will be loaded from this device, and can even override
+the modules on the RoboRIO if you want to. Furthermore, log files, crash reports, and configuration files are all stored on the USB Device if present, allowing
+for quick and easy debugging of your Robot Program.
 
-## Crash and Logging
-Robots Crash. A lot. Whether it's programmatically or physically, something needs to be done, so lets fix both.  
-Toast includes a logging system that uses a formatter to make the log from Toast and it's modules nice and readable. Additionally, these logs are also saved to file for you to read from later.  
+# Logging and Crash Reports
+Toast will helpfully log all console output to file, and even provides a logging framework for you to use to format your logs
+neatly. An example "just-started-up" log is seen below.
 ```
 .________    ______                 __
 ((       )  /_  __/___  ____ ______/ /_
@@ -94,10 +67,12 @@ Toast includes a logging system that uses a formatter to make the log from Toast
 [05/07/15-06:46:05] [Toast] [Start] [INFO] Fabricating Sandwich...
 [05/07/15-06:46:05] [Toast] [Start] [INFO] Verdict: Needs more salt
 [05/07/15-06:46:05] [Toast] [Main] [INFO] Total Initiation Time: 2.98 seconds
-
 ```
+This log output can also be viewed in the official 2016 FRC Driver Station!
 
-Now let's say your Robot crashes. First thing that happens is Toast formats the crash log to include all the vital information: Loaded Modules, Environment Data, Crash Stacktrace and Toast Version. Toast also saves this Crash Log to a file with the Time Stamp of the crash, too.
+Additionally, Crash Logs are also formatted whenever the Robot encounters an unexpected exception. An example crash log
+can be seen below. All Crash Logs are saved to file with a date/time stamp.
+
 ```
 **** CRASH LOG ****
 Your robot has crashed. Following is a crash log and more details.
@@ -109,60 +84,85 @@ This log has been saved to: D:\Programming\FRC\OpenRIO\Toast\run\toast\crash\cra
 \\_______/ \____/_/ /_/   \____/_/ /_/
 
 java.lang.Exception: Invoked Debug Crash
-	at jaci.openrio.toast.core.command.cmd.CommandInvokeCrash.invokeCommand(CommandInvokeCrash.java:35)
-	at jaci.openrio.toast.core.command.CommandBus.parseMessage(CommandBus.java:78)
-	at jaci.openrio.toast.core.command.CommandBus$1.run(CommandBus.java:167)
+    at jaci.openrio.toast.core.command.cmd.CommandInvokeCrash.invokeCommand(CommandInvokeCrash.java:35)
+    at jaci.openrio.toast.core.command.CommandBus.parseMessage(CommandBus.java:78)
+    at jaci.openrio.toast.core.command.CommandBus$1.run(CommandBus.java:167)
 
 Crash Information:
-	Toast:
-		Toast Version: 2.0.0
-		Loaded Modules:
+    Toast:
+        Toast Version: 2.0.0
+        Loaded Modules:
 
-	Environment:
-		    Toast: 2.0.0
-		     Type: Simulation
-		      FMS: false
-		       OS: Windows 8.1 6.3 (amd64)
-		     Java: 1.8.0_25 (Oracle Corporation)
-		Java Path: C:\Program Files\Java\jdk1.8.0_25\jre
-		  JScript: Supported (Nashorn)
+    Environment:
+            Toast: 2.0.0
+             Type: Simulation
+              FMS: false
+               OS: Windows 8.1 6.3 (amd64)
+             Java: 1.8.0_25 (Oracle Corporation)
+        Java Path: C:\Program Files\Java\jdk1.8.0_25\jre
+          JScript: Supported (Nashorn)
 
 
 *******************
 ```
-Next up, Toast stops all the Motors on the RoboRIO, all working Threads are killed and Network Connections disconnected. All this helps to ensure your Robot doesn't destroy everything if it crashes.
 
-## Expansion and Storage
-The RoboRIO doesn't have a lot of space, which becomes a problem for modules that like to take up a lot of disk space. To ensure the RoboRIO doesn't destroy its filesystem, Toast has support for USB Mass Storage devices. In short, USB drives can be used to either Override all the modules on the RoboRIO, or run modules alongside them. Data Dumps can be done to USB devices, as well as data restoring. USB Drives can be of any size, 1GB, 2GB, hell, even 64GB. It's up to you.
+# Configurations
+Instead of redeploying code each time you tweak a value (such as PID), Toast provides a way to make these changes simpler. Using the `ModuleConfig` class, you
+can create a Configuration File for your Toast Module to use. Configuration Files are stored in .json format, and can be changed very easily over SSH. Toast's Configuration File
+can be seen below.
+```json
+{
+	"delegate":{
+		"logger":{
+			"password":"",
+			"algorithm":"SHA256"
+		},
+		"command":{
+			"password":"",
+			"algorithm":"SHA256"
+		}
+	},
+	"robot":{
+		"name":"{ NAME NOT SET }",
+		"team":-1,
+		"desc":"{ DESCRIPTION NOT SET }"
+	},
+	"security":{
+		"policy":"STRICT"
+	},
+	"optimization":{
+		"gc":{
+			"time":30,
+			"enabled":false
+		}
+	},
+	"sim":{
+		"ds":{
+			"enabled":true
+		},
+		"bonjour":{
+			"enabled":false,
+			"target":"9999"
+		}
+	},
+	"threading":{
+		"pool_size":2
+	},
+	"javascript":{
+		"autoload":["main.js"]
+	}
+}
 
-If you want to generate an Autorun file for your USB Drive to work with Toast, you can go to [this page](http://dev.imjac.in/toast/usb/) to create one, or run ``` usb generate ``` in your Toast CommandBus
+```
 
-## Commands
-Toast aims to be as flexible as possible, and as such, we provide a CommandBus implementation. The Command Bus can be accessed through the RoboRIO, Remote Console or even a Web UI or Mobile Device. The Command Bus simply takes a text input from the user, and parses it to an operation. Modules can add their own commands, or even invoke them. Commands are used to give an easy interface between the User and the Robot while the code is running.
+# Commands
+Toast introduces a CommandBus. The CommandBus allows for commands to be sent to the RoboRIO via GradleRIO, STDIN (for Simulation), the Network, or through your own implementation. These
+commands, similar to any shell, will be interpreted by Toast and passed to the relevant code. This allows you to create 'commands' and register on the CommandBus to control your robot with a text-based
+prompt. For example, a team may use the CommandBus to define the layout of the Outer Works in the 2016 Stronghold Tournament *(hint, hint)*.
 
-## Security
-In the odd event that a module goes haywire, Toast has security implementations to make sure the modules doesn't Nuke your RoboRIO.  
-In the Toast Configuration, a user can select STRICT, LOOSE or NONE as a security policy. STRICT will deny unauthorized actions, while LOOSE will only warn the user.
-
-### Ports and Networking
-Modules are given freedom in which ports they choose. STRICT and LOOSE will act the same in this setting, where STRICT will not block, only warn. Any ports outside of the 5800 - 5810 range will send a warning to the user, as ports outside of this range will NOT be forwarded by FMS. This is a precaution so people don't go mad when FMS doesn't forward their ports and their robot doesn't work on the first match.  
-
-## Others
-Many other tools are available to the Toast User, but those that haven't been listed in this readme can be found in the Toast Whitepaper.  
-
-# Deployment
-Toast Deployment is managed through gradle in the Toast releases. Instructions for deploying the Toast Framework to your RoboRIO can be found on the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Deploying-Toast-to-your-RoboRIO).
-
-
-## Module Deployment
-  To deploy a module to your RoboRIO, it's recommended to use a USB Drive.
-  - Plug your USB into the RoboRIO and run ``` usb generate ``` if you haven't already. Restart your RoboRIO after this step.
-  - Plug your USB into your computer and copy your module to ``` toast/modules ``` on your USB.
-  - Plug your USB back into your RoboRIO and you're done
-
-# Developing a Module (Installing Toast)
-
-Developing a Module for Toast can be done in many ways, and as such, we've moved Module Development to the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)
+# JavaScript
+Toast has inbuilt support for the Nashorn JavaScript Engine. Scripts can be saved to a `.js` file and Toast will run them at startup, or code
+can be interpreted LIVE, while the Robot/Simulation is running, to run code on the fly via the `js` command.
 
 # Reporting Bugs
 Find something wrong with Toast? Think it needs more butter, or just isn't Toasted enough? Great! Head over to our [issues page](https://github.com/Open-RIO/ToastAPI/issues) and see if your issue has already been submitted. If it hasn't, go ahead and hit 'new issue' and give us a detailed description of what's wrong. If possible, we'd like you to include as much of the following information possible so we can track down that bug and squash it as quickly as possible.  
