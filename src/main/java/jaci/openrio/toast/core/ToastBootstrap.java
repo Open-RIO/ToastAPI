@@ -38,7 +38,7 @@ public class ToastBootstrap {
      */
     public static Logger toastLogger;
 
-    public static boolean color;
+    public static boolean color = false;
 
     /**
      * Is this a simulation? This is set to true if the Launch Args include
@@ -75,7 +75,6 @@ public class ToastBootstrap {
         Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 2);      // Slightly above normal priority, but below maximum priority.
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();
-        color = true;
         ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
         JavaScript.startLoading();
         profiler.start("ParseArgs");
@@ -106,8 +105,11 @@ public class ToastBootstrap {
                         RobotLoader.manualLoadedClasses.add(nextArg);
                     }
                 } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("--no-color")) {
-                color = false;
+            } else if (arg.equalsIgnoreCase("--color")) {
+                color = true;
+            } else if (arg.equalsIgnoreCase("-ide")) {
+                if (args.length > (i+1))
+                    if (args[i+1].equalsIgnoreCase("IDEA")) color = true;           // Most other IDEs don't support ANSI
             } else if (arg.equalsIgnoreCase("--join")) {
                 ToastSessionJoiner.init();
                 return;
@@ -146,6 +148,9 @@ public class ToastBootstrap {
 
         profiler.start("Misc");
         System.out.println(Assets.getAscii("splash"));
+        try {
+            Thread.sleep(10);       // To avoid splash screen flush racing
+        } catch (InterruptedException e) { }
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
         GlobalBlackboard.INSTANCE.put("runtime_args", args);
