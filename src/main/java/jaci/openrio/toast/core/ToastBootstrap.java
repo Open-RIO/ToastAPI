@@ -148,13 +148,14 @@ public class ToastBootstrap {
 
         profiler.start("Misc");
         System.out.println(Assets.getAscii("splash"));
-        try {
-            Thread.sleep(10);       // To avoid splash screen flush racing
-        } catch (InterruptedException e) { }
         toastLogger = new Logger("Toast", Logger.ATTR_DEFAULT);
         new GlobalBlackboard();
         GlobalBlackboard.INSTANCE.put("runtime_args", args);
         profiler.stop("Misc");
+
+        try {
+            Thread.sleep(20);       // To avoid splash screen flush racing
+        } catch (InterruptedException e) { }
 
         profiler.start("Version");
         Version.init();
