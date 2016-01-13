@@ -217,27 +217,29 @@ public class ToastBootstrap {
         UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Language, FRCNetworkCommunicationsLibrary.tInstances.kLanguage_Java);
         Toast toast = new Toast();
 
-        File file = null;
-        FileOutputStream output = null;
-        try {
-            file = new File("/tmp/frc_versions/FRC_Lib_Version.ini");
+        if (!isSimulation) {
+            File file = null;
+            FileOutputStream output = null;
+            try {
+                file = new File("/tmp/frc_versions/FRC_Lib_Version.ini");
 
-            if (file.exists())
-                file.delete();
+                if (file.exists())
+                    file.delete();
 
-            file.createNewFile();
+                file.createNewFile();
 
-            output = new FileOutputStream(file);
+                output = new FileOutputStream(file);
 
-            output.write("2016 Java Beta5.0".getBytes());
+                output.write("2016 Java Beta5.0".getBytes());
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException ex) {
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } finally {
+                if (output != null) {
+                    try {
+                        output.close();
+                    } catch (IOException ex) {
+                    }
                 }
             }
         }
