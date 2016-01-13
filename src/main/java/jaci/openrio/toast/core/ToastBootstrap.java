@@ -1,6 +1,8 @@
 package jaci.openrio.toast.core;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
+import edu.wpi.first.wpilibj.communication.UsageReporting;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
@@ -22,6 +24,7 @@ import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jaci.openrio.toast.lib.state.LoadPhase;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -202,7 +205,43 @@ public class ToastBootstrap {
         profiler.stop("Security");
 
         profiler.start("WPILib");
-        RobotBase.main(args);
+//        RobotBase.main(args);
+        fakeRobotBase();
+    }
+
+    // For some stupid reason WPILib decides to read EVERY manifest in the classpath and not bother to check if Robot-Class
+    // is null before assigning it. To fix this, we have to 'fake' RobotBase. This bug is in the WPILib bug tracker.
+    public static void fakeRobotBase() {
+        RobotBase.initializeHardwareConfiguration();
+        UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Language, FRCNetworkCommunicationsLibrary.tInstances.kLanguage_Java);
+        Toast toast = new Toast();
+
+        File file = null;
+        FileOutputStream output = null;
+        try {
+            file = new File("/tmp/frc_versions/FRC_Lib_Version.ini");
+
+            if (file.exists())
+                file.delete();
+
+            file.createNewFile();
+
+            output = new FileOutputStream(file);
+
+            output.write("2016 Java Beta5.0".getBytes());
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+
+        toast.startCompetition();
     }
 
 }
