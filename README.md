@@ -16,7 +16,9 @@ An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib.
 
 
 # Installing Toast
-Toast installation and Module Development Instructions can be found in the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)
+Toast installation and Module Development Instructions can be found in the [Toast Wiki](https://github.com/Open-RIO/ToastAPI/wiki/Creating-A-Toast-Module----Start-to-Finish)  
+  
+If you're releasing your module source files, whether it be on Github or anywhere else, it is recommended to read [this wiki article](https://github.com/Open-RIO/ToastAPI/wiki/Open-Sourcing-your-Toast-Module)
 
 # What is Toast?
 Toast is a modular robotics framework for the *FIRST* Robotics Competition, built atop WPILib.
