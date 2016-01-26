@@ -42,21 +42,25 @@ public class CrashInfoModules implements CrashInfoProvider {
         ArrayList<String> text = new ArrayList<>();
 
         for (ModuleContainer module : ModuleManager.getContainers()) {
-            text.add(module.getName());
-            text.add("\tName: " + module.getName());
-            text.add("\tVersion: " + module.getVersion());
-            text.add("\tFile: " + module.getCandidate().getModuleFile());
-            text.add("\tBypass Class: " + module.getCandidate().getBypassClass());
-            text.add("\tCore Module Class: " + module.getCandidate().getCorePluginClass());
-            text.add("\tOwned Packages: ");
-            for (String pack : module.getCandidate().getClassEntries())
-                text.add("\t\t" + pack);
+            try {
+                text.add(module.getName());
+                text.add("\tName: " + module.getName());
+                text.add("\tVersion: " + module.getVersion());
+                text.add("\tFile: " + module.getCandidate().getModuleFile());
+                text.add("\tBypass Class: " + module.getCandidate().getBypassClass());
+                text.add("\tCore Module Class: " + module.getCandidate().getCorePluginClass());
+                text.add("\tOwned Packages: ");
+                for (String pack : module.getCandidate().getClassEntries())
+                    text.add("\t\t" + pack);
 
-            HashMap<String, String> customData = module.getModule().getCustomData();
-            if (customData != null) {
-                text.add("\tCustom Data: ");
-                for (Map.Entry<String, String> entry : customData.entrySet())
-                    text.add("\t\t" + entry.getKey() + ": " + entry.getValue());
+                HashMap<String, String> customData = module.getModule().getCustomData();
+                if (customData != null) {
+                    text.add("\tCustom Data: ");
+                    for (Map.Entry<String, String> entry : customData.entrySet())
+                        text.add("\t\t" + entry.getKey() + ": " + entry.getValue());
+                }
+            } catch (Throwable e) {
+                text.add(module.getClass().getCanonicalName() + " could not be logged. (" + e.getLocalizedMessage() + ")");
             }
         }
 

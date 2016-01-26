@@ -151,10 +151,16 @@ public class ProfilerSection {
         JsonBuilder<JsonObject> obj = JsonObject.builder();
 
         for (ProfilerSection section : sections()) {
-            obj.value(section.name(), section.toJSON());
+            if (section != null) {
+                JsonObject object = section.toJSON();
+
+                if (section.name() != null && object != null)
+                    obj.value(section.name(), object);
+            }
         }
         for (ProfilerEntity entity : entities()) {
-            obj.value(entity.name(), entity.getDuration());
+            if (entity != null && entity.name() != null)
+                obj.value(entity.name(), entity.getDuration());
         }
         return obj.done();
     }

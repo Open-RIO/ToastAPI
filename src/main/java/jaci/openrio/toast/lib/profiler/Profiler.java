@@ -111,7 +111,12 @@ public class Profiler {
         JsonBuilder<JsonObject> obj = JsonObject.builder();
 
         for (ProfilerSection section : sections()) {
-            obj.value(section.name(), section.toJSON());
+            if (section != null) {
+                JsonObject object = section.toJSON();
+
+                if (section.name() != null && object != null)
+                    obj.value(section.name(), object);
+            }
         }
         return obj.done();
     }

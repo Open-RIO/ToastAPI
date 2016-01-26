@@ -85,13 +85,17 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             out.println();
             out.println("Crash Information: ");
             for (CrashInfoProvider provider : providers) {
-                out.println("\t" + provider.getName() + ": ");
-                List<String> info = provider.getCrashInfo(t);
-                if (info != null)
-                    for (String s : info) {
-                        out.println("\t\t" + s);
-                    }
-                out.println();
+                try {
+                    out.println("\t" + provider.getName() + ": ");
+                    List<String> info = provider.getCrashInfo(t);
+                    if (info != null)
+                        for (String s : info) {
+                            out.println("\t\t" + s);
+                        }
+                    out.println();
+                } catch (Throwable e) {
+                    out.println("Provider: " + provider.getClass().getCanonicalName() + " could not finalize output. (" + e.getLocalizedMessage() + ")");
+                }
             }
             out.println();
             out.println("*******************");
