@@ -42,7 +42,7 @@ public class ModuleConfig {
         section.stop("ModuleConfig");
     }
 
-    File parent_file;
+    public File parent_file;
     HashMap<String, Object> defaults;
     HashMap<String, Object> full_config;
 
