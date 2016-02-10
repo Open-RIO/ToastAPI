@@ -19,7 +19,6 @@ public class GuiSRX extends JComponent {
 
     public GuiSRX(int x, int y, SRX_Reg.SRX_Wrapper wrapper, JPanel parent) {
         this.x = x; this.y = y; this.wrapper = wrapper;
-        wrapper.onUpdate(this::update);
         this.setBounds(x, y, 500, 150);
         parent.add(this);
 
@@ -36,6 +35,7 @@ public class GuiSRX extends JComponent {
         createLabel("Voltage: ", 230, 50, 70, 14, graytext);
         voltage = new GuiNumberSpinner(300, 55, 0, 0, -12, 12, false, this).enableProgress().setFontSize(14);
 
+        wrapper.onUpdate(this::update);
         update();
     }
 
@@ -43,15 +43,16 @@ public class GuiSRX extends JComponent {
      * On Talon Update
      */
     public void update() {
-        control_mode.setText("Control Mode: " + CANTalon.TalonControlMode.valueOf(wrapper.mode).toString());
-        slotid.setText("Slot ID: " + wrapper.slotid);
-        follower.setText("Following: " + wrapper.follower);
+        if (wrapper != null) {
+            control_mode.setText("Control Mode: " + CANTalon.TalonControlMode.valueOf(wrapper.mode).toString());
+            slotid.setText("Slot ID: " + wrapper.slotid);
+            follower.setText("Following: " + wrapper.follower);
 
-        pvbus.setValue(wrapper.pvbus);
-        voltage.setValue(wrapper.voltage);
-        speed.setText("Speed Delta: " + wrapper.speed);
-        position.setText("Position Delta: " + wrapper.position);
-
+            pvbus.setValue(wrapper.pvbus);
+            voltage.setValue(wrapper.voltage);
+            speed.setText("Speed Delta: " + wrapper.speed);
+            position.setText("Position Delta: " + wrapper.position);
+        }
         repaint();
     }
 
