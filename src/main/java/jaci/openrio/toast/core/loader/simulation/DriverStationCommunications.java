@@ -31,6 +31,11 @@ public class DriverStationCommunications {
                 Process p = pb.start();
                 ProcessBuilder pb2 = new ProcessBuilder("dns-sd", "-P", "roboRIO-" + bonjour_target, "_ni._tcp", "local", "3580", "roboRIO-" + bonjour_target + ".local", "127.0.0.1");
                 Process p2 = pb2.start();
+                ProcessBuilder pb3 = new ProcessBuilder("dns-sd", "-P", "roboRIO-TOAST-frc", "_ni._tcp", "local", "3580", "roboRIO-TOAST-frc.local", "127.0.0.1");
+                Process p3 = pb3.start();
+                ProcessBuilder pb4 = new ProcessBuilder("dns-sd", "-P", "roboRIO-" + bonjour_target + "-frc", "_ni._tcp", "local", "3580", "roboRIO-" + bonjour_target + "-frc.local", "127.0.0.1");
+                Process p4 = pb4.start();
+                Toast.log().info("Toast Driver Station Networking Bonjour Tunnel successfully configured!");
             } catch (Exception e) {
                 Toast.log().error("Could not start Toast DriverStation Bonjour Service (do you have Bonjour installed?): " + e);
             }
