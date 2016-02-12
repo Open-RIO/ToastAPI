@@ -84,8 +84,8 @@ public class ToastBootstrap {
             try {
                 Thread.sleep(2 * 60 * 1000);
                 if (LoadPhase.currentPhase != LoadPhase.COMPLETE) {
-                    System.err.println("[ ERROR ] Toast is taking over 2 minutes to initiate. This is not normal. Following is" +
-                            "a full detailed list of where each thread is in its execution. If you are seeing this message," +
+                    System.err.println("[ ERROR ] Toast is taking over 2 minutes to initiate. This is not normal. Following is " +
+                            "a full detailed list of where each thread is in its execution. If you are seeing this message, " +
                             "please notify the developers on the Toast API Main Repository (http://github.com/Open-RIO/ToastAPI");
                     System.err.println("\tMAIN Thread:");
                     for (StackTraceElement element : main_thread.getStackTrace()) {
