@@ -22,6 +22,7 @@ import jaci.openrio.toast.lib.module.ModuleConfig;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.profiler.ProfilerSection;
 import jaci.openrio.toast.lib.state.LoadPhase;
+import jaci.openrio.toast.lib.state.RobotState;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,6 +69,9 @@ public class ToastBootstrap {
     public static long startTimeMS;
     public static long endTimeMS;
 
+    public static Thread main_thread;
+    public static Thread watch_init_thread;
+
     /**
      * The Main Method. Called when the Toast Program is started. This contains multiple arguments, such as
      * -sim, -verify, -groovy, -groovyClass, -core and any others that are required. More of these are outlined in
@@ -75,6 +79,30 @@ public class ToastBootstrap {
      * the GlobalBlackboard
      */
     public static void main(String[] args) {
+        main_thread = Thread.currentThread();
+        watch_init_thread = new Thread(() -> {
+            try {
+                Thread.sleep(2 * 60 * 1000);
+                if (LoadPhase.currentPhase != LoadPhase.COMPLETE) {
+                    System.err.println("[ ERROR ] Toast is taking over 2 minutes to initiate. This is not normal. Following is" +
+                            "a full detailed list of where each thread is in its execution. If you are seeing this message," +
+                            "please notify the developers on the Toast API Main Repository (http://github.com/Open-RIO/ToastAPI");
+                    System.err.println("\tMAIN Thread:");
+                    for (StackTraceElement element : main_thread.getStackTrace()) {
+                        System.err.println("\t\tat " + element);
+                    }
+
+                    Thread.getAllStackTraces().forEach((thread, stackTraceElements) -> {
+                        System.err.println("\tThread: '" + thread.getName() + "' priority: " + thread.getPriority() + " group: '" + thread.getThreadGroup().getName() + "'");
+                        for (StackTraceElement element : stackTraceElements) {
+                            System.err.println("\t\tat " + element);
+                        }
+                    });
+                }
+            } catch (InterruptedException e) { }
+        });
+        watch_init_thread.start();
+
         Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 2);      // Slightly above normal priority, but below maximum priority.
         startTimeNS = System.nanoTime();
         startTimeMS = System.currentTimeMillis();

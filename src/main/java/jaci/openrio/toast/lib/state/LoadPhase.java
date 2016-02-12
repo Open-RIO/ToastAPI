@@ -60,7 +60,7 @@ public enum LoadPhase {
     COMPLETE("Main");
 
     String threadName;
-    static LoadPhase currentPhase;
+    public static LoadPhase currentPhase;
 
     LoadPhase(String threadName) {
         this.threadName = threadName;
