@@ -63,7 +63,7 @@ public class AnalogJNI extends JNIWrapper {
 	public static int getAnalogOffset(long analog_port_pointer){
 		return 0;
 	}
-	
+
 	public static double getAnalogOutput(long port_pointer){
 		return port_pointer;
 	}
@@ -73,7 +73,10 @@ public class AnalogJNI extends JNIWrapper {
 	}
 	
 	public static double getAnalogSampleRate(){
-		return 0;
+		// Everything fucking dies if this is set to 0. resetAccumulator() in AnalogInput runs 1.0 / getAnalogSampleRate(),
+		// which means 1.0 / 0 in floating point arithmetic, which equals Infinity, hence blocking the main thread indefinitely.
+		// 1 / 0 gives an exception, but 1.0 / 0 gives infinity. Welcome to floating point arithmetic.
+		return 1 / 25;
 	}
 	
 	public static boolean getAnalogTriggerInWindow(long analog_trigger_pointer){
