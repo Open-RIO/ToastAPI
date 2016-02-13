@@ -57,6 +57,7 @@ public class Registrar<ID, Type> {
     public static volatile Registrar<Integer, PWM>              pwmRegistrar    = new Registrar<>();
     public static volatile Registrar<Integer, SpeedController>  canRegistrar    = new Registrar<>();
     public static volatile Registrar<Integer, DigitalSource>    dioRegistrar    = new Registrar<>();
+    public static volatile Registrar<Integer, Relay>            relayRegistrar  = new Registrar<>();
     public static volatile Registrar<Integer, AnalogInput>      aiRegistrar     = new Registrar<>();
     public static volatile Registrar<Integer, AnalogOutput>     aoRegistrar     = new Registrar<>();
 
@@ -90,6 +91,14 @@ public class Registrar<ID, Type> {
      */
     public static AnalogInput analogInput(int port) {
         return aiRegistrar.fetch(port, AnalogInput.class, () -> { return new AnalogInput(port); });
+    }
+    
+    /**
+     * Get a Spike style Relay instance from the Registrar
+     * @param relayPort the Relay port to use
+     */
+    public static Relay relay(int relayPort) {
+        return relayRegistrar.fetch(relayPort, Relay.class, () -> { return new Relay(relayPort); });
     }
 
     // -- Motor Controllers -- //
