@@ -76,7 +76,7 @@ public class AnalogJNI extends JNIWrapper {
 		// Everything fucking dies if this is set to 0. resetAccumulator() in AnalogInput runs 1.0 / getAnalogSampleRate(),
 		// which means 1.0 / 0 in floating point arithmetic, which equals Infinity, hence blocking the main thread indefinitely.
 		// 1 / 0 gives an exception, but 1.0 / 0 gives infinity. Welcome to floating point arithmetic.
-		return 1 / 25;
+		return 1 / 25d;
 	}
 	
 	public static boolean getAnalogTriggerInWindow(long analog_trigger_pointer){
