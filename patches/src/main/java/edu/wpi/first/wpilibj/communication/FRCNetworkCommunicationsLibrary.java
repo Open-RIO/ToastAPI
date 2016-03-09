@@ -223,4 +223,11 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 		//TODO report error
 		return 0;
 	}
+
+  public static int HALSendError(boolean isError, int errorCode,
+      boolean isLVCode, String details, String location, String callStack,
+      boolean printMsg) {
+    // TODO print error
+    return 0;
+  }
 }
