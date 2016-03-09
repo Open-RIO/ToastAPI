@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib.crash;
 
+import jaci.openrio.toast.core.Environment;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastBootstrap;
 import jaci.openrio.toast.core.io.usb.MassStorageDevice;
@@ -33,6 +34,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     static DateFormat dateFormat;
     static CrashHandler instance;
 
+    static int exception_fms_count = 0;
+    static long exception_fms_start = 0;
+
     /**
      * Initialize the handler. This is handled by Toast.
      */
@@ -64,12 +68,21 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     public static void handle(Throwable t) {
         try {
+            boolean shouldShutdown = !Environment.isCompetition();
+            exception_fms_count++;
+            if (exception_fms_start == 0) exception_fms_start = System.currentTimeMillis();
+
             String fn = "crash-" + dateFormat.format(new Date());
             File file = new File(crashDir, fn + ".txt");
             SplitStream split = new SplitStream(System.err, new FileOutputStream(file));
             PrintStream out = new PrintStream(split);
 
             out.println("**** CRASH LOG ****");
+            if (!shouldShutdown && exception_fms_count > 10 && exception_fms_start < 10000) {     // 10 Exceptions in 10 Seconds
+                out.println("NOTICE: More than 10 Exceptions have occured in 10 seconds. This is a good sign there is something majorly wrong, and even though you are connected to FMS, we're going to shut down anyway. Goodbye, World.");
+                shouldShutdown = true;
+            } else if (!shouldShutdown)
+                out.println("NOTICE: Your robot is connected to FMS! To save your robot, we won't shut down your robot unless this exception is repeated.");
             out.println("Your robot has crashed. Following is a crash log and more details.");
             out.println("This log has been saved to: " + file.getCanonicalPath());
             out.println("This log will also be duplicated to USB devices, with the filename: " + fn + ".txt");
@@ -110,7 +123,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             duplicate(cpFile);
             duplicate(file);
 
-            Toast.getToast().shutdownCrash();
+            if (shouldShutdown)
+                Toast.getToast().shutdownCrash();
         } catch (Exception e) {
         }
     }
