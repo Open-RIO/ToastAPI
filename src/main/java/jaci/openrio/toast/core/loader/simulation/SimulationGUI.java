@@ -173,6 +173,15 @@ public class SimulationGUI extends JPanel {
                 }
             });
         }
+        
+        // interface for encoder values
+        createLabel("Encoder", 130, 10, 100, 14, new Color(180, 180, 180));
+        createLabel("Count", 165, 25, 100, 12, Color.GRAY);
+        createLabel("Rate", 165, 45, 100, 14, Color.GRAY);
+        GuiNumberSpinner count = new GuiNumberSpinner(115, 30, 0, 1, -10, 10, true, this);
+        count.setCallback(value -> SimulationData.encoderValue = (int) value);
+        GuiNumberSpinner rate = new GuiNumberSpinner(115, 50, 1, .1, -10, 10, true, this);
+        rate.setCallback(value -> SimulationData.encoderRate = value);
 
         createLabel("Power", 210, 10, 100, 14, new Color(180, 180, 180));
 
@@ -236,6 +245,16 @@ public class SimulationGUI extends JPanel {
             }
             public void onToggle(boolean state) { }
         });
+        
+        // GuiNumberSpinners for controlling analog input
+        GuiNumberSpinner analog0 = new GuiNumberSpinner(355, 470, 0, 1, -10, 10, true, this);
+        analog0.setCallback(value -> SimulationData.analogValues[0] = (short) value);
+        GuiNumberSpinner analog1 = new GuiNumberSpinner(380, 485, 0, 1, -10, 10, true, this);
+        analog1.setCallback(value -> SimulationData.analogValues[1] = (short) value);
+        GuiNumberSpinner analog2 = new GuiNumberSpinner(410, 470, 0, 1, -10, 10, true, this);
+        analog2.setCallback(value -> SimulationData.analogValues[2] = (short) value);
+        GuiNumberSpinner analog3 = new GuiNumberSpinner(435, 485, 0, 1, -10, 10, true, this);
+        analog3.setCallback(value -> SimulationData.analogValues[3] = (short) value);
     }
 
     /**

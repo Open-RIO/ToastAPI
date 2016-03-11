@@ -2,6 +2,8 @@ package edu.wpi.first.wpilibj.hal;
 
 import java.nio.IntBuffer;
 
+import jaci.openrio.toast.core.loader.simulation.SimulationData;
+
 /**
  * JNIWrapper for encoders
  */
@@ -20,11 +22,11 @@ public class EncoderJNI extends JNIWrapper {
     }
     
     public static int getEncoder(long encoder_pointer){
-        return 0;
+        return 4 * SimulationData.encoderValue;
     }
     
     public static double getEncoderPeriod(long encoder_pointer){
-        return 0;
+        return 1 / SimulationData.encoderRate;
     }
     
     public static void setEncoderMaxPeriod(long encoder_pointer, double maxPeriod){

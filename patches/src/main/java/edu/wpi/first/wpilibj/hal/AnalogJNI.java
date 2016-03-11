@@ -3,6 +3,8 @@ package edu.wpi.first.wpilibj.hal;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 
+import jaci.openrio.toast.core.loader.simulation.SimulationData;
+
 /**
  * Analog Input/Output
  */
@@ -92,7 +94,7 @@ public class AnalogJNI extends JNIWrapper {
 	}
 	
 	public static short getAnalogValue(long analog_port_pointer){
-		return 0;
+		return SimulationData.analogValues[(int) analog_port_pointer];
 	}
 	
 	public static double getAnalogVoltage(long analog_port_pointer){
