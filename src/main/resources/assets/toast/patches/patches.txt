@@ -8,6 +8,7 @@ edu/wpi/first/wpilibj/communication/FRCNetworkCommunicationsLibrary.sim
 edu/wpi/first/wpilibj/hal/AccelerometerJNI.sim
 edu/wpi/first/wpilibj/hal/AnalogJNI.sim
 edu/wpi/first/wpilibj/hal/DIOJNI.sim
+edu/wpi/first/wpilibj/hal/EncoderJNI.sim
 edu/wpi/first/wpilibj/hal/HALUtil.sim
 edu/wpi/first/wpilibj/hal/InterruptJNI$InterruptJNIHandlerFunction.sim
 edu/wpi/first/wpilibj/hal/InterruptJNI.sim
