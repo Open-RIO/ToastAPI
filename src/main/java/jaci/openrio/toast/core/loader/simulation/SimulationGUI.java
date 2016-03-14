@@ -1,16 +1,27 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.loader.simulation.encoder.EncoderGUI;
 import jaci.openrio.toast.core.loader.simulation.jni.InterruptContainer;
 import jaci.openrio.toast.core.loader.simulation.srx.TalonSRX_GUI;
 import jaci.openrio.toast.lib.profiler.Profiler;
 import jaci.openrio.toast.lib.state.RobotState;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 /**
  * This is the Rat's nest of code that is the Simulation GUI. There is no clean way to programmatically create a GUI
@@ -174,15 +185,6 @@ public class SimulationGUI extends JPanel {
             });
         }
         
-        // interface for encoder values
-        createLabel("Encoder", 130, 10, 100, 14, new Color(180, 180, 180));
-        createLabel("Count", 165, 25, 100, 12, Color.GRAY);
-        createLabel("Rate", 165, 45, 100, 14, Color.GRAY);
-        GuiNumberSpinner count = new GuiNumberSpinner(115, 30, 0, 1, -10, 10, true, this);
-        count.setCallback(value -> SimulationData.encoderValue = (int) value);
-        GuiNumberSpinner rate = new GuiNumberSpinner(115, 50, 1, .1, -10, 10, true, this);
-        rate.setCallback(value -> SimulationData.encoderRate = value);
-
         createLabel("Power", 210, 10, 100, 14, new Color(180, 180, 180));
 
         GuiNumberSpinner voltage = new GuiNumberSpinner(205, 30, 12.5, 0.1, 5, 12.8, true, this);
@@ -246,6 +248,24 @@ public class SimulationGUI extends JPanel {
             public void onToggle(boolean state) { }
         });
         
+        GuiButton encoderButton = new GuiButton(20, 180, 100, 30, false, "Encoders", false, this);
+        encoderButton.setCallback(new GuiButton.ButtonCallback() {
+			
+			/* (non-Javadoc)
+			 * @see jaci.openrio.toast.core.loader.simulation.GuiButton.ButtonCallback#onToggle(boolean)
+			 */
+			public void onToggle(boolean state) {
+			}
+			
+			/* (non-Javadoc)
+			 * @see jaci.openrio.toast.core.loader.simulation.GuiButton.ButtonCallback#onClick()
+			 */
+			@Override
+			public void onClick() {
+				openEncoder();
+			}
+		});
+        
         // GuiNumberSpinners for controlling analog input
         GuiNumberSpinner analog0 = new GuiNumberSpinner(355, 470, 0, 1, -10, 10, true, this);
         analog0.setCallback(value -> SimulationData.analogValues[0] = (short) value);
@@ -271,6 +291,14 @@ public class SimulationGUI extends JPanel {
     public void openPneumatics() {
         if (PneumaticsGUI.INSTANCE == null)
             PneumaticsGUI.create();
+    }
+    
+    /**
+     * Open the Encoder GUI
+     */
+    public void openEncoder(){
+    	if (EncoderGUI.INSTANCE == null)
+    		EncoderGUI.create();
     }
 
     /**
