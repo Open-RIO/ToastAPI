@@ -64,6 +64,11 @@ public class SimulationData {
         if (SimulationGUI.INSTANCE != null)
             SimulationGUI.INSTANCE.pwmSpinners[port].setValue(val);
     }
+    
+    /**
+     * USAGE REPORTING *
+     */
+    public static byte[] motorControllers = new byte[10];
 
     /**
      * POWER DISTRIBUTION PANEL *

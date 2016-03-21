@@ -10,13 +10,20 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+/**
+ * JNI Wrapper for library <b>FRC_NetworkCommunications</b><br>
+ */
 public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
+	
+	/** Module type from LoadOut.h */
 	public static interface tModuleType {
 		public static final int kModuleType_Unknown = 0x00;
 		public static final int kModuleType_Analog = 0x01;
 		public static final int kModuleType_Digital = 0x02;
 		public static final int kModuleType_Solenoid = 0x03;
 	};
+	
+	/** Target class from LoadOut.h */
 	public static interface tTargetClass {
 		public static final int kTargetClass_Unknown = 0x00;
 		public static final int kTargetClass_FRC1 = 0x10;
@@ -27,6 +34,8 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 		public static final int kTargetClass_FamilyMask = 0xF0;
 		public static final int kTargetClass_ModuleMask = 0x0F;
 	};
+	
+	/** Resource types from UsageReporting.h */
 	public static interface tResourceType {
 		public static final int kResourceType_Controller = 0;
 		public static final int kResourceType_Module = 1;
@@ -77,7 +86,18 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 		public static final int kResourceType_HiTechnicAccel = 46;
 		public static final int kResourceType_HiTechnicCompass = 47;
 		public static final int kResourceType_SRF08 = 48;
+		public static final int kResourceType_AnalogOutput = 49;
+		public static final int kResourceType_VictorSP = 50;
+		public static final int kResourceType_TalonSRX = 51;
+		public static final int kResourceType_CANTalonSRX = 52;
+		public static final int kResourceType_ADXL362 = 53;
+		public static final int kResourceType_ADXRS450 = 54;
+		public static final int kResourceType_RevSPARK = 55;
+		public static final int kResourceType_MindsensorsSD540 = 56;
+		public static final int kResourceType_DigitalFilter = 57;
 	};
+	
+	/** Instances from UsageReporting.h */
 	public static interface tInstances {
 		public static final int kLanguage_LabVIEW = 1;
 		public static final int kLanguage_CPlusPlus = 2;
@@ -112,6 +132,7 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 		public static final int kCommand_Scheduler = 1;
 		public static final int kSmartDashboard_Instance = 1;
 	};
+	
 	public static final int kFRC_NetworkCommunication_DynamicType_DSEnhancedIO_Input = 17;
 	public static final int kFRC_NetworkCommunication_DynamicType_Kinect_Vertices1 = 21;
 	public static final int SYS_STATUS_DATA_SIZE = 44;
@@ -134,8 +155,26 @@ public class FRCNetworkCommunicationsLibrary extends JNIWrapper {
 
 	public static void setNewDataSem(long mutexId) {}
 
+	/**
+	 * Report the usage of a resource of interest. <br>
+	 *
+	 * <br>
+	 *$
+	 * @param resource one of the values in the tResourceType above (max value
+	 *        51). <br>
+	 * @param instanceNumber an index that identifies the resource instance. <br>
+	 * @param context an optional additional context number for some cases (such
+	 *        as module number). Set to 0 to omit. <br>
+	 * @param feature a string to be included describing features in use on a
+	 *        specific resource. Setting the same resource more than once allows
+	 *        you to change the feature string.<br>
+	 *        Original signature :
+	 *        <code>uint32_t report(tResourceType, uint8_t, uint8_t, const char*)</code>
+	 */
 	public static int FRCNetworkCommunicationUsageReportingReport(byte resource, byte instanceNumber, byte context, String feature) {
-		//TODO: Report
+		// keep track of what motor controllers are initialized where
+		if (resource == tResourceType.kResourceType_VictorSP)
+			SimulationData.motorControllers[instanceNumber] = resource;
 		return 0;
 	}
 
