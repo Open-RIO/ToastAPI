@@ -58,6 +58,9 @@ public class ToastBootstrap {
     public static boolean isHeadless;
     public static boolean compareStub;
 
+    public static boolean debug_logging = false;
+    public static boolean exception_info_logging = false;
+
     /**
      * Get the root folder for Toast. This is where logs, modules,
      * and just about everything for toast is saved.
@@ -115,39 +118,44 @@ public class ToastBootstrap {
             try {
                 nextArg = args[i+1];
             } catch (Exception e) {}
-            if (arg.equalsIgnoreCase("-simulation") || arg.equals("-sim")) {
+            if (arg.equalsIgnoreCase("-simulation") || arg.equals("-sim")) {                // Start Toast in Simulation Mode
                 isSimulation = true;
                 try {
                     if (!nextArg.equals(".")) {
-                        if (nextArg.equalsIgnoreCase("--search")) {
+                        if (nextArg.equalsIgnoreCase("--search")) {                         // Search for Simulated Classes in an IDE Environment
                             RobotLoader.search = true;
                         } else {
                             RobotLoader.manualLoadedClasses.add(nextArg);
                         }
                     }
                 } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {
+            } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {    // Start Toast in Verification Mode
                 isSimulation = true;
                 isVerification = true;
-            } else if (arg.equalsIgnoreCase("-core")) {
+            } else if (arg.equalsIgnoreCase("-core")) {                                     // Manually Load a Core Class
                 try {
                     if (!nextArg.equals(".")) {
                         RobotLoader.coreClasses.add(nextArg);
                         RobotLoader.manualLoadedClasses.add(nextArg);
                     }
                 } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("--color")) {
+            } else if (arg.equalsIgnoreCase("--color")) {                                   // Log in color
                 color = true;
-            } else if (arg.equalsIgnoreCase("-ide")) {
+            } else if (arg.equalsIgnoreCase("-ide")) {                                      // Specify the IDE currently being used (IDEA/Eclipse)
                 if (args.length > (i+1))
-                    if (args[i+1].equalsIgnoreCase("IDEA")) color = true;           // Most other IDEs don't support ANSI
-            } else if (arg.equalsIgnoreCase("--join")) {
+                    if (args[i+1].equalsIgnoreCase("IDEA")) color = true;                   // Most other IDEs don't support ANSI
+            } else if (arg.equalsIgnoreCase("--join")) {                                    // Join a local Toast logging session
                 ToastSessionJoiner.init();
                 return;
-            } else if (arg.equalsIgnoreCase("--headless")) {
+            } else if (arg.equalsIgnoreCase("--headless")) {                                // Start the simulation Headless (no GUI)
                 isHeadless = true;
-            } else if (arg.equalsIgnoreCase("--stub")) {
+            } else if (arg.equalsIgnoreCase("--stub")) {                                    // Exit immediately. Used for memory profiling
                 compareStub = true;
+            } else if (arg.equalsIgnoreCase("-d") || arg.equalsIgnoreCase("--debug") || arg.equalsIgnoreCase("--MOAR")) {     // Enable debug output
+                debug_logging = true;
+                exception_info_logging = true;
+            } else if (arg.equalsIgnoreCase("-e") || arg.equalsIgnoreCase("--exceptions")) {    // Enable superfluous loading exception output
+                exception_info_logging = true;
             }
         }
         profiler.stop("ParseArgs");

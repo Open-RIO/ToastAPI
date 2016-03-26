@@ -137,10 +137,12 @@ public class RobotLoader {
                     log.info("Injected Core Plugin: " + file.getName());
                 }
                 if (attr.getValue("Toast-Plugin-Class") != null) {
+                    log.debug("Bypass Module Detected: " + file.getName());
                     String bypassClass = (String) attr.getValue("Toast-Plugin-Class");
                     container.setBypass(true, bypassClass);
                 }
                 if (attr.getValue("Robot-Class") != null) {
+                    log.debug("Wrapping Module Detected: " + file.getName());
                     String wrapperClazz = attr.getValue("Robot-Class");
                     container.setWrapper(true, wrapperClazz);
                 }
@@ -155,6 +157,7 @@ public class RobotLoader {
                 }
             }
 
+            log.debug("Preliminary Candidate Added: " + file.getName());
             getCandidates().add(container);
             if (expandClasspath)
                 addURL(file.toURI().toURL());
@@ -199,8 +202,12 @@ public class RobotLoader {
         if (files != null)
             for (File file : files) {
                 try {
+                    log.debug("Discovering Module Jar: " + file.getName());
                     loadJar(file, true);
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    log.debug("Could not discover module for candidacy: " + file.getName());
+                    log.debugException(e);
+                }
             }
 
         File[] otherFiles = dir.listFiles(new FilenameFilter() {
@@ -213,8 +220,12 @@ public class RobotLoader {
         if (otherFiles != null)
             for (File file : otherFiles) {
                 try {
+                    log.warn("Non-Jar Module in modules/! This should be in libs/! " + file.getName());
                     addURL(file.toURI().toURL());
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    log.debug("Could not expand classpath for Library: " + file.getName());
+                    log.debugException(e);
+                }
             }
     }
 
@@ -234,8 +245,12 @@ public class RobotLoader {
         if (files != null)
             for (File file : files) {
                 try {
+                    log.debug("Expanding Classpath for Library: " + file.getName());
                     addURL(file.toURI().toURL());
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    log.debug("Could not expand classpath for Library: " + file.getName());
+                    log.debugException(e);
+                }
             }
 
         File[] otherFiles = dir.listFiles(new FilenameFilter() {
@@ -248,8 +263,12 @@ public class RobotLoader {
         if (otherFiles != null)
             for (File file : otherFiles) {
                 try {
+                    log.debug("Expanding Classpath for Non-Jar Library: " + file.getName());
                     addURL(file.toURI().toURL());
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    log.debug("Could not expand classpath for Non-Jar Library: " + file.getName());
+                    log.debugException(e);
+                }
             }
     }
 
@@ -284,11 +303,14 @@ public class RobotLoader {
         section.start("Parse");
         for (String clazz : coreClasses) {
             try {
+                log.debug("Parsing Core Entry: " + clazz);
                 Class c = Class.forName(clazz);
                 Object object = c.newInstance();
                 coreObjects.add(object);
                 c.getDeclaredMethod("preinit").invoke(object);
             } catch (Throwable e) {
+                log.debug("Could not parse core entry: " + clazz);
+                log.debugException(e);
             }
         }
         section.stop("Parse");
@@ -308,10 +330,13 @@ public class RobotLoader {
         try {
             Class c = Class.forName(clazz);
             if (ToastModule.class.isAssignableFrom(c) && classLoadable(c)) {
+                log.debug("Toast Module Class Found: " + clazz + " for candidate: " + candidate.getModuleFile().getName());
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
             }
         } catch (Throwable e) {
+            log.debug("Could not parse module class: " + clazz);
+            log.debugException(e);
         }
     }
 
@@ -322,10 +347,13 @@ public class RobotLoader {
         try {
             Class c = Class.forName(clazz);
             if (RobotBase.class.isAssignableFrom(c) && classLoadable(c) && !Toast.class.isAssignableFrom(c)) {
+                log.debug("WPILib Class Found: " + clazz + " for candidate: " + candidate.getModuleFile().getName() + "... wrapping...");
                 ModuleWrapper wrapper = new ModuleWrapper(candidate.getModuleFile(), c, candidate);
                 getContainers().add(new ModuleContainer(wrapper, candidate));
             }
         } catch (Throwable e) {
+            log.debug("Could not parse wrapper class: " + clazz);
+            log.debugException(e);
         }
     }
 
@@ -347,6 +375,7 @@ public class RobotLoader {
         }
 
         for (String clazz : manualLoadedClasses) {
+            log.debug("Manually Loading Class: " + clazz);
             ModuleCandidate candidate = new ModuleCandidate();
             candidate.addClassEntry(clazz);
             parseClass(clazz, candidate);
@@ -363,6 +392,7 @@ public class RobotLoader {
     private static void constructModules(ProfilerSection section) {
         for (ModuleContainer container : getContainers()) {
             try {
+                log.debug("Constructing Module Container: " + container.getCandidate().getModuleFile().getName());
                 ProfilerEntity entity = new ProfilerEntity().start();
                 container.construct();
                 entity.stop();
@@ -370,6 +400,8 @@ public class RobotLoader {
                 section.section("Module").section(container.getName()).pushEntity(entity);
                 log.info("Module Loaded: " + container.getDetails());
             } catch (Exception e) {
+                log.debug("Could not Construct Module: " + container.getCandidate().getModuleFile().getName());
+                log.debugException(e);
             }
         }
     }
@@ -382,6 +414,7 @@ public class RobotLoader {
     private static void resolveBranches(ProfilerSection section) {
         ProfilerSection section1 = section.section("Dependency");
         for (ModuleContainer container : getContainers()) {
+            log.debug("Resolving Dependencies for Module: " + container.getName());
             section1.start(container.getName());
             container.resolve_branches();
             section1.stop(container.getName());
