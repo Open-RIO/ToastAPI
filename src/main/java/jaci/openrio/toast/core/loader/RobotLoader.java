@@ -330,7 +330,7 @@ public class RobotLoader {
         try {
             Class c = Class.forName(clazz);
             if (ToastModule.class.isAssignableFrom(c) && classLoadable(c)) {
-                log.debug("Toast Module Class Found: " + clazz + " for candidate: " + candidate.getModuleFile().getName());
+                log.debug("Toast Module Class Found: " + clazz + " for candidate: " + candidate.getModuleFile());
                 ModuleContainer container = new ModuleContainer(c, candidate);
                 getContainers().add(container);
             }
@@ -347,7 +347,7 @@ public class RobotLoader {
         try {
             Class c = Class.forName(clazz);
             if (RobotBase.class.isAssignableFrom(c) && classLoadable(c) && !Toast.class.isAssignableFrom(c)) {
-                log.debug("WPILib Class Found: " + clazz + " for candidate: " + candidate.getModuleFile().getName() + "... wrapping...");
+                log.debug("WPILib Class Found: " + clazz + " for candidate: " + candidate.getModuleFile() + "... wrapping...");
                 ModuleWrapper wrapper = new ModuleWrapper(candidate.getModuleFile(), c, candidate);
                 getContainers().add(new ModuleContainer(wrapper, candidate));
             }
@@ -392,7 +392,7 @@ public class RobotLoader {
     private static void constructModules(ProfilerSection section) {
         for (ModuleContainer container : getContainers()) {
             try {
-                log.debug("Constructing Module Container: " + container.getCandidate().getModuleFile().getName());
+                log.debug("Constructing Module Container: " + container.getCandidate().getModuleFile());
                 ProfilerEntity entity = new ProfilerEntity().start();
                 container.construct();
                 entity.stop();
@@ -400,7 +400,7 @@ public class RobotLoader {
                 section.section("Module").section(container.getName()).pushEntity(entity);
                 log.info("Module Loaded: " + container.getDetails());
             } catch (Exception e) {
-                log.debug("Could not Construct Module: " + container.getCandidate().getModuleFile().getName());
+                log.debug("Could not Construct Module: " + container.getCandidate().getModuleFile());
                 log.debugException(e);
             }
         }
