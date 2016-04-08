@@ -121,10 +121,8 @@ public class ModuleCandidate {
      * to aid in culprit detection and class loading. This is not called if it is a bypass.
      */
     public void addClassEntry(String classEntry) {
-        if (classMembers.contains("."))
+        if (classEntry.contains("/"))
             classMembers.add(classEntry.substring(0, classEntry.lastIndexOf('.')).replace('/', '.').replace('\\', '.'));
-        else
-            classMembers.add(classEntry);
     }
 
     /**
