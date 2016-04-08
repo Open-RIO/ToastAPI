@@ -12,6 +12,7 @@ import jaci.openrio.toast.core.network.ToastSessionJoiner;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.core.security.ToastSecurityManager;
 import jaci.openrio.toast.core.shared.GlobalBlackboard;
+import jaci.openrio.toast.core.shared.OptionParser;
 import jaci.openrio.toast.core.thread.Async;
 import jaci.openrio.toast.lib.Assets;
 import jaci.openrio.toast.lib.Version;
@@ -112,52 +113,72 @@ public class ToastBootstrap {
         ProfilerSection profiler = Profiler.INSTANCE.section("Setup");
         JavaScript.startLoading();
         profiler.start("ParseArgs");
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            String nextArg = null;
+        OptionParser parser = new OptionParser(true);
+
+        parser.on("-sim", "-simulation", "Start a Simulation with the following class. Use --search to search for Module Classes, or '.' to just start a Simulation without a class", 1, list -> {
+            isSimulation = true;
             try {
-                nextArg = args[i+1];
-            } catch (Exception e) {}
-            if (arg.equalsIgnoreCase("-simulation") || arg.equals("-sim")) {                // Start Toast in Simulation Mode
-                isSimulation = true;
-                try {
-                    if (!nextArg.equals(".")) {
-                        if (nextArg.equalsIgnoreCase("--search")) {                         // Search for Simulated Classes in an IDE Environment
-                            RobotLoader.search = true;
-                        } else {
-                            RobotLoader.manualLoadedClasses.add(nextArg);
-                        }
-                    }
-                } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("-verify") || arg.equalsIgnoreCase("-vf")) {    // Start Toast in Verification Mode
-                isSimulation = true;
-                isVerification = true;
-            } else if (arg.equalsIgnoreCase("-core")) {                                     // Manually Load a Core Class
-                try {
-                    if (!nextArg.equals(".")) {
-                        RobotLoader.coreClasses.add(nextArg);
-                        RobotLoader.manualLoadedClasses.add(nextArg);
-                    }
-                } catch (Exception e) { }
-            } else if (arg.equalsIgnoreCase("--color")) {                                   // Log in color
-                color = true;
-            } else if (arg.equalsIgnoreCase("-ide")) {                                      // Specify the IDE currently being used (IDEA/Eclipse)
-                if (args.length > (i+1))
-                    if (args[i+1].equalsIgnoreCase("IDEA")) color = true;                   // Most other IDEs don't support ANSI
-            } else if (arg.equalsIgnoreCase("--join")) {                                    // Join a local Toast logging session
-                ToastSessionJoiner.init();
-                return;
-            } else if (arg.equalsIgnoreCase("--headless")) {                                // Start the simulation Headless (no GUI)
-                isHeadless = true;
-            } else if (arg.equalsIgnoreCase("--stub")) {                                    // Exit immediately. Used for memory profiling
-                compareStub = true;
-            } else if (arg.equalsIgnoreCase("-d") || arg.equalsIgnoreCase("--debug") || arg.equalsIgnoreCase("--MOAR")) {     // Enable debug output
-                debug_logging = true;
-                exception_info_logging = true;
-            } else if (arg.equalsIgnoreCase("-e") || arg.equalsIgnoreCase("--exceptions")) {    // Enable superfluous loading exception output
-                exception_info_logging = true;
-            }
-        }
+                String component = list.get(0);
+                if (!component.equals(".")) {
+                    if (component.equalsIgnoreCase("--search")) {
+                        RobotLoader.search = true;
+                    } else RobotLoader.manualLoadedClasses.add(component);
+                }
+            } catch (Exception e) { }
+        });
+
+        parser.on("-vf", "-verify", "Start a Headless Verification", 0, list -> {
+            isSimulation = true;
+            isVerification = true;
+        });
+
+        parser.on("-core", "Load a Core Module class", 1, list -> {
+            try {
+                String component = list.get(0);
+                if (!component.equals(".")) {
+                    RobotLoader.coreClasses.add(component);
+                    RobotLoader.manualLoadedClasses.add(component);
+                }
+            } catch (Exception e) { }
+        });
+
+        parser.on("--color", "Enable Color Output", 0, list -> { color = true; });
+
+        parser.on("-ide", "Set the IDE you are currently using. This will be either ECLIPSE or IDEA, usually.", 1, list -> {
+            try {
+                String component = list.get(0);
+                if (component.equalsIgnoreCase("IDEA")) color = true;
+            } catch (Exception e) {  }
+        });
+
+        parser.on("-j", "--join", "Join a currently running Toast Logging session", 0, list -> {
+            ToastSessionJoiner.init();
+            System.exit(0);
+        });
+
+        parser.on("-nogui", "--headless", "Run the Simulation Headless (without a GUI)", 0, list -> {
+            isHeadless = true;
+        });
+
+        parser.on("--stub", "Exit the program immediately. This is mostly used to profile memory usage over time.", 0, list -> {
+            compareStub = true;
+        });
+
+        parser.on("-d", "--debug", "Launch in Debug Mode. More logging output and exception printing to aid in debugging issues.", 0, list -> {
+            debug_logging = true;
+            exception_info_logging = true;
+        });
+
+        parser.on("--MOAR", "Launch in Debug Mode. More logging output and exception printing to aid in debugging issues.", 0, list -> {
+            debug_logging = true;
+            exception_info_logging = true;
+        });
+
+        parser.on("-e", "--exceptions", "Debug Mode for Runtime Exceptions. More exception printing to aid in debugging issues", 0, list -> {
+            exception_info_logging = true;
+        });
+
+        parser.parse(args);
         profiler.stop("ParseArgs");
 
         if (compareStub) {
