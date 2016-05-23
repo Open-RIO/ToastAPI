@@ -1,5 +1,6 @@
 package edu.wpi.first.wpilibj.hal;
 
+import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 public class PWMJNI extends DIOJNI {
@@ -13,7 +14,18 @@ public class PWMJNI extends DIOJNI {
 	
 	public static void setPWM(long digital_port_pointer, short value) {
 		byte port = (byte)digital_port_pointer;
-		SimulationData.setPWM(port, (double) (value - 1012) / 255);
+		double output = (double) (value - 1012) / 255;
+		// let's figure out what motor controller is being used
+		switch (SimulationData.motorControllers[port]){
+		case FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_VictorSP:
+			if (output > 0.6)
+				output += 0.01;
+			else if (output < -0.8)
+				output -= 0.01;
+			output += 0.05;
+			break;
+		}
+		SimulationData.setPWM(port, output);
 	}
 	
 	public static short getPWM(long digital_port_pointer) {
