@@ -32,7 +32,7 @@ public class Registrar<ID, Type> {
      */
     public synchronized  <T extends Type> T fetch(ID id, Class<T> clazz, Supplier<T> creator) {
         Type in_register = registered.get(id);
-        if (in_register.equals(null)) {
+        if (in_register == null) {
             T instance = creator.get();
             registered.put(id, instance);
             return instance;
@@ -244,6 +244,9 @@ public class Registrar<ID, Type> {
 
         @Override
         public boolean equals(Object o) {
+            if(o == null)
+                return false;
+
             if(!(o instanceof SolenoidID))
                 return false;
 
