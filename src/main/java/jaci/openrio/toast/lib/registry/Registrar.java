@@ -32,6 +32,15 @@ public class Registrar<ID, Type> {
      */
     public synchronized  <T extends Type> T fetch(ID id, Class<T> clazz, Supplier<T> creator) {
         Type in_register = registered.get(id);
+
+        if(in_register == null) {
+            for (ID key : registered.keySet()) {
+                if (key.equals(id)) {
+                    in_register = registered.get(key);
+                }
+            }
+        }
+
         if (in_register == null) {
             T instance = creator.get();
             registered.put(id, instance);
