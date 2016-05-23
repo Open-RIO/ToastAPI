@@ -160,6 +160,14 @@ public class Registrar<ID, Type> {
     }
 
     /**
+     * Get a Servo instance from the Registrar
+     * @param pwmPort the PWM port to use
+     */
+    public static Servo servo(int pwmPort) {
+        return pwmRegistrar.fetch(pwmPort, Servo.class, () -> { return new Servo(pwmPort); });
+    }
+
+    /**
      * Get a Talon SRX [CAN] instance from the Registrar
      * @param canID the CAN Device ID to use
      */
