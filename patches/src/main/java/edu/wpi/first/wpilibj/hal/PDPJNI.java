@@ -1,5 +1,6 @@
 package edu.wpi.first.wpilibj.hal;
 
+import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 public class PDPJNI extends JNIWrapper {
@@ -8,6 +9,10 @@ public class PDPJNI extends JNIWrapper {
 	// multiple Power Distribution Panels to their Robot. Is that even allowed?
 
 	public static void initializePDP(int module) { }
+
+	public static boolean checkPDPModule(int module) { return true; }
+
+	public static boolean checkPDPChannel(int channel) { return true; }
 
 	public static double getPDPTemperature(int module) {
 		return SimulationData.pdpTemperature;
@@ -29,15 +34,15 @@ public class PDPJNI extends JNIWrapper {
 	}
 
 	public static double getPDPTotalPower(int module) {
-		return 0; //TODO figure out what this links to and patch it in
+		return 0;
 	}
 
 	public static double getPDPTotalEnergy(int module) {
-		return 0; //TODO figure out what this links to and patch it in
+		return 0;
 	}
 
 	public static void resetPDPTotalEnergy(int module) { }
 
 	public static void clearPDPStickyFaults(int module) { }
-	
+
 }

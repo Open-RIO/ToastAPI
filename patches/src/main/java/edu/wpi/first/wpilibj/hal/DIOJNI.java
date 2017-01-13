@@ -1,46 +1,57 @@
 package edu.wpi.first.wpilibj.hal;
 
+import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
+
+import java.nio.IntBuffer;
 
 public class DIOJNI extends JNIWrapper {
 
-	public static long initializeDigitalPort(long port_pointer) {
+	public static int initializeDigitalPort(int port_pointer, boolean input) {
+		SimulationData.setDIODir((byte)port_pointer, (byte)(input ? 1 : 0));
 		return port_pointer;
 	}
 
-	public static boolean allocateDIO(long digital_port_pointer, boolean input) {
-		SimulationData.setDIODir((byte)digital_port_pointer, input);
-		return input;
+	public static boolean checkDIOChannel(int channel) {
+		return true;
 	}
 
-	public static void freeDIO(long digital_port_pointer) { }
+	public static void freeDIO(int dioPortHandle) { }
 
-	public static void setDIO(long digital_port_pointer, short value) {
+	public static void setDIO(int digital_port_pointer, short value) {
 		SimulationData.setDIO((byte)digital_port_pointer, (byte)value);
 	}
 
-	public static boolean getDIO(long digital_port_pointer) {
-		return SimulationData.dioValues[(byte)digital_port_pointer] == 1;
+	public static boolean getDIO(int digital_port_pointer) {
+		return SimulationData.dioValues[digital_port_pointer] == 1;
 	}
 
-	public static boolean getDIODirection(long digital_port_pointer) {
-		return SimulationData.dioDirections[(byte)digital_port_pointer] == 1;
+	public static boolean getDIODirection(int digital_port_pointer, IntBuffer status) {
+		return SimulationData.dioDirections[digital_port_pointer] == 1;
 	}
 
-	public static void pulse(long digital_port_pointer, double pulseLength) {
-		//TODO: Implement Pulse Control
+	public static void pulse(int dioPortHandle, double pulseLength) {
 	}
 
-	public static byte isPulsing(long digital_port_pointer) {
-		return 0;
+	public static boolean isPulsing(int dioPortHandle) {
+		return false;
 	}
 
-	public static byte isAnyPulsing() {
-		return 0;
+	public static boolean isAnyPulsing() {
+		return false;
 	}
 
 	public static short getLoopTiming() {
 		return 80;
 	}
 
+	public static int allocateDigitalPWM() { return 0; }
+
+	public static void freeDigitalPWM(int pwmGenerator) { }
+
+	public static void setDigitalPWMRate(double rate) { }
+
+	public static void setDigitalPWMDutyCycle(int pwmGenerator, double dutyCycle) { }
+
+	public static void setDigitalPWMOutputChannel(int pwmGenerator, int channel) { }
 }

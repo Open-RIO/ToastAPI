@@ -1,23 +1,24 @@
 package edu.wpi.first.wpilibj.hal;
 
+import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 public class PowerJNI extends JNIWrapper {
-	
-	public static float getVinVoltage() {
-		return (float) SimulationData.powerVinVoltage;
+
+	public static double getVinVoltage() {
+		return (double) SimulationData.powerVinVoltage;
 	}
 	
-	public static float getVinCurrent() {
-		return (float) SimulationData.powerVinCurrent;
+	public static double getVinCurrent() {
+		return (double) SimulationData.powerVinCurrent;
 	}
 	
-	public static float getUserVoltage6V() {
-		return (float) SimulationData.powerUserVoltage6V;
+	public static double getUserVoltage6V() {
+		return (double) SimulationData.powerUserVoltage6V;
 	}
 	
-	public static float getUserCurrent6V() {
-		return (float) SimulationData.powerUserCurrent6V;
+	public static double getUserCurrent6V() {
+		return (double) SimulationData.powerUserCurrent6V;
 	}
 	
 	public static boolean getUserActive6V() {
@@ -28,12 +29,12 @@ public class PowerJNI extends JNIWrapper {
 		return SimulationData.powerUserFaults6V;
 	}
 
-	public static float getUserVoltage5V() {
-		return (float) SimulationData.powerUserVoltage5V;
+	public static double getUserVoltage5V() {
+		return (double) SimulationData.powerUserVoltage5V;
 	}
 	
-	public static float getUserCurrent5V() {
-		return (float) SimulationData.powerUserCurrent5V;
+	public static double getUserCurrent5V() {
+		return (double) SimulationData.powerUserCurrent5V;
 	}
 	
 	public static boolean getUserActive5V() {
@@ -44,12 +45,12 @@ public class PowerJNI extends JNIWrapper {
 		return SimulationData.powerUserFaults5V;
 	}
 
-	public static float getUserVoltage3V3() {
-		return (float) SimulationData.powerUserVoltage3V3;
+	public static double getUserVoltage3V3() {
+		return (double) SimulationData.powerUserVoltage3V3;
 	}
 	
-	public static float getUserCurrent3V3() {
-		return (float) SimulationData.powerUserCurrent3V3;
+	public static double getUserCurrent3V3() {
+		return (double) SimulationData.powerUserCurrent3V3;
 	}
 	
 	public static boolean getUserActive3V3() {

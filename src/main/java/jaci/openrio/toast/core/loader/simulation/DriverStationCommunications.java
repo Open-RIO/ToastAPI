@@ -1,11 +1,14 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.lib.state.RobotState;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 /**
  * Simulated DriverStation communication library
@@ -23,24 +26,111 @@ public class DriverStationCommunications {
         }
     }
 
-    public static void run() {
-        if (ToastConfiguration.Property.SIM_BONJOUR_ENABLED.asBoolean()) {
-            String bonjour_target = ToastConfiguration.Property.SIM_BONJOUR_TARGET.asString();
-            try {
-                ProcessBuilder pb = new ProcessBuilder("dns-sd", "-P", "roboRIO-TOAST", "_ni._tcp", "local", "3580", "roboRIO-TOAST.local", "127.0.0.1");
-                Process p = pb.start();
-                ProcessBuilder pb2 = new ProcessBuilder("dns-sd", "-P", "roboRIO-" + bonjour_target, "_ni._tcp", "local", "3580", "roboRIO-" + bonjour_target + ".local", "127.0.0.1");
-                Process p2 = pb2.start();
-                ProcessBuilder pb3 = new ProcessBuilder("dns-sd", "-P", "roboRIO-TOAST-frc", "_ni._tcp", "local", "3580", "roboRIO-TOAST-frc.local", "127.0.0.1");
-                Process p3 = pb3.start();
-                ProcessBuilder pb4 = new ProcessBuilder("dns-sd", "-P", "roboRIO-" + bonjour_target + "-frc", "_ni._tcp", "local", "3580", "roboRIO-" + bonjour_target + "-frc.local", "127.0.0.1");
-                Process p4 = pb4.start();
-                Toast.log().info("Toast Driver Station Networking Bonjour Tunnel successfully configured!");
-            } catch (Exception e) {
-                Toast.log().error("Could not start Toast DriverStation Bonjour Service (do you have Bonjour installed?): " + e);
-            }
+    public static void broadcast() {
+        String service = "roborio-" + ToastConfiguration.Property.SIM_BROADCAST_TEAM + "-frc";
+        String hostname = "roborio-" + ToastConfiguration.Property.SIM_BROADCAST_TEAM + "-frc";
+        String ip_str = "127.0.0.1";
+
+        char ip[] = new char[4];
+        String arr[] = ip_str.split("\\.");
+        for (int i = 0; i < 4; i++) {
+            ip[i] = (char) (int) Integer.parseInt(arr[i]);
         }
 
+        char payload_1[] = {
+                0x00, 0x00, 0x84, 0x00,        // ID, Response Query
+                0x00, 0x00, 0x00, 0x03,        // No Question, 3 Answers
+                0x00, 0x00, 0x00, 0x01,        // No Authority, 1 Additional RR
+        };
+
+        char payload_2[] = {
+                0x03,                            // Len: 3
+                0x5f, 0x6e, 0x69,                // _ni
+                0x04,                            // Len: 4
+                0x5f, 0x74, 0x63, 0x70,            // _tcp
+                0x05,                            // Len: 5
+                0x6c, 0x6f, 0x63, 0x61, 0x6c,    // local
+                0x00,                            // end of string
+
+                0x00, 0x0c, 0x80, 0x01,            // Type: PTR (domain name PoinTeR), Class: IN, Cache flush: true
+                0x00, 0x00, 0x00, 0x3C,            // TTL: 60 Sec
+                0x00, (char) (0x03 + service.length()),
+                (char) service.length()
+        };
+
+        char payload_3[] = service.toCharArray();
+
+        char payload_4[] = {
+                0xc0, 0x0c,                    // Name Offset (0xc0, 0x0c => 12 =>._ni._tcp.local)
+
+                // Record 2: SRV
+                0xc0, 0x26, 0x00, 0x21,        // Name Offset (mdns.service_name), Type: SRV (Server Selection)
+                0x80, 0x01,                    // Class: IN, Cache flush: true
+                0x00, 0x00, 0x00, 0x3C,        // TTL: 60 sec
+                0x00, (char) (0xE + hostname.length()),    // Data Length: 14 + thnl
+                0x00, 0x00, 0x00, 0x00,        // Priority: 0, Weight: 0
+                0x0d, 0xfc,                    // Port: 3580
+                (char) hostname.length()                    // Len: thnl
+        };
+
+        char payload_5[] = hostname.toCharArray();
+
+        char payload_6[] = {
+                0x05,                            // Len: 5
+                0x6c, 0x6f, 0x63, 0x61, 0x6c,    // local
+                0x00,                            // end of string
+
+                // Record 3: TXT
+                0xc0, 0x26, 0x00, 0x10,        // Name Offset (mdns.service_name), Type: TXT
+                0x80, 0x01,                    // Class: IN, Cache flush: true
+                0x00, 0x00, 0x00, 0x3C,        // TTL: 60 sec
+                0x00, 0x01, 0x00,            // Data Length: 1, TXT Length: 0
+
+                // Additional Record: A
+                0xc0, (char) (0x3b + service.length()),    // Name Offset (mdns.target_host_name)
+                0x00, 0x01, 0x80, 0x01,        // Type: A, Class: IN, Cache flush: true
+                0x00, 0x00, 0x00, 0x3C,        // TTL: 60 sec
+                0x00, 0x04,                    // Data Length: 4
+                ip[0], ip[1], ip[2], ip[3]    // IP Bytes
+        };
+
+        char payload[] = new char[payload_1.length + payload_2.length + payload_3.length + payload_4.length + payload_5.length + payload_6.length];
+        System.arraycopy(payload_1, 0, payload, 0, payload_1.length);
+        int l = payload_1.length;
+        System.arraycopy(payload_2, 0, payload, l, payload_2.length);
+        l += payload_2.length;
+        System.arraycopy(payload_3, 0, payload, l, payload_3.length);
+        l += payload_3.length;
+        System.arraycopy(payload_4, 0, payload, l, payload_4.length);
+        l += payload_4.length;
+        System.arraycopy(payload_5, 0, payload, l, payload_5.length);
+        l += payload_5.length;
+        System.arraycopy(payload_6, 0, payload, l, payload_6.length);
+
+        try {
+            InetAddress group = InetAddress.getByName("224.0.0.251");
+            MulticastSocket multicast_socket = new MulticastSocket(5353);
+            multicast_socket.joinGroup(group);
+
+            byte[] byte_payload = new byte[payload.length];
+            for(int i = 0; i < payload.length; i++) {
+                byte_payload[i] = (byte) payload[i];
+            }
+
+            Toast.log().info("Driver Station Communications -> Broadcast Running!");
+            while (true) {
+                DatagramPacket packet = new DatagramPacket(byte_payload, byte_payload.length, group, 5353);
+                multicast_socket.send(packet);
+                Thread.sleep(5000);
+            }
+        } catch (Exception e) { }
+    }
+
+    public static void run() {
+        if (ToastConfiguration.Property.SIM_BROADCAST_MDNS.asBoolean()) {
+            Thread broadcastThread = new Thread(group, DriverStationCommunications::broadcast);
+            broadcastThread.run();
+        }
         try {
             DatagramSocket socket = new DatagramSocket(1110);
             byte[] buffer = new byte[8192];

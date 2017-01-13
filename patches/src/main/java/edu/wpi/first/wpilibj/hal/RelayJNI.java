@@ -1,22 +1,43 @@
 package edu.wpi.first.wpilibj.hal;
 
+import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 public class RelayJNI extends DIOJNI {
-    public static void setRelayForward(long digital_port_pointer, byte on) {
-        SimulationData.setRelay((byte)digital_port_pointer, true, on == 1);
+    public static int initializeRelayPort(int halPortHandle, boolean forward) {
+        return halPortHandle * 2 + (forward ? 1 : 0);       // Rvs = 0, 2, 4, 6   Fwd = 1, 3, 5, 7
     }
 
-    public static void setRelayReverse(long digital_port_pointer, byte on) {
-        SimulationData.setRelay((byte)digital_port_pointer, false, on == 1);
+    public static void freeRelayPort(int relayPortHandle) { }
+
+    public static boolean checkRelayChannel(int channel) {
+        return true;
     }
 
-    public static byte getRelayForward(long digital_port_pointer) {
-        return (byte) (SimulationData.relay_fwd[(int)digital_port_pointer] ? 1 : 0);
+    public static void setRelay(int relayPortHandle, boolean on) {
+        int port = relayPortHandle;
+        boolean fwd = false;
+        if (port % 2 != 0) {
+            port -= 1;
+            fwd = true;
+        }
+        port /= 2;
+        if (fwd) {
+            SimulationData.relay_fwd[port] = on;
+        } else {
+            SimulationData.relay_rvs[port] = on;
+        }
     }
 
-    public static byte getRelayReverse(long digital_port_pointer) {
-        return (byte) (SimulationData.relay_rvs[(int)digital_port_pointer] ? 1 : 0);
+    public static boolean getRelay(int relayPortHandle) {
+        int port = relayPortHandle;
+        boolean fwd = false;
+        if (port % 2 != 0) {
+            port -= 1;
+            fwd = true;
+        }
+        port /= 2;
+        return fwd ? SimulationData.relay_fwd[port] : SimulationData.relay_rvs[port];
     }
 }
 

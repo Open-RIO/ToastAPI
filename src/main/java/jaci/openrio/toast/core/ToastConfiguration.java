@@ -38,8 +38,8 @@ public class ToastConfiguration {
         ROBOT_TEAM("robot.team", -1),
         ROBOT_DESC("robot.desc", "{ DESCRIPTION NOT SET }"),
 
-        SIM_BONJOUR_ENABLED("sim.bonjour.enabled", false),
-        SIM_BONJOUR_TARGET("sim.bonjour.target", "9990"),
+        SIM_BROADCAST_MDNS("sim.mdns.enabled", false),
+        SIM_BROADCAST_TEAM("sim.mdns.team", "9990"),
         SIM_DS_ENABLED("sim.ds.enabled", true)
         ;
 

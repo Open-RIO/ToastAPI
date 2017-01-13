@@ -1,6 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation.srx;
 
-import edu.wpi.first.wpilibj.CANTalon;
+import com.ctre.CANTalon;
 
 import java.util.HashMap;
 

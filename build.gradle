@@ -1,32 +1,30 @@
 buildscript {
   repositories {
-	mavenCentral()
-	maven {
-		name = "GradleRIO"
-		url = "http://dev.imjac.in/maven"
-	}
+	  mavenCentral()
     jcenter()
   }
   dependencies {
-    classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '+'			//Change this line if you wish to Update GradleRIO
     classpath group: 'org.ajoberstar', name: 'grgit', version: '1.1.0'
   }
 }
 
-apply plugin: 'GradleRIO'                                 //Apply the GradleRIO plugin
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
+plugins {
+  id 'java'
+  id 'idea'
+  id 'eclipse'
+  id 'maven'
+  id 'jaci.openrio.gradle.GradleRIO' version '2017.0.5'
+}
 apply plugin: BuildGradle
-apply plugin: 'maven'
 
 ext {
     git = org.ajoberstar.grgit.Grgit.open(file('.'))      //Used for Toast's internal versioning system
 }
 
-gradlerio.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
-gradlerio.team = "9999"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
-gradlerio.rioIP = "172.22.11.2"                           //Uncomment to specify the IP address of the RIO
+frc {
+  frc.robotClass = "jaci.openrio.toast.core.Toast"    //The class for the main Robot Class. Used in manifest
+  frc.team = "9999"                                   //Your FRC team number (e.g. 5333 for team 'Can't C#', or 47 for Chief Delphi)
+}
 
 [compileJava, compileTestJava]*.options.collect {options -> options.encoding = 'UTF-8'}   //Keep things in the proper encoding otherwise things get messed up on some compilers
 
@@ -89,8 +87,10 @@ configurations {
 dependencies {
   compile fileTree(dir: 'libs/', include: '*.jar')
 
+  compile wpilib()
+  compile talonSrx()
+
   compile 'jaci.openrio.delegate:NetworkDelegate:1.2.1'
-  //compile 'com.google.code.gson:gson:2.3.1'
   compile 'com.grack:nanojson:+'
   deployerJars 'org.apache.maven.wagon:wagon-ssh:2.4'
 }
@@ -102,7 +102,7 @@ group = "jaci.openrio.toast"
 def robotManifest = {
   //attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
   attributes 'Main-Class': 'jaci.openrio.toast.core.ToastBootstrap'
-  attributes 'Robot-Class': gradlerio.robotClass
+  attributes 'Robot-Class': frc.robotClass
 }
 
 jar.doFirst {
@@ -166,12 +166,6 @@ task genVersion << {
 task updateLatest << {
   ant.delete(dir: "build/latest/")
   ant.copy(file: "${jar.archivePath}", todir: "build/latest")
-}
-
-task externalWPI << {
-  if (new File("../WPILib/Open-WPI").exists()) {
-    externalWPI_impl.execute()
-  }
 }
 
 task genMetrics << {
@@ -244,46 +238,48 @@ uploadArchives {
 }
 
 task wrapper(type: Wrapper) {
-   gradleVersion = '2.1'
+   gradleVersion = '3.3'
 }
 
 
 class BuildGradle implements Plugin<Project> {
   void apply(Project project) {
-    jaci.openrio.gradle.ToastIDE.init(project)
+    //jaci.openrio.gradle.ToastIDE.init(project)
 
     project.getConfigurations().maybeCreate('verify')
-    project.task('verify') << {
-      File toast_dir = new File('run/verification')
-      if (toast_dir.exists()) {
-        project.ant.delete(dir: toast_dir.getAbsolutePath())
+    project.task('verify') {
+      doLast {
+        File toast_dir = new File('run/verification')
+        if (toast_dir.exists()) {
+          project.ant.delete(dir: toast_dir.getAbsolutePath())
+        }
+
+        toast_dir.mkdirs()
+        File modules_dir = new File(toast_dir, "toast/modules")
+        modules_dir.mkdirs()
+
+        println "Beginning Assets Copying..."
+        File toast = new File(toast_dir, 'Toast.jar')
+        String archive = project.jar.archivePath
+        project.ant.copy(tofile: toast.getAbsolutePath(), file: archive)
+
+        project.getConfigurations().verify.resolve().each {
+          File file = it
+          File toFile = new File(modules_dir, file.getName())
+          project.ant.copy(tofile: toFile.getAbsolutePath(), file: file.getAbsolutePath())
+        }
+
+        println "Assets Copied..."
+        println "Beginning Verification..."
+
+        project.javaexec {
+          workingDir = toast_dir.getAbsolutePath()
+          args = ["Toast.jar", "-verify"]
+          main = '-jar'
+        }
+
+        println "Verification Complete..."
       }
-
-      toast_dir.mkdirs()
-      File modules_dir = new File(toast_dir, "toast/modules")
-      modules_dir.mkdirs()
-
-      println "Beginning Assets Copying..."
-      File toast = new File(toast_dir, 'Toast.jar')
-      String archive = project.jar.archivePath
-      project.ant.copy(tofile: toast.getAbsolutePath(), file: archive)
-
-      project.getConfigurations().verify.resolve().each {
-        File file = it
-        File toFile = new File(modules_dir, file.getName())
-        project.ant.copy(tofile: toFile.getAbsolutePath(), file: file.getAbsolutePath())
-      }
-
-      println "Assets Copied..."
-      println "Beginning Verification..."
-
-      project.javaexec {
-        workingDir = toast_dir.getAbsolutePath()
-        args = ["Toast.jar", "-verify"]
-        main = '-jar'
-      }
-
-      println "Verification Complete..."
     }
   }
 }
