@@ -7,6 +7,8 @@
 
 package edu.wpi.first.wpilibj;
 
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+
 import com.sun.tools.javadoc.Start;
 import edu.wpi.first.wpilibj.hal.FRCNetComm;
 import edu.wpi.first.wpilibj.hal.HAL;

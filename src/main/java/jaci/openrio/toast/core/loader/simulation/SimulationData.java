@@ -1,8 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation;
 
 import edu.wpi.first.wpilibj.PWMConfigDataResult;
-
-import edu.wpi.first.wpilibj.PWMConfigDataResult;
 import edu.wpi.first.wpilibj.Utility;
 import edu.wpi.first.wpilibj.hal.NotifierJNI;
 import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;

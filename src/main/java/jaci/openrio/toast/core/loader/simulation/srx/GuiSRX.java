@@ -1,7 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation.srx;
 
 import com.ctre.CANTalon;
-import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.GuiNumberSpinner;
 
 import javax.swing.*;

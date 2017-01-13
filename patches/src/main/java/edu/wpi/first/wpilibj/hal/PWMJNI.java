@@ -1,6 +1,7 @@
 package edu.wpi.first.wpilibj.hal;
 
-import com.sun.tools.javadoc.Start;
+import jaci.openrio.toast.core.loader.simulation.SimulationData;
+
 import edu.wpi.first.wpilibj.PWMConfigDataResult;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
