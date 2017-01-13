@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core.loader.simulation;
 
+import edu.wpi.first.wpilibj.PWMConfigDataResult;
 import jaci.openrio.toast.core.loader.simulation.jni.DummyJoystick;
 import jaci.openrio.toast.core.loader.simulation.jni.SimulatedJoystick;
 import jaci.openrio.toast.lib.state.RobotState;
@@ -47,6 +48,8 @@ public class SimulationData {
      * PWM OUT *
      */
     public static double[] pwmValues = new double[10];
+    public static PWMConfigDataResult[] pwmConfigs = new PWMConfigDataResult[10];
+    public static boolean[] pwmEliminateDeadband = new boolean[10];
 
     /**
      * Set the PWM value on the given port with the given value

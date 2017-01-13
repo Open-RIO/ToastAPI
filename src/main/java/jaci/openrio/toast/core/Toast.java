@@ -63,11 +63,6 @@ public class Toast extends RobotBase {
         return tastes[new Random().nextInt(tastes.length)];
     }
 
-    /**
-     * Executed when WPILib detects this class and loads it. This
-     * is used for Pre-Initialization Tasks.
-     */
-    @Override
     protected void prestart() {
         try {
             ProfilerSection section = Profiler.INSTANCE.section("Setup");
@@ -95,6 +90,7 @@ public class Toast extends RobotBase {
      */
     @Override
     public void startCompetition() {
+        prestart();
         try {
             // -------- NEW PHASE -------- //
             LoadPhase.START.transition();

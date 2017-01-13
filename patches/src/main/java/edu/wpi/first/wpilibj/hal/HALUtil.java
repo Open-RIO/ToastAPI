@@ -16,55 +16,40 @@ public class HALUtil extends JNIWrapper {
 	public static final int NO_AVAILABLE_RESOURCES = -104;
 	public static final int PARAMETER_OUT_OF_RANGE = -1028;
 
-	public static ByteBuffer initializeMutexNormal() {
-		return ByteBuffer.allocate(1);
-	}
-	public static void deleteMutex(ByteBuffer sem) {
-	}
-	public static ByteBuffer initializeMultiWait() {
-		return ByteBuffer.allocate(1);
-	}
-	public static void deleteMultiWait(ByteBuffer sem) {
-	}
-
-	public static byte takeMultiWait(ByteBuffer sem, ByteBuffer m, int timeOut) {
-		try {
-			Thread.sleep(20);
-		} catch (Exception e) {}
-		return 0;
-	}
-
-	public static short getFPGAVersion(IntBuffer status) {
+	public static short getFPGAVersion() {
 		return 2009;
 	}
 
-	public static int getFPGARevision(IntBuffer status) {
+	public static int getFPGARevision() {
 		return 0;
 	}
 
-	public static long getFPGATime(IntBuffer status) {
-		return ToastBootstrap.startTimeNS - System.nanoTime();
+	public static long getFPGATime() {
+		return (System.nanoTime() - ToastBootstrap.startTimeNS) / 1000;
 	}
 
-	public static boolean getFPGAButton(IntBuffer status) {
+	public static int getHALRuntimeType() {
+		return 0;
+	}
+
+	public static boolean getFPGAButton() {
 		return SimulationData.userButtonPressed;
 	}
 
 	public static String getHALErrorMessage(int code) {
 		return "";
 	}
-	
+
 	public static int getHALErrno() {
 		return 0;
 	}
+
 	public static String getHALstrerror(int errno) {
 		return "";
 	}
-	public static String getHALstrerror(){
-		return getHALstrerror(getHALErrno());
-	}
 
-	public static void checkStatus(IntBuffer status) {
+	public static String getHALstrerror() {
+		return getHALstrerror(getHALErrno());
 	}
 
 }

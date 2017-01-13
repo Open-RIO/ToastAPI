@@ -6,20 +6,40 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class RelayJNI extends DIOJNI {
-    public static void setRelayForward(ByteBuffer digital_port_pointer, byte on, IntBuffer status) {
-        SimulationData.setRelay(digital_port_pointer.get(0), true, on == 1);
+    public static int initializeRelayPort(int halPortHandle, boolean forward) {
+        return halPortHandle * 2 + (forward ? 1 : 0);       // Rvs = 0, 2, 4, 6   Fwd = 1, 3, 5, 7
     }
 
-    public static void setRelayReverse(ByteBuffer digital_port_pointer, byte on, IntBuffer status) {
-        SimulationData.setRelay(digital_port_pointer.get(0), false, on == 1);
+    public static void freeRelayPort(int relayPortHandle) { }
+
+    public static boolean checkRelayChannel(int channel) {
+        return true;
     }
 
-    public static byte getRelayForward(ByteBuffer digital_port_pointer, IntBuffer status) {
-        return (byte) (SimulationData.relay_fwd[digital_port_pointer.get(0)] ? 1 : 0);
+    public static void setRelay(int relayPortHandle, boolean on) {
+        int port = relayPortHandle;
+        boolean fwd = false;
+        if (port % 2 != 0) {
+            port -= 1;
+            fwd = true;
+        }
+        port /= 2;
+        if (fwd) {
+            SimulationData.relay_fwd[port] = on;
+        } else {
+            SimulationData.relay_rvs[port] = on;
+        }
     }
 
-    public static byte getRelayReverse(ByteBuffer digital_port_pointer, IntBuffer status) {
-        return (byte) (SimulationData.relay_rvs[digital_port_pointer.get(0)] ? 1 : 0);
+    public static boolean getRelay(int relayPortHandle) {
+        int port = relayPortHandle;
+        boolean fwd = false;
+        if (port % 2 != 0) {
+            port -= 1;
+            fwd = true;
+        }
+        port /= 2;
+        return fwd ? SimulationData.relay_fwd[port] : SimulationData.relay_rvs[port];
     }
 }
 

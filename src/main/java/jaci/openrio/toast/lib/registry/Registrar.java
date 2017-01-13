@@ -1,5 +1,6 @@
 package jaci.openrio.toast.lib.registry;
 
+import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.*;
 
 import java.util.HashMap;
@@ -140,13 +141,5 @@ public class Registrar<ID, Type> {
      */
     public static CANTalon canTalon(int canID) {
         return canRegistrar.fetch(canID, CANTalon.class, () -> { return new CANTalon(canID); });
-    }
-
-    /**
-     * Get a Jaguar [CAN] instance from the Registrar
-     * @param canID the CAN Device ID to use
-     */
-    public static CANJaguar canJaguar(int canID) {
-        return canRegistrar.fetch(canID, CANJaguar.class, () -> { return new CANJaguar(canID); });
     }
 }

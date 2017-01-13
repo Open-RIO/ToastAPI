@@ -7,28 +7,48 @@ import java.nio.IntBuffer;
 
 public class SolenoidJNI extends JNIWrapper {
 
-    public static ByteBuffer initializeSolenoidPort(ByteBuffer portPointer, IntBuffer status) {
-        return portPointer;
+    public static int initializeSolenoidPort(int halPortHandle) {
+        return halPortHandle;
     }
 
-    public static ByteBuffer getPortWithModule(byte module, byte channel) {
-        return ByteBuffer.allocate(2).put(new byte[]{module, channel});
+    public static boolean checkSolenoidModule(int module) {
+        return true;
     }
 
-    public static void setSolenoid(ByteBuffer port, byte on, IntBuffer status) {
-        byte module = port.get(0);
-        byte channel = port.get(1);
-        SimulationData.setSolenoid(module, channel, on != 0);
+    public static boolean checkSolenoidChannel(int channel) {
+        return true;
     }
 
-    public static byte getSolenoid(ByteBuffer port, IntBuffer status) {
-        byte module = port.get(0);
-        byte channel = port.get(1);
-        return (byte) (SimulationData.solenoids[module][channel] ? 1 : 0);
+    public static void freeSolenoidPort(int portHandle) { }
+
+    public static void setSolenoid(int portHandle, boolean on) {
+        byte[] pm = getPortAndModuleFromHandle(portHandle);
+        SimulationData.setSolenoid(pm[0], pm[1], on);
     }
 
-    public static native byte getPCMSolenoidBlackList(ByteBuffer pcm_pointer, IntBuffer status);
-    public static boolean getPCMSolenoidVoltageStickyFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getPCMSolenoidVoltageFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static void clearAllPCMStickyFaults(ByteBuffer pcm_pointer, IntBuffer status) {}
+    public static boolean getSolenoid(int portHandle) {
+        byte[] pm = getPortAndModuleFromHandle(portHandle);
+        return SimulationData.solenoids[pm[0]][pm[1]];
+    }
+
+    public static byte getAllSolenoids(byte module) {
+        byte data = 0;
+        for (int i = 0; i < 8; i++)
+            if (SimulationData.solenoids[module][i]) data |= 1 << i;
+        return data;
+    }
+
+    public static int getPCMSolenoidBlackList(byte module) {
+        return 0;
+    }
+
+    public static boolean getPCMSolenoidVoltageStickyFault(byte module) {
+        return false;
+    }
+
+    public static boolean getPCMSolenoidVoltageFault(byte module) {
+        return false;
+    }
+
+    public static void clearAllPCMStickyFaults(byte module) { }
 }

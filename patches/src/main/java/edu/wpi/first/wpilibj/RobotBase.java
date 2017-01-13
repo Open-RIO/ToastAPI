@@ -10,12 +10,19 @@ package edu.wpi.first.wpilibj;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
+import edu.wpi.first.wpilibj.hal.FRCNetComm;
+import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.internal.HardwareHLUsageReporting;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.util.WPILibVersion;
 import jaci.openrio.toast.core.Toast;
+import jaci.openrio.toast.core.io.Storage;
+import org.opencv.core.Core;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -34,6 +41,7 @@ public abstract class RobotBase {
 	 */
 	public static final int ROBOT_TASK_PRIORITY = 101;
 
+	public static final long MAIN_THREAD_ID = Thread.currentThread().getId();
 	protected final DriverStation m_ds;
 
 	/**
@@ -49,9 +57,11 @@ public abstract class RobotBase {
 		// TODO: See if the next line is necessary
 		// Resource.RestartProgram();
 
-		NetworkTable.setServerMode();//must be before b
+		NetworkTable.setNetworkIdentity("Robot");
+		NetworkTable.setPersistentFilename(Storage.highestPriority("networktables.ini").getAbsolutePath());
+		NetworkTable.setServerMode();// must be before b
 		m_ds = DriverStation.getInstance();
-		NetworkTable.getTable("");  // forces network tables to initialize
+		NetworkTable.getTable(""); // forces network tables to initialize
 		NetworkTable.getTable("LiveWindow").getSubTable("~STATUS~").putBoolean("LW Enabled", false);
 	}
 
@@ -128,18 +138,7 @@ public abstract class RobotBase {
 	 */
 	public abstract void startCompetition();
 
-	/**
-	 * This hook is called right before startCompetition(). By default, tell the
-	 * DS that the robot is now ready to be enabled. If you don't want for the
-	 * robot to be enabled yet, you can override this method to do nothing.
-	 * If you do so, you will need to call 
-	 * FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationOvserveUserProgramStarting() from
-	 * your code when you are ready for the robot to be enabled.
-	 */
-	protected void prestart() {
-		FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramStarting();
-	}
-
+	@SuppressWarnings("JavadocMethod")
 	public static boolean getBooleanProperty(String name, boolean defaultValue) {
 		String propVal = System.getProperty(name);
 		if (propVal == null) {
@@ -157,13 +156,23 @@ public abstract class RobotBase {
 	/**
 	 * Common initialization for all robot programs.
 	 */
-	public static void initializeHardwareConfiguration(){
-		FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationReserve();
+	public static void initializeHardwareConfiguration() {
+		int rv = HAL.initialize(0);
+		assert rv == 1;
 
 		// Set some implementations so that the static methods work properly
 		Timer.SetImplementation(new HardwareTimer());
 		HLUsageReporting.SetImplementation(new HardwareHLUsageReporting());
 		RobotState.SetImplementation(DriverStation.getInstance());
+
+		// Load opencv
+		try {
+			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		} catch (UnsatisfiedLinkError ex) {
+			System.out.println("OpenCV Native Libraries could not be loaded.");
+			System.out.println("Please try redeploying, or reimage your roboRIO and try again.");
+			ex.printStackTrace();
+		}
 	}
 
 	/**
@@ -172,11 +181,27 @@ public abstract class RobotBase {
 	public static void main(String args[]) {
 		initializeHardwareConfiguration();
 
-		UsageReporting.report(tResourceType.kResourceType_Language, tInstances.kLanguage_Java);
-
+		HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Java);
 		RobotBase robot = new Toast();
-		robot.prestart();
-		
+
+		try {
+			final File file = new File("/tmp/frc_versions/FRC_Lib_Version.ini");
+
+			if (file.exists()) {
+				file.delete();
+			}
+
+			file.createNewFile();
+
+			try (FileOutputStream output = new FileOutputStream(file)) {
+				output.write("Java ".getBytes());
+				output.write(WPILibVersion.Version.getBytes());
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
 		boolean errorOnExit = false;
 		try {
 			robot.startCompetition();

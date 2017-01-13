@@ -2,42 +2,39 @@ package edu.wpi.first.wpilibj.hal;
 
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 public class CompressorJNI extends JNIWrapper {
-    public static ByteBuffer initializeCompressor(byte module) {
+    public static int initializeCompressor(byte module) {
         SimulationData.setCompressor(module);
-        return ByteBuffer.allocate(1).put(module);
+        return getPort(module);
     }
 
     public static boolean checkCompressorModule(byte module) { return true; }
 
-    public static boolean getCompressor(ByteBuffer pcm_pointer, IntBuffer status) {
-        return SimulationData.compressorRunning(pcm_pointer.get(0));
+    public static boolean getCompressor(int pcm_pointer) {
+        return SimulationData.compressorRunning((byte)pcm_pointer);
     }
 
-    public static void setClosedLoopControl(ByteBuffer pcm_pointer, boolean value, IntBuffer status) {
-        SimulationData.setCompressorLoop(pcm_pointer.get(0), value);
+    public static void setClosedLoopControl(int pcm_pointer, boolean value) {
+        SimulationData.setCompressorLoop((byte)pcm_pointer, value);
     }
 
-    public static boolean getClosedLoopControl(ByteBuffer pcm_pointer, IntBuffer status) {
-        return SimulationData.loop_compressors[pcm_pointer.get(0)];
+    public static boolean getClosedLoopControl(int pcm_pointer) {
+        return SimulationData.loop_compressors[pcm_pointer];
     }
 
-    public static boolean getPressureSwitch(ByteBuffer pcm_pointer, IntBuffer status) {
-        return SimulationData.compressor_pressure[pcm_pointer.get(0)];
+    public static boolean getPressureSwitch(int pcm_pointer) {
+        return SimulationData.compressor_pressure[pcm_pointer];
     }
 
-    public static float getCompressorCurrent(ByteBuffer pcm_pointer, IntBuffer status) {
-        return SimulationData.compressor_current[pcm_pointer.get(0)];
+    public static double getCompressorCurrent(int pcm_pointer) {
+        return SimulationData.compressor_current[pcm_pointer];
     }
 
-    public static boolean getCompressorCurrentTooHighFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getCompressorCurrentTooHighStickyFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getCompressorShortedStickyFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getCompressorShortedFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getCompressorNotConnectedStickyFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static boolean getCompressorNotConnectedFault(ByteBuffer pcm_pointer, IntBuffer status) { return false; }
-    public static void clearAllPCMStickyFaults(ByteBuffer pcm_pointer, IntBuffer status) {}
+    public static boolean getCompressorCurrentTooHighFault(int pcm_pointer) { return false; }
+    public static boolean getCompressorCurrentTooHighStickyFault(int pcm_pointer) { return false; }
+    public static boolean getCompressorShortedStickyFault(int pcm_pointer) { return false; }
+    public static boolean getCompressorShortedFault(int pcm_pointer) { return false; }
+    public static boolean getCompressorNotConnectedStickyFault(int pcm_pointer) { return false; }
+    public static boolean getCompressorNotConnectedFault(int pcm_pointer) { return false; }
+    public static void clearAllPCMStickyFaults(int pcm_pointer) {}
 }
