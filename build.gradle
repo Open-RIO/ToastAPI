@@ -184,9 +184,9 @@ build.finalizedBy updateLatest
 task src(type: Jar, dependsOn: classes) {
   classifier = 'sources'
   from sourceSets.main.allSource
-  project.getConfigurations().wpi_source.resolve().each {
-    from(zipTree(it))
-  }
+  // project.getConfigurations().wpi_source.resolve().each {
+  //   from(zipTree(it))
+  // }
 }
 
 task raw(type: Jar, dependsOn: classes) {

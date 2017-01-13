@@ -1,6 +1,5 @@
 package edu.wpi.first.wpilibj.hal;
 
-import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 import java.nio.IntBuffer;
@@ -8,7 +7,7 @@ import java.nio.IntBuffer;
 public class DIOJNI extends JNIWrapper {
 
 	public static int initializeDigitalPort(int port_pointer, boolean input) {
-		SimulationData.setDIODir((byte)port_pointer, (byte)(input ? 1 : 0));
+		SimulationData.setDIODir((byte)port_pointer, input);
 		return port_pointer;
 	}
 

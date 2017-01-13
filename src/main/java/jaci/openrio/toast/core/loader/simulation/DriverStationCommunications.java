@@ -1,6 +1,5 @@
 package jaci.openrio.toast.core.loader.simulation;
 
-import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.Toast;
 import jaci.openrio.toast.core.ToastConfiguration;
 import jaci.openrio.toast.lib.state.RobotState;
@@ -154,9 +153,11 @@ public class DriverStationCommunications {
     public static boolean connected = false;
 
     public static short[][] joyaxis = new short[6][12];
+    public static short[] joyaxiscount = new short[6];
     public static int[] joybuttons = new int[6];
     public static byte[] joybuttoncount = new byte[6];
     public static short[][] joypov = new short[6][1];
+    public static short[] joypovcount = new short[6];
 
     public static void decodePacket(DatagramPacket packet, byte[] buffer) {
         connected = true;
@@ -185,6 +186,7 @@ public class DriverStationCommunications {
                 if (!search) continue;
 
                 int axis_count = buffer[i + 2];
+                joyaxiscount[joyid] = (byte) axis_count;
                 joyaxis[joyid] = new short[axis_count];
                 for (int ax = 0; ax < axis_count; ax++) {
                     int ax_val = buffer[i + 2 + ax + 1];
@@ -206,6 +208,7 @@ public class DriverStationCommunications {
                 b = b + button_delta + 1;
 
                 int pov_count = buffer[b];
+                joypovcount[joyid] = (byte) pov_count;
                 joypov[joyid] = new short[pov_count];
                 for (int pv = 0; pv < pov_count; pv++) {
                     int a1 = buffer[b + 1 + (pv*2)];

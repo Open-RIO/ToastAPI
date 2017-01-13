@@ -1,8 +1,9 @@
 package jaci.openrio.toast.core;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
+import edu.wpi.first.wpilibj.hal.FRCNetComm;
+import edu.wpi.first.wpilibj.hal.HAL;
+import edu.wpi.first.wpilibj.hal.HALUtil;
 import jaci.openrio.toast.core.io.usb.USBMassStorage;
 import jaci.openrio.toast.core.loader.ClassPatcher;
 import jaci.openrio.toast.core.loader.RobotLoader;
@@ -271,7 +272,7 @@ public class ToastBootstrap {
     // is null before assigning it. To fix this, we have to 'fake' RobotBase. This bug is in the WPILib bug tracker.
     public static void fakeRobotBase() {
         RobotBase.initializeHardwareConfiguration();
-        UsageReporting.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Language, FRCNetworkCommunicationsLibrary.tInstances.kLanguage_Java);
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Language, FRCNetComm.tInstances.kLanguage_Java);
         Toast toast = new Toast();
 
         if (!isSimulation) {

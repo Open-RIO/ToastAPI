@@ -4,6 +4,7 @@ import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 import edu.wpi.first.wpilibj.PWMConfigDataResult;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
+import jaci.openrio.toast.lib.crash.CrashHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,8 +13,8 @@ import java.util.function.Function;
 
 public class PWMJNI extends DIOJNI {
 	
-	public static boolean initializePWMPort(int digital_port_pointer) {
-		return true;
+	public static int initializePWMPort(int digital_port_pointer) {
+		return digital_port_pointer;
 	}
 
 	public static boolean checkPWMChannel(int channel) {
@@ -27,11 +28,13 @@ public class PWMJNI extends DIOJNI {
 											  int deadbandMaxPwm, int centerPwm,
 											  int deadbandMinPwm, int minPwm) {
 		try {
-			Constructor<PWMConfigDataResult> constructor = PWMConfigDataResult.class.getDeclaredConstructor(Integer.class, Integer.class, Integer.class, Integer.class, Integer.class);
+			Constructor<PWMConfigDataResult> constructor = PWMConfigDataResult.class.getDeclaredConstructor(int.class, int.class, int.class, int.class, int.class);
 			constructor.setAccessible(true);
 			PWMConfigDataResult result = constructor.newInstance(maxPwm, deadbandMaxPwm, centerPwm, deadbandMinPwm, minPwm);
 			SimulationData.pwmConfigs[pwmPortHandle] = result;
-		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) { }
+		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            CrashHandler.handle(e);
+        }
 	}
 
 	public static void setPWMConfig(int pwmPortHandle, double maxPwm,
@@ -40,16 +43,18 @@ public class PWMJNI extends DIOJNI {
 		try {
 			double loopTime = DIOJNI.getLoopTiming() / (ConstantsJNI.getSystemClockTicksPerMicrosecond() * 1e3);
 			Function<Double, Integer> convert = (a) -> { return (int)((a - 1.5) / loopTime + 999); };
-			Constructor<PWMConfigDataResult> constructor = PWMConfigDataResult.class.getDeclaredConstructor(Integer.class, Integer.class, Integer.class, Integer.class, Integer.class);
+			Constructor<PWMConfigDataResult> constructor = PWMConfigDataResult.class.getDeclaredConstructor(int.class, int.class, int.class, int.class, int.class);
 			constructor.setAccessible(true);
 			PWMConfigDataResult result = constructor.newInstance(convert.apply(maxPwm), convert.apply(deadbandMaxPwm),
 					convert.apply(centerPwm), convert.apply(deadbandMinPwm), convert.apply(minPwm));
 			SimulationData.pwmConfigs[pwmPortHandle] = result;
-		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) { }
+		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            CrashHandler.handle(e);
+        }
 	}
 
 	public static PWMConfigDataResult getPWMConfigRaw(int pwmPortHandle) {
-		return SimulationData.pwmConfigs[pwmPortHandle];					// This function is never called, so I'm going to leave this for now
+		return SimulationData.pwmConfigs[pwmPortHandle];
 	}
 
 	public static void setPWMEliminateDeadband(int pwmPortHandle, boolean eliminateDeadband) {

@@ -13,10 +13,10 @@ public class SimulatedJoystick {
     double[] axisV;
     int[] povs;
 
-    public SimulatedJoystick(int buttonCount, int povCount) {
+    public SimulatedJoystick(int buttonCount, int axisCount, int povCount) {
         this.buttonCount = buttonCount;
         this.buttons = new boolean[buttonCount];
-        axisV = new double[5];
+        axisV = new double[axisCount];
         povs = new int[povCount];
         for (int i = 0; i < povCount; i++)
             povs[i] = -1;

@@ -92,11 +92,29 @@ public class HAL extends JNIWrapper {
     public static int kMaxJoystickPOVs = 12;
 
     public static short getJoystickAxes(byte joystickNum, float[] axesArray) {
-
+        if (DriverStationCommunications.connected) {
+            short count = DriverStationCommunications.joyaxiscount[joystickNum];
+            for (int i = 0; i < count; i++)
+                axesArray[i] = (float)DriverStationCommunications.joyaxis[joystickNum][i] / 127.0f;
+            return count;
+        }
+        SimulatedJoystick simJoy = SimulationData.getJoystick(joystickNum);
+        for (int i = 0; i < simJoy.getAxis().length; i++)
+            axesArray[i] = (float)simJoy.getAxis(i);
+        return (short)simJoy.getAxis().length;
     }
 
     public static short getJoystickPOVs(byte joystickNum, short[] povsArray) {
-
+        if (DriverStationCommunications.connected) {
+            short count = DriverStationCommunications.joypovcount[joystickNum];
+            for (int i = 0; i < count; i++)
+                povsArray[i] = DriverStationCommunications.joypov[joystickNum][i];
+            return count;
+        }
+        SimulatedJoystick simJoy = SimulationData.getJoystick(joystickNum);
+        for (int i = 0; i < simJoy.getPOVs().length; i++)
+            povsArray[i] = (short)simJoy.getPOV(i);
+        return (short)simJoy.getPOVs().length;
     }
 
     public static int getJoystickButtons(byte joystickNum, ByteBuffer count) {
@@ -114,19 +132,19 @@ public class HAL extends JNIWrapper {
     }
 
     public static int getJoystickIsXbox(byte joystickNum) {
-
+        return 0;
     }
 
     public static int getJoystickType(byte joystickNum) {
-
+        return 0;
     }
 
     public static String getJoystickName(byte joystickNum) {
-
+        return "Generic";
     }
 
     public static int getJoystickAxisType(byte joystickNum, byte axis) {
-
+        return 0;
     }
 
     public static double getMatchTime() {

@@ -1,7 +1,5 @@
 package edu.wpi.first.wpilibj.hal;
 
-import com.sun.tools.javadoc.Start;
-
 import java.nio.ByteBuffer;
 
 public class JNIWrapper {
@@ -16,7 +14,7 @@ public class JNIWrapper {
     }
 
     public static byte[] getPortAndModuleFromHandle(int handle) {
-        return ByteBuffer.allocateDirect(2).putShort((short)handle).array();
+        return ByteBuffer.allocate(2).putShort((short)handle).array();
     }
 
 }

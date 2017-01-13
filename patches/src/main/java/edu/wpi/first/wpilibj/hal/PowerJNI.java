@@ -1,6 +1,5 @@
 package edu.wpi.first.wpilibj.hal;
 
-import com.sun.tools.javadoc.Start;
 import jaci.openrio.toast.core.loader.simulation.SimulationData;
 
 public class PowerJNI extends JNIWrapper {

@@ -1,6 +1,6 @@
 package jaci.openrio.toast.lib;
 
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
+import edu.wpi.first.wpilibj.hal.HAL;
 
 /**
  * Common hooks to the FRC methods with ridiculously long method names. WPI pls.
@@ -13,35 +13,35 @@ public class FRCHooks {
      * Called when the robot is ready to be enabled (pre-init phase complete)
      */
     public static void robotReady() {
-        FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramStarting();
+        HAL.observeUserProgramStarting();
     }
 
     /**
      * Observe the input from the driver station for the 'disabled' mode
      */
     public static void observeDisabled() {
-        FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramDisabled();
+        HAL.observeUserProgramDisabled();
     }
 
     /**
      * Observe the input from the driver station for the 'test' mode
      */
     public static void observeTest() {
-        FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramTest();
+        HAL.observeUserProgramTest();
     }
 
     /**
      * Observe the input from the driver station for the 'teleop' mode
      */
     public static void observeTeleop() {
-        FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramTeleop();
+        HAL.observeUserProgramTeleop();
     }
 
     /**
      * Observe the input from the driver station for the 'autonomous' mode
      */
     public static void observeAutonomous() {
-        FRCNetworkCommunicationsLibrary.FRCNetworkCommunicationObserveUserProgramAutonomous();
+        HAL.observeUserProgramAutonomous();
     }
 
 }

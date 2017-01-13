@@ -1,5 +1,6 @@
 package jaci.openrio.toast.core;
 
+import edu.wpi.first.wpilibj.util.WPILibVersion;
 import jaci.openrio.toast.core.script.js.JavaScript;
 import jaci.openrio.toast.lib.Version;
 
@@ -144,6 +145,7 @@ public class Environment {
         list.add(String.format("%10s %s", "Toast:", Version.version().get()));
         list.add(String.format("%10s %s (%s)", "Git:", Version.getShortCommitHash(), Version.getCommitHash()));
         list.add(String.format("%10s %s", "Type:", getEnvironmentalType()));
+        list.add(String.format("%10s %s", "WPILib:", WPILibVersion.Version));
         list.add(String.format("%10s %s", "FMS:", isCompetition()));
         list.add(String.format("%10s %s %s (%s)", "OS:", getOS_Name(), getOS_Version(), getOS_Architecture()));
         list.add(String.format("%10s %s (%s)", "Java:", getJava_version(), getJava_vendor()));

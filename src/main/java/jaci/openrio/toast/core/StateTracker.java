@@ -1,6 +1,6 @@
 package jaci.openrio.toast.core;
 
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
+import edu.wpi.first.wpilibj.hal.FRCNetComm;
 import edu.wpi.first.wpilibj.hal.HAL;
 import jaci.openrio.toast.core.loader.verification.VerificationWorker;
 import jaci.openrio.toast.lib.FRCHooks;
@@ -39,7 +39,7 @@ public class StateTracker {
      * Start the StateTracker loop
      */
     public static void init(Toast impl) {
-        HAL.report(FRCNetworkCommunicationsLibrary.tResourceType.kResourceType_Framework, 1);
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Framework, 1);
         StateTracker.impl = impl;
         boolean isAlive;
         if (ToastBootstrap.isVerification)
