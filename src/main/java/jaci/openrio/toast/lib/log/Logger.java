@@ -30,6 +30,7 @@ public class Logger {
     public static final int ATTR_DEFAULT = ATTR_TIME | ATTR_THREAD | ATTR_COLOR;
 
     public static final LogLevel INFO = new LogLevel("INFO");
+    public static final LogLevel DEBUG = new LogLevel("DEBUG");
     public static final LogLevel WARN = new LogLevel("WARN").setPrintStream(System.err).setColor(Pretty.Colors.RED);
     public static final LogLevel ERROR = new LogLevel("ERROR").setPrintStream(System.err).setColor(Pretty.Colors.RED);
     public static final LogLevel SEVERE = new LogLevel("SEVERE").setPrintStream(System.err).setColor(Pretty.Colors.RED);
@@ -121,6 +122,26 @@ public class Logger {
         s += "] ";
         if (color) s += "<" + c1 + ">";
         return color ? Pretty.format(s) : s;
+    }
+
+    /**
+     * Log a message in Debug Mode (e.g. only if runtime arg)
+     */
+    public void debug(String message) {
+        if (ToastBootstrap.debug_logging)
+            log(message, DEBUG);
+    }
+
+    /**
+     * Log an exception in Debug Mode (e.g. only if debug or exception runtime arg)
+     */
+    public void debugException(Throwable t) {
+        if (ToastBootstrap.exception_info_logging || ToastBootstrap.debug_logging) {
+            DEBUG.getPrintSteam().flush();
+            log("DEBUG EXCEPTION: " + t, ERROR);
+            exception(t);
+            ERROR.getPrintSteam().flush();
+        }
     }
 
     /**

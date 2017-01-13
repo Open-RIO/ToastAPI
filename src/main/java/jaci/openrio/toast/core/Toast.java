@@ -172,4 +172,12 @@ public class Toast extends RobotBase {
      */
     public void shutdownCommon() { }
 
+    public static boolean isSimulation() {
+      return Environment.isSimulation();
+    }
+
+    public static boolean isReal() {
+      return Environment.isEmbedded();
+    }
+
 }
