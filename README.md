@@ -1,8 +1,17 @@
 #![](doc/resources/logo_tiny_text.png)
 An expandable, Open Source and Cross-Platform Robot API for FRC built on WPILib.
 
-### Now ready for the 2016 FIRST Robotics Competition!
+#WHERE'S THE 2017 UPDATE?
+The ToastAPI, while stable for 2017, will not be officially released. There have been a lot of changes in the past year to the way WPILib is maintained, all of which are for the better. With the recent focus on the [GradleRIO](https://github.com/Open-RIO/GradleRIO) build system to be more expansible for multi-project configurations and libraries, a module-loading system similar to Toast's is not required. 
 
+With device libraries being forked over to the manufacturer, simulation will become harder and harder to maintain. For this reason, I encourage teams to drop the simulation model and work more towards unit tests. Unit tests can be done with [GradleRIO](https://github.com/Open-RIO/GradleRIO). When some time is available, I will be writing a post on how to achieve unit tests efficiently and effectively. 
+
+Finally, a project as big as this requires a lot of time to maintain, time which I don't currently have. I am working on much larger projects, and unfortunately I don't have time for this one. Other projects, such as [GradleRIO](https://github.com/Open-RIO/GradleRIO), however, will be still be maintained. 
+
+I'd like to remind you that this is an open source project. If you want to continue using Toast, or turn it into something of your own, I encourage you to fork and modify the repo to your needs. 
+
+Be well,
+~Jaci
 
 | Branch | Windows | Linux / Mac |
 |--------|---------|-------------|
