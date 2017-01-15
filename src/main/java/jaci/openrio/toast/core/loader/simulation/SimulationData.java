@@ -27,6 +27,11 @@ public class SimulationData {
      */
     public static byte[] dioValues = new byte[10];
     public static byte[] dioDirections = new byte[10];
+    
+    /**
+     * ANALOG INPUT *
+     */
+    public static short[] analogValues = new short[4];
 
     /**
      * Set the Digital IO on the given port with the given value
