@@ -283,3 +283,10 @@ class BuildGradle implements Plugin<Project> {
     }
   }
 }
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.incremental = true
+    }
+
+}
